@@ -1,0 +1,14 @@
+paint-shop-backend/
+├── src/
+│   ├── config/         # Chứa config DB, Env (e.g., config.ts)
+│   ├── controllers/    # Nhận Request, Validate, trả Response
+│   ├── middlewares/    # Xử lý Auth, Error, Logging
+│   ├── routes/         # Định nghĩa các endpoint (v1)
+│   ├── services/       # Logic nghiệp vụ (Business Logic)
+│   ├── utils/          # Hàm dùng chung (Helper, Error Class)
+│   ├── app.ts          # Setup Express App
+│   └── server.ts       # Entry point (Chạy server)
+├── .env                # Biến môi trường
+├── .gitignore
+├── package.json
+└── tsconfig.json
