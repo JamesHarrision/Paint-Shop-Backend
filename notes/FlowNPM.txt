@@ -1,0 +1,18 @@
+Flow chuẩn của backend TypeScript:
+DEV:
+npm run dev
+
+BUILD:
+npm run build
+
+PROD:
+npm start
+
+Sơ đồ dễ nhớ:
+┌─────────────┐
+│ server.ts   │  ← dev (nodemon)
+└─────┬───────┘
+      │ tsc
+┌─────▼───────┐
+│ server.js   │  ← start (node)
+└─────────────┘
