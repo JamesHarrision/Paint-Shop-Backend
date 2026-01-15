@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as userService from '../services/userService';
+import { AuthRequest } from "../types/express";
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -57,4 +58,20 @@ export const login = async (req: Request, res: Response) => {
       message: error.message || 'Login failed'
     });
   }
+}
+
+export const getMe = async (req: AuthRequest, res: Response) => {
+  
+  //Lúc này req.user đã có dữ liệu nhờ middleware gác cổng
+  const currentUser = req.user
+
+  if(!currentUser){
+    res.status(401).json({message: 'Unauthorized'});
+    return;
+  }
+
+  res.status(200).json({
+    message: 'This is your profile data',
+    user: currentUser
+  });
 }

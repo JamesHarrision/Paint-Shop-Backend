@@ -1,2 +1,11 @@
 Clean Architecture: 
 Route -> Controller (Xử lý HTTP) -> Service (Logic nghiệp vụ) -> Prisma (DB).
+
+Middleware có nhiệm vụ:
+Lấy token từ request (thường là Authorization header)
+Kiểm tra token có tồn tại không
+Verify token (JWT)
+Gắn thông tin user vào req để các route sau dùng
+Chặn request nếu chưa đăng nhập / token sai
+Luồng chuẩn:
+Client → Request → Auth Middleware → Controller
