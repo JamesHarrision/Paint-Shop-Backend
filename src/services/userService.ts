@@ -1,5 +1,7 @@
+import { error } from 'node:console';
 import {prisma} from '../config/prisma'
-import { hashPassword } from '../utils/password'
+import { comparePassword, hashPassword } from '../utils/password'
+import { generateJwtToken } from '../utils/jwt';
 
 export const registerUser = async (
   email: string,
@@ -36,4 +38,41 @@ export const registerUser = async (
   })
 
   return newUser;
+}
+
+export const loginUser = async (
+  email: string,
+  password: string
+) => {
+  //1. Tìm user theo email
+  const user = await prisma.user.findUnique({
+    where: {
+      email
+    }
+  });
+
+  if(!user){
+    throw new Error("Invalid email or password");
+  }
+
+  //2. So sánh password hash
+  const isMatch = await comparePassword(password, user.password);
+  if(!isMatch){
+    throw new Error("Invalid email or password");
+  }
+
+
+  //3. Tạo jwt token
+  const token = generateJwtToken(user.id, user.role);
+
+  //4. Trả về thông tin (ko trả password nha fen)
+  return {
+    user: {
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      role: user.role
+    },
+    token
+  };
 }
