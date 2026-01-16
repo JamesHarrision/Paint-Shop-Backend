@@ -3,6 +3,7 @@ import helmet from 'helmet';
 import cors from 'cors'
 import { prisma } from './config/prisma';
 import authRoutes from './routes/authRoutes'
+import productRoutes from './routes/productRoutes'
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 
 //Route
 app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes);
 
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'Welcome to Paint Shop API 🚀' });

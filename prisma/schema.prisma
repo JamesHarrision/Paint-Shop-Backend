@@ -14,8 +14,8 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  email String @unique
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
   password  String
   fullName  String?
   role      Role     @default(USER)
@@ -25,8 +25,20 @@ model User {
   @@map("users")
 }
 
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?  @db.Text // Cho phép lưu văn bản dài
+  price       Decimal  @db.Decimal(10, 2) // Tiền tệ nên dùng Decimal để chính xác
+  stock       Int      @default(0)
+  imageUrl    String? // URL ảnh (sau này upload)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("products")
+}
+
 enum Role {
   USER
   ADMIN
 }
-

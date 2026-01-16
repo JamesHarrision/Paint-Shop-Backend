@@ -1,0 +1,34 @@
+{
+  // ... các phần khác ...
+  "scripts": {
+    // ...
+  },
+  "dependencies": {
+    // ...
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  }
+}
+
+### Bước 3: Chạy lệnh Seed
+
+Mở terminal và gõ:
+
+```bash
+npx prisma db seed
+
+Nếu thấy dòng chữ: `Seeding finished. Created 15 products.` là thành công!
+
+---
+
+### Bước 4: Test lại API
+1.  **Phân trang:** `GET /api/products?page=1&limit=5` (Sẽ ra 5 món đầu như Dulux, Jotun...)
+2.  **Lọc giá rẻ:** `GET /api/products?maxPrice=100000` (Sẽ ra Sơn dầu Bạch Tuyết, Keo Cá sấu, Sơn xịt ATM).
+3.  **Lọc giá cao:** `GET /api/products?minPrice=1000000` (Sẽ ra Kova, Mykolor...).
+4.  **Tìm kiếm:** `GET /api/products?search=Kova` (Sẽ ra 2 món Kova).
+
+Bạn chạy xong seed báo mình nhé, mình sẽ hướng dẫn phần **Caching (Redis)** để giải quyết bài toán chịu tải cao.
+
+Test api này
+GET - http://localhost:3000/api/products?search=Kova&minPrice=1000000&maxPrice=1500000
