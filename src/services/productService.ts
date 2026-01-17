@@ -1,5 +1,6 @@
 import { prisma } from '../config/prisma'
 import { Prisma } from '@prisma/client'
+import redis from '../config/redis'
 
 // Interface cho bộ lọc (Filter)
 interface GetProductsParams {
@@ -23,18 +24,53 @@ export const createProduct = async (data: any) => {
 };
 
 export const getProductById = async (id: number) => {
+  // 1. Tạo Key Cache: ví dụ "product:15"
+  const cacheKey = `product:${id}`;
+
+  // 2. Kiểm tra trong Redis trước
+  const cachedData = await redis.get(cacheKey);
+
+  if (cachedData) {
+    console.log(`⚡ Hit Cache Product Detail: ${id}`);
+    return JSON.parse(cachedData);
+  }
+
+  // 3. Nếu không có, gọi DB
   const product = await prisma.product.findUnique({
     where: { id: id }
   });
 
+
   if (!product) throw new Error('Product not found');
+
+  // 4. Lưu vào Redis (Hết hạn sau 60s)
+  await redis.set(cacheKey, JSON.stringify(product), "EX", 60);
+
   return product;
 }
 
 export const getProducts = async (params: GetProductsParams) => {
-  const { page = 1, limit = 10, search, minPrice, maxPrice } = params;
+  let { page = 1, limit = 10, search, minPrice, maxPrice } = params;
+  if (!minPrice) minPrice = 0;
+  if (!maxPrice) maxPrice = 1e9;
 
-  // Tính toán Skip (tư duy giống bài toán mảng)
+  // 1. TẠO KEY CACHE (Định danh duy nhất cho request này)
+  // Ví dụ: "products:p1:l10:s=Son:min=null:max=null"
+  const cacheKey = `product:p${page}:l${limit}:s=${search || ''}:min=${minPrice || ''}:max=${maxPrice || ''}`;
+
+  // 2. CHECK REDIS
+  const cachedData = await redis.get(cacheKey);
+
+  if (cachedData) {
+    // Hit Cache: Có dữ liệu trong RAM -> Trả về ngay
+    console.log('⚡ Hit Cache List: Returning data from Redis');
+    return JSON.parse(cachedData);
+  }
+
+
+  // 3. MISS CACHE -> GỌI DB
+  console.log('🐢 Miss Cache List: Fetching from DB...');
+  
   // Page 1: skip 0. Page 2: skip 10...
   const skip = (page - 1) * limit;
 
@@ -63,7 +99,7 @@ export const getProducts = async (params: GetProductsParams) => {
   ]);
 
 
-  return {
+  const result = {
     data: products,
     pagination: {
       page: Number(page),
@@ -72,4 +108,10 @@ export const getProducts = async (params: GetProductsParams) => {
       totalPages: Math.ceil(total / limit)
     }
   }
+  
+  // 4. LƯU VÀO REDIS (Set TTL = 60 giây)
+  // Dữ liệu sẽ tự động biến mất sau 60s để đảm bảo không bị cũ quá
+  redis.set(cacheKey, JSON.stringify(result), 'EX', 60);
+
+  return result;
 }

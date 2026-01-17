@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  # 1. Database MySQL
+  db:
+    image: mysql:8.0               # Tên Image (giống như đĩa cài Win)
+    container_name: paint_shop_mysql # Tên đặt cho máy ảo này
+    restart: always                # Tự khởi động lại nếu bị crash
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD} # Mật khẩu root
+      MYSQL_DATABASE: ${MYSQL_DATABASE}      # Tên database tạo sẵn
+    ports:
+      - '${MYSQL_PORT}:3306'                # Ánh xạ cổng: Cổng máy thật -> Cổng máy ảo
+    volumes:
+      - mysql_data:/var/lib/mysql  # Lưu dữ liệu ra ngoài để xóa container không mất data
+
+  # 2. Redis Cache (Mới thêm vào)
+  redis:
+    image: redis:alpine            # Bản alpine là bản siêu nhẹ (<10MB)
+    container_name: paint_shop_redis
+    ports:
+      - '${REDIS_PORT}:6379'                # Cổng mặc định của Redis
+
+volumes:
+  mysql_data:                      # Khai báo nơi lưu data bền vững
