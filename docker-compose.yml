@@ -1,32 +1,66 @@
 version: '3.8'
 
 services:
-  # 1. Database MySQL
+  # 1. Database
   db:
-    image: mysql:8.0               # Tên Image (giống như đĩa cài Win)
-    container_name: paint_shop_mysql # Tên đặt cho máy ảo này
-    restart: always                # Tự khởi động lại nếu bị crash
+    image: mysql:8.0
+    container_name: paint_shop_mysql
+    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD} # Mật khẩu root
-      MYSQL_DATABASE: ${MYSQL_DATABASE}      # Tên database tạo sẵn
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     ports:
-      - '${MYSQL_PORT}:3306'                # Ánh xạ cổng: Cổng máy thật -> Cổng máy ảo
+      - '${MYSQL_PORT}:3306'
     volumes:
-      - mysql_data:/var/lib/mysql  # Lưu dữ liệu ra ngoài để xóa container không mất data
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app_network
 
-  # 2. Redis Cache (Mới thêm vào)
+  # 2. Redis
   redis:
-    image: redis:alpine            # Bản alpine là bản siêu nhẹ (<10MB)
+    image: redis:alpine
     container_name: paint_shop_redis
     ports:
-      - '${REDIS_PORT}:6379'                # Cổng mặc định của Redis
+      - '${REDIS_PORT}:6379'
+    networks:
+      - app_network
 
-# Python AI Service
+  # 3. AI Service
   ai_service:
     build: ./ai-service
     container_name: paint_shop_ai
     ports:
-      - "${AI_SERVICE_PORT}:8000" # Expose ra ngoài để test (nếu cần)
+      - "${AI_SERVICE_PORT}:8000"
+    networks:
+      - app_network
+
+  # 4. Backend Node.js
+  backend:
+    build: ./backend
+    container_name: paint_shop_backend
+    ports:
+      - "3000:3000"
+    environment:
+      # --- KỸ THUẬT QUAN TRỌNG ---
+      # Chúng ta ghi đè biến môi trường để ép Docker dùng tên service nội bộ
+      
+      # 1. Ghép chuỗi connection string cho Prisma:
+      # Cấu trúc: mysql://user:pass@HOST:PORT/db_name
+      # Lưu ý: @db là tên service database ở trên
+      - DATABASE_URL=mysql://root:${MYSQL_ROOT_PASSWORD}@db:3306/${MYSQL_DATABASE}
+      
+      # 2. Kết nối Redis:
+      - REDIS_URL=redis://redis:6379
+      
+      # 3. Kết nối AI Service:
+      - AI_SERVICE_URL=http://ai_service:8000
+      
+      - PORT=3000
+      - JWT_SECRET=${JWT_SECRET} # Các biến khác thì lấy từ .env
+    depends_on:
+      - db
+      - redis
+      - ai_service
     networks:
       - app_network
 
@@ -35,4 +69,4 @@ networks:
     driver: bridge
 
 volumes:
-  mysql_data:                      # Khai báo nơi lưu data bền vững
+  mysql_data:
