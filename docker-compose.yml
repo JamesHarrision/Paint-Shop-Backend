@@ -21,5 +21,18 @@ services:
     ports:
       - '${REDIS_PORT}:6379'                # Cổng mặc định của Redis
 
+# Python AI Service
+  ai_service:
+    build: ./ai-service
+    container_name: paint_shop_ai
+    ports:
+      - "${AI_SERVICE_PORT}:8000" # Expose ra ngoài để test (nếu cần)
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
+
 volumes:
   mysql_data:                      # Khai báo nơi lưu data bền vững
