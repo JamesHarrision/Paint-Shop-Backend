@@ -12,6 +12,8 @@ interface GetProductsParams {
 }
 
 export const createProduct = async (data: any) => {
+  await redis.del('product:color-lookup');
+
   return await prisma.product.create({
     data: {
       name: data.name,
