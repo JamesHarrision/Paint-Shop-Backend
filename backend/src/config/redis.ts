@@ -1,7 +1,4 @@
 import Redis from 'ioredis';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 // Lấy thông tin từ biến môi trường (đã cấu hình trong .env)
 const redisPort = Number(process.env.REDIS_PORT_APP) || 6379;
