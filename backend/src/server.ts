@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 import path from 'path'
 
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 import app from './app'
 
 const HOST = process.env.HOST || '0.0.0.0';

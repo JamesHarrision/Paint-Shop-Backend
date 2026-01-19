@@ -105,3 +105,7 @@ async def analyze_room(file: UploadFile = File(...)):
         "base_color_rgb": [int(c) for c in dominant_rgb],
         "palette": suggestion
     }
+
+if __name__ == "__main__":
+    # Phải thêm host='0.0.0.0'
+    app.run(host='0.0.0.0', port=8000)

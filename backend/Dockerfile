@@ -9,6 +9,8 @@ COPY package*.json ./
 COPY prisma ./prisma/ 
 # (Copy folder prisma để generate client, nếu bạn để prisma chỗ khác thì sửa lại đường dẫn)
 
+RUN apk add --no-cache openssl
+
 # 4. Cài đặt dependencies
 RUN npm install
 

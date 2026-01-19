@@ -40,29 +40,32 @@ services:
     container_name: paint_shop_backend
     ports:
       - "3000:3000"
+    
+    # --- PHẦN QUAN TRỌNG: VOLUMES ĐỂ CODE HOT RELOAD ---
+    volumes:
+      - ./backend:/app          # <--- Map code từ máy thật vào container
+      - /app/node_modules       # <--- Giữ folder node_modules của container (ko bị máy thật ghi đè)
+    
     environment:
-      # --- KỸ THUẬT QUAN TRỌNG ---
-      # Chúng ta ghi đè biến môi trường để ép Docker dùng tên service nội bộ
-      
-      # 1. Ghép chuỗi connection string cho Prisma:
-      # Cấu trúc: mysql://user:pass@HOST:PORT/db_name
-      # Lưu ý: @db là tên service database ở trên
-      - DATABASE_URL=mysql://root:${MYSQL_ROOT_PASSWORD}@db:3306/${MYSQL_DATABASE}
-      
-      # 2. Kết nối Redis:
-      - REDIS_URL=redis://redis:6379
-      
-      # 3. Kết nối AI Service:
-      - AI_SERVICE_URL=http://ai_service:8000
-      
+      - HOST=0.0.0.0
       - PORT=3000
-      - JWT_SECRET=${JWT_SECRET} # Các biến khác thì lấy từ .env
+      - DATABASE_URL=mysql://root:${MYSQL_ROOT_PASSWORD}@db:3306/${MYSQL_DATABASE}
+      - REDIS_URL=${REDIS_URL}  
+
+      - AI_SERVICE_URL=http://ai_service:8000 
+      - REDIS_HOST=redis     
+      - REDIS_PORT=6379
+      - JWT_SECRET=${JWT_SECRET} 
+    
     depends_on:
       - db
       - redis
       - ai_service
     networks:
       - app_network
+    
+    # Lệnh chạy dev (bạn nhớ đảm bảo package.json có script "dev")
+    command: npm run dev 
 
 networks:
   app_network:
