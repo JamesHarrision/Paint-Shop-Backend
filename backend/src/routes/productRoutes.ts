@@ -1,7 +1,7 @@
 import { Router } from "express";
 import * as productController from '../controllers/productController'
 import { authenticate } from "../middlewares/authMiddleware";
-import { requireAdmin } from "../middlewares/roldeMiddleware";
+import { requireAdmin } from "../middlewares/roleMiddleware";
 
 const router = Router();
 
