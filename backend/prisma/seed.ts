@@ -1,4 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Role } from '@prisma/client';
+import { hashPassword } from '../src/utils/password';
 
 const prisma = new PrismaClient();
 
@@ -212,6 +213,34 @@ async function main() {
   await prisma.product.createMany({
     data: products,
   });
+
+  // 1. Tạo mẫu Admin Account
+  const adminPassword = await hashPassword('admin123');
+  const admin = await prisma.user.upsert({
+    where: { email: 'admin@paint.com' },
+    update: {},
+    create: {
+      email: 'admin@paint.com',
+      password: adminPassword,
+      fullName: 'System Administrator',
+      role: Role.ADMIN, // Set role ADMIN
+    },
+  });
+
+  // 2. Tạo mẫu Normal User
+  const userPassword = await hashPassword('user123');
+  const user = await prisma.user.upsert({
+    where: { email: 'user@paint.com' },
+    update: {},
+    create: {
+      email: 'user@paint.com',
+      password: userPassword,
+      fullName: 'Normal Customer',
+      role: Role.USER, // Default role
+    },
+  });
+
+  console.log({ admin, user });
 
   console.log(`Seeding finished. Created ${products.length} products.`);
 }
