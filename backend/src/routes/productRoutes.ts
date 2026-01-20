@@ -13,9 +13,7 @@ router.get('/:id', productController.getProductDetail);
 
 // POST /api/products -> Tạo mới (Tạm thời public để dễ test data)
 router.post('/', authenticate, requireAdmin, productController.createProduct);
-
-// Sẽ thêm update/delete ở đây
-// router.put('/:id', authenticate, requireAdmin, updateProduct);
-// router.delete('/:id', authenticate, requireAdmin, deleteProduct);
+router.put('/:id', authenticate, requireAdmin, productController.updateProduct);
+router.delete('/:id', authenticate, requireAdmin, productController.deleteProduct);
 
 export default router;
