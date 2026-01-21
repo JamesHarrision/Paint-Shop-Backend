@@ -1,13 +1,18 @@
 import express from 'express'
 import helmet from 'helmet';
 import cors from 'cors'
-import { prisma } from './config/prisma';
+import path from 'path';
 import authRoutes from './routes/authRoutes'
 import productRoutes from './routes/productRoutes'
 import aiRoutes from './routes/aiRoutes'
 import userRoutes from './routes/userRoutes'
 
 const app = express();
+
+//Middleware for static file
+// Serve Static Files (Mở quyền truy cập folder uploads)
+// User truy cập: http://localhost:3000/uploads/filename.jpg
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 //Middleware
 app.use(helmet());

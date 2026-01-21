@@ -3,11 +3,12 @@ import FormData from "form-data";
 import { prisma } from "../config/prisma";
 import { calculateColorDistance } from "../utils/colorUtils";
 import redis from "../config/redis";
+import fs from 'fs'
 
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://127.0.0.1:8000';
 const REDIS_COLOR_KEY = 'product:color-lookup';
 
-const getAllProducts = async () => {
+const getAllProductsForAI = async () => {
   const cachedData = await redis.get(REDIS_COLOR_KEY);
   if (cachedData) {
     return JSON.parse(cachedData);
@@ -33,15 +34,13 @@ const getAllProducts = async () => {
   return products;
 }
 
-export const analyzeRoomColor = async (imageBuffer: Buffer, fileName: string) => {
+export const analyzeRoomColor = async (filePath: string, userId: number) => {
   try {
-    // console.log('--- BẮT ĐẦU GỌI AI SERVICE ---');
-    // console.log(`1. Target URL: ${AI_SERVICE_URL}/analyze`);
-    // console.log(`2. File Size: ${imageBuffer.length} bytes`);
+    const imageBuffer = fs.readFileSync(filePath);
 
     const formData = new FormData();
     // 'file' là key bắt buộc phải khớp với bên Python (main.py)
-    formData.append('file', imageBuffer, { filename: fileName });
+    formData.append('file', imageBuffer, { filename: 'upload.jpg' });
 
     // Lưu ý: Phải set headers từ formData để có đúng Boundary
     const headers = formData.getHeaders();
@@ -55,7 +54,7 @@ export const analyzeRoomColor = async (imageBuffer: Buffer, fileName: string) =>
     });
     const aiData = aiResponse.data;
 
-    const allProducts = await getAllProducts();
+    const allProducts = await getAllProductsForAI();
 
     const enhancedPalette = aiData.palette.map((colorItem: any) => {
       let bestMatchProduct = null;
@@ -75,6 +74,8 @@ export const analyzeRoomColor = async (imageBuffer: Buffer, fileName: string) =>
         matchScore = Math.max(0, Math.round(100 - (minDistance * 10)));
       }
 
+
+
       return {
         ...colorItem,
         matchedProduct: bestMatchProduct
@@ -92,10 +93,24 @@ export const analyzeRoomColor = async (imageBuffer: Buffer, fileName: string) =>
 
     });
 
-    return {
+    const finalResult = {
       base_color_rgb: aiData.base_color_rgb,
       palette: enhancedPalette
     }
+
+    // LƯU LỊCH SỬ VÀO DB (Logic mới)
+    // Chuyển path hệ thống (uploads\file.jpg) thành URL (uploads/file.jpg)
+    const nomarlizedPath = filePath.replace('/\\/g', '/');
+
+    await prisma.analysisHistory.create({
+      data: {
+        userId: userId,
+        imageUrl: nomarlizedPath,   // Lưu đường dẫn tương đối
+        result: finalResult as any  // Ép kiểu JSON cho Prisma
+      }
+    });
+
+    return finalResult;
 
   } catch (error: any) {
     console.error('!!! LỖI Ở AI SERVICE !!!');
@@ -112,4 +127,18 @@ export const analyzeRoomColor = async (imageBuffer: Buffer, fileName: string) =>
     }
     throw new Error(`AI service error: ${error}`);
   }
+}
+
+export const getHistoryByUserId = async (userId: number) => {
+  return await prisma.analysisHistory.findMany({
+    where: {
+      userId: userId
+    },
+    select: {
+      id: true,
+      imageUrl: true,
+      createdAt: true,
+      result: true
+    }
+  })
 }

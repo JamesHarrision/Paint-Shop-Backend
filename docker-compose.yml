@@ -45,7 +45,8 @@ services:
     volumes:
       - ./backend:/app          # <--- Map code từ máy thật vào container
       - /app/node_modules       # <--- Giữ folder node_modules của container (ko bị máy thật ghi đè)
-    
+      - ./backend/uploads:/app/uploads
+      
     environment:
       - HOST=0.0.0.0
       - PORT=3000

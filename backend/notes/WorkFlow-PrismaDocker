@@ -1,0 +1,10 @@
+🎯 Workflow đúng khi làm việc với Docker
+Khi thêm model mới:
+
+# 1. Sửa schema.prisma trên máy local
+
+# 2. Chạy migrate TRONG Docker
+docker compose exec backend npx prisma migrate dev --name add_new_model
+
+# 3. Generate client trên máy local để có types
+npx prisma generate
