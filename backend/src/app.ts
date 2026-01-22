@@ -6,6 +6,7 @@ import authRoutes from './routes/authRoutes'
 import productRoutes from './routes/productRoutes'
 import aiRoutes from './routes/aiRoutes'
 import userRoutes from './routes/userRoutes'
+import orderRoutes from './routes/orderRoutes'
 
 const app = express();
 
@@ -20,10 +21,12 @@ app.use(cors());
 app.use(express.json());
 
 //Route
+app.use('/api/v1/ai', aiRoutes);
+
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes); 
-app.use('/api/v1/ai', aiRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/orders', orderRoutes);
 
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'Welcome to Paint Shop API 🚀' });
