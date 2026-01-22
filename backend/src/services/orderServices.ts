@@ -1,6 +1,6 @@
 import { Decimal } from '@prisma/client/runtime/library';
 import { prisma } from '../config/prisma';
-import { Order, OrderItem } from '@prisma/client';
+import { Order, OrderItem, OrderStatus } from '@prisma/client';
 
 interface CartItem {
   productId: number,
@@ -116,6 +116,32 @@ export const getOrderServiceByUserId = async (userId: number) => {
     },
     orderBy: {
       createdAt: 'desc'
+    }
+  })
+}
+
+export const updateOrderStatus = async (orderId: number, status: string) => {
+
+  const order = await prisma.order.findUnique({
+    where: {
+      id: orderId
+    }
+  });
+
+  if (!order) {
+    throw new Error('Order not found');
+  }
+
+  if (!Object.values(OrderStatus).includes(status as OrderStatus)) {
+    throw new Error('Error updating invalid status');
+  }
+
+  return await prisma.order.update({
+    where: {
+      id: orderId
+    },
+    data: {
+      status: (status as OrderStatus)
     }
   })
 }
