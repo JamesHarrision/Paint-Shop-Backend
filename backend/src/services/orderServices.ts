@@ -91,8 +91,31 @@ export const createOrder = async (userId: number, items: CartItem[]) => {
   } catch (error: any) {
     console.error("Order Creation Failed:", error);
     if (error.message.includes('out of stock')) {
-        throw error;
+      throw error;
     }
-    throw new Error('Error checking out'); 
+    throw new Error('Error checking out');
   }
+}
+
+export const getOrderServiceByUserId = async (userId: number) => {
+  return await prisma.order.findMany({
+    where: {
+      userId: userId,
+    },
+    include: {
+      items: {
+        include: {
+          product: {
+            select: {
+              name: true,
+              colorCode: true
+            }
+          }
+        }
+      }
+    },
+    orderBy: {
+      createdAt: 'desc'
+    }
+  })
 }

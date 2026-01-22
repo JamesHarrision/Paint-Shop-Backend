@@ -24,3 +24,24 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 }
+
+export const getMyOrder = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req?.user?.userId;
+
+    if (!userId) {
+      return res.status(401).json({ message: "User un authenticated. Please login first" });
+    }
+
+    const orders = await orderService.getOrderServiceByUserId(userId);
+
+    return res.status(200).json({
+      message: "success",
+      data: orders
+    });
+
+  } catch (error: any) {
+    console.log(error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
