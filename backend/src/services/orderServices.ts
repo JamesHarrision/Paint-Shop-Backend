@@ -120,28 +120,69 @@ export const getOrderServiceByUserId = async (userId: number) => {
   })
 }
 
-export const updateOrderStatus = async (orderId: number, status: string) => {
+// export const updateOrderStatus = async (orderId: number, status: string) => {
 
-  const order = await prisma.order.findUnique({
-    where: {
-      id: orderId
+//   const order = await prisma.order.findUnique({
+//     where: {
+//       id: orderId
+//     }
+//   });
+
+//   if (!order) {
+//     throw new Error('Order not found');
+//   }
+
+//   if (!Object.values(OrderStatus).includes(status as OrderStatus)) {
+//     throw new Error('Error updating invalid status');
+//   }
+
+//   return await prisma.order.update({
+//     where: {
+//       id: orderId
+//     },
+//     data: {
+//       status: (status as OrderStatus)
+//     }
+//   })
+// }
+
+export const updateOrderStatus = async (orderId: number, newStatus: string) => {
+  return await prisma.$transaction(async (tx) => {
+    const currentOrder = await tx.order.findUnique({
+      where: {
+        id: orderId
+      },
+      include: {
+        items: true
+      }
+    });
+
+    if (!currentOrder) {
+      throw new Error('Order not found');
     }
+
+    if (!Object.values(OrderStatus).includes(newStatus as OrderStatus)) {
+      throw new Error('Error updating invalid status');
+    }
+
+    if (newStatus === OrderStatus.CANCELLED && currentOrder.status !== OrderStatus.CANCELLED) {
+      for(const item of currentOrder.items){
+        await tx.product.update({
+          where: {
+            id: item.productId
+          },
+          data: {
+            stock: {increment: item.quantity}
+          }
+        })
+      }
+    }
+
+    const updatedOrder = await tx.order.update({
+      where: { id: orderId },
+      data: { status: (newStatus as OrderStatus) }
+    });
+
+    return updatedOrder;
   });
-
-  if (!order) {
-    throw new Error('Order not found');
-  }
-
-  if (!Object.values(OrderStatus).includes(status as OrderStatus)) {
-    throw new Error('Error updating invalid status');
-  }
-
-  return await prisma.order.update({
-    where: {
-      id: orderId
-    },
-    data: {
-      status: (status as OrderStatus)
-    }
-  })
 }
