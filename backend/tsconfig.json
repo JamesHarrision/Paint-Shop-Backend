@@ -1,12 +1,14 @@
 {
   "compilerOptions": {
-    "target": "es2020",
+    "target": "ES2020",
     "module": "commonjs",
-    "rootDir": "./src",        /* Code nằm trong folder src */
-    "outDir": "./dist",        /* Code build ra folder dist */
-    "strict": true,
+    "outDir": "./dist",            // Quan trọng: Nơi xuất file JS
+    "rootDir": "./src",            // Quan trọng: Nơi chứa code nguồn
+    "strict": true,                // Chế độ nghiêm ngặt (Clean Code)
     "esModuleInterop": true,
-    "skipLibCheck": true,
+    "skipLibCheck": true,          // Bỏ qua check lỗi trong node_modules (Rất quan trọng để tránh lỗi tào lao)
     "forceConsistentCasingInFileNames": true
-  }
+  },
+  "include": ["src/**/*"],         // Chỉ build code trong src
+  "exclude": ["node_modules", "dist", "**/*.test.ts"] // Tuyệt đối không build node_modules
 }

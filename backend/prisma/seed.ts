@@ -5,9 +5,16 @@ const prisma = new PrismaClient();
 
 async function main() {
   console.log('Start seeding...');
+  // --- 1. CLEAN UP DATA (QUAN TRỌNG: Thứ tự xóa phải đúng) ---
 
-  // 1. Xóa dữ liệu cũ (để tránh trùng lặp khi chạy lại)
+  // Xóa các bảng con trước (bảng chứa khóa ngoại)
+  await prisma.orderItem.deleteMany();      // Xóa chi tiết đơn hàng trước
+  await prisma.order.deleteMany();          // Sau đó xóa đơn hàng
+  await prisma.analysisHistory.deleteMany(); // Xóa lịch sử AI (vì nó dính tới User)
+
+  // Bây giờ mới được phép xóa các bảng cha (Product, User)
   await prisma.product.deleteMany();
+  await prisma.user.deleteMany(); // Xóa luôn User để tạo lại ID cho sạch (hoặc giữ lại tùy bạn)
   console.log('Deleted all existing products.');
 
   // 2. Danh sách dữ liệu mẫu 

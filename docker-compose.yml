@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # 1. Database
+  # 1. Database (Giữ nguyên)
   db:
     image: mysql:8.0
     container_name: paint_shop_mysql
@@ -15,8 +15,12 @@ services:
       - mysql_data:/var/lib/mysql
     networks:
       - app_network
+    healthcheck: # (Mới) Đảm bảo DB sống trước khi Backend gọi
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
 
-  # 2. Redis
+  # 2. Redis (Giữ nguyên)
   redis:
     image: redis:alpine
     container_name: paint_shop_redis
@@ -25,7 +29,7 @@ services:
     networks:
       - app_network
 
-  # 3. AI Service
+  # 3. AI Service (Giữ nguyên)
   ai_service:
     build: ./ai-service
     container_name: paint_shop_ai
@@ -34,39 +38,47 @@ services:
     networks:
       - app_network
 
-  # 4. Backend Node.js
+  # 4. Backend Node.js (CẬP NHẬT LỚN)
   backend:
-    build: ./backend
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+      target: runner # Chỉ định rõ dùng stage 'runner'
     container_name: paint_shop_backend
     ports:
       - "3000:3000"
     
-    # --- PHẦN QUAN TRỌNG: VOLUMES ĐỂ CODE HOT RELOAD ---
+    # Quan trọng: BỎ volumes mount code nguồn. 
+    # Chỉ giữ lại volume cho file upload để không mất ảnh khi restart container.
     volumes:
-      - ./backend:/app          # <--- Map code từ máy thật vào container
-      - /app/node_modules       # <--- Giữ folder node_modules của container (ko bị máy thật ghi đè)
       - ./backend/uploads:/app/uploads
-      
-    environment:
-      - HOST=0.0.0.0
-      - PORT=3000
-      - DATABASE_URL=mysql://root:${MYSQL_ROOT_PASSWORD}@db:3306/${MYSQL_DATABASE}
-      - REDIS_URL=${REDIS_URL}  
 
-      - AI_SERVICE_URL=http://ai_service:8000 
-      - REDIS_HOST=redis     
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      # Service Discovery: Gọi 'db' thay vì localhost
+      - DATABASE_URL=mysql://root:${MYSQL_ROOT_PASSWORD}@db:3306/${MYSQL_DATABASE}
+      # Service Discovery: Gọi 'redis' thay vì localhost
+      - REDIS_URL=${REDIS_URL} 
+      - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - JWT_SECRET=${JWT_SECRET} 
-    
+      # Service Discovery: Gọi 'ai_service' thay vì localhost
+      - AI_SERVICE_URL=http://ai_service:8000
+      - JWT_SECRET=${JWT_SECRET}
+
     depends_on:
-      - db
-      - redis
-      - ai_service
+      db:
+        condition: service_healthy # Chờ DB healthcheck ok mới start backend
+      redis:
+        condition: service_started
+      ai_service:
+        condition: service_started
+    
     networks:
       - app_network
     
-    # Lệnh chạy dev (bạn nhớ đảm bảo package.json có script "dev")
-    command: npm run dev 
+    # KHÔNG dùng 'command: npm run dev' nữa. 
+    # Docker sẽ tự dùng CMD ["npm", "start"] trong Dockerfile.
 
 networks:
   app_network:
