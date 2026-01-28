@@ -44,10 +44,8 @@ Hệ thống thương mại điện tử chuyên bán sơn, tích hợp AI tư v
 
 Bạn không cần cài Node.js hay MySQL trên máy. Chỉ cần **Docker Desktop**.
 
-### 1. Clone & Config
-
 ```bash
-Clone dự án
+# Clone dự án
 git clone [https://github.com/your-username/paint-shop-backend.git](https://github.com/your-username/paint-shop-backend.git)
 cd paint-shop-backend
 ```
@@ -55,13 +53,13 @@ cd paint-shop-backend
 1. Tạo file .env (Copy từ mẫu)
 ```
 cp backend/.env.example backend/.env
-Lưu ý: Cập nhật các biến môi trường trong .env nếu cần thiết.
+# Lưu ý: Cập nhật các biến môi trường trong .env nếu cần thiết.
 ```
 
 2. Khởi chạy hệ thống
 
 ```Bash
-Chạy toàn bộ 4 services (Backend, AI, MySQL, Redis) với 1 lệnh duy nhất:
+# Chạy toàn bộ 4 services (Backend, AI, MySQL, Redis) với 1 lệnh duy nhất:
 docker-compose up --build -d
 ```
 
