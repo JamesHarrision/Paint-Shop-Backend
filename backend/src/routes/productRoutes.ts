@@ -2,6 +2,7 @@ import { Router } from "express";
 import * as productController from '../controllers/productController'
 import { authenticate } from "../middlewares/authMiddleware";
 import { requireAdmin } from "../middlewares/roleMiddleware";
+import { cloudinaryUpload } from "../services/cloudinaryService";
 
 const router = Router();
 
@@ -12,7 +13,8 @@ router.get('/', productController.getAllProducts);
 router.get('/:id', productController.getProductDetail);
 
 // POST /api/products -> Tạo mới (Tạm thời public để dễ test data)
-router.post('/', authenticate, requireAdmin, productController.createProduct);
+router.post('/', authenticate, requireAdmin, cloudinaryUpload.single("image"), productController.createProduct);
+
 router.put('/:id', authenticate, requireAdmin, productController.updateProduct);
 router.delete('/:id', authenticate, requireAdmin, productController.deleteProduct);
 

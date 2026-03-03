@@ -46,7 +46,23 @@ export const createProduct = async (req: Request, res: Response) => {
       return;
     }
 
-    const product = await productService.createProduct(req.body);
+    const { name, price, description, stock } = req.body;
+    let imageUrl = '';
+
+    // Lấy URL từ Cloudinary
+    if (req.file) {
+      imageUrl = req.file.path;
+    }
+
+    const product = await productService.createProduct(
+      {
+        name,
+        price: Number(price),
+        description,
+        imageUrl,
+        stock,
+      }
+    );
     res.status(201).json({ message: 'Product created', data: product });
   }
   catch (error: any) {
@@ -56,7 +72,13 @@ export const createProduct = async (req: Request, res: Response) => {
 
 export const updateProduct = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { name, description, price, stock, imageUrl, colorCode } = req.body;
+  let { name, description, price, stock, colorCode } = req.body;
+
+  let imageUrl = '';
+  // Lấy URL từ Cloudinary
+  if (req.file) {
+    imageUrl = req.file.path;
+  }
 
   try {
 
