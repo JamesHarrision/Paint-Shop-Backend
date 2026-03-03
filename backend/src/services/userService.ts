@@ -1,7 +1,9 @@
 import { error } from 'node:console';
-import {prisma} from '../config/prisma'
+import { prisma } from '../config/prisma'
 import { comparePassword, hashPassword } from '../utils/password'
 import { generateJwtToken } from '../utils/jwt';
+import redis from '../config/redis';
+import { sendResetPasswordEmail } from '../utils/emailService';
 
 export const registerUser = async (
   email: string,
@@ -14,8 +16,8 @@ export const registerUser = async (
       email: email
     }
   });
-  
-  if(existingUser){
+
+  if (existingUser) {
     throw new Error('Email already exists');
   }
 
@@ -51,13 +53,13 @@ export const loginUser = async (
     }
   });
 
-  if(!user){
+  if (!user) {
     throw new Error("Invalid email or password");
   }
 
   //2. So sánh password hash
   const isMatch = await comparePassword(password, user.password);
-  if(!isMatch){
+  if (!isMatch) {
     throw new Error("Invalid email or password");
   }
 
@@ -75,4 +77,52 @@ export const loginUser = async (
     },
     token
   };
+}
+
+export const forgetPassword = async (
+  email: string
+) => {
+  // 1. Kiểm tra user có tồn tại không
+  // 2. Sinh token ngẫu nhiên
+  // 3. Lưu vào Redis với TTL 15 phút (900s)
+  // Key format: password_reset:{token} -> Value: email
+  // 4. Gửi email
+
+  const user = await prisma.user.findFirst({
+    where: { email: email }
+  });
+  if (!user) throw new Error("User không tồn tại trong hệ thống");
+
+  const resetToken = crypto.randomUUID();
+
+  const redisKey = `password_reset:${resetToken}`;
+  await redis.setex(redisKey, 900, email);
+
+  await sendResetPasswordEmail(email, resetToken);
+
+  return { message: 'Email reset mật khẩu đã được gửi' };
+}
+
+export const resetPassword = async (
+  token: string,
+  newPassword: string
+) => {
+  const redisKey = `password_reset:${token}`;
+
+  // 1. Kiểm tra token trong Redis
+  // 2. Hash password mới và cập nhật vào MySQL
+  // 3. Xóa token khỏi Redis để tránh sử dụng lại (One-time use)
+
+  const email = await redis.get(redisKey);
+  if (!email) throw new Error("Token không tồn tại hoặc đã hết hạn");
+
+  const hashedPassword = await hashPassword(newPassword);
+  await prisma.user.update({
+    where: { email: email },
+    data: { password: hashedPassword }
+  })
+
+  await redis.del(redisKey);
+
+  return { message: 'Đặt lại mật khẩu thành công' };
 }

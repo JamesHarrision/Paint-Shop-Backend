@@ -14,5 +14,8 @@ router.post('/login', authController.login);
 // Flow: Request -> authenticate (check vé) -> getMe (trả dữ liệu)
 router.get('/me', authenticate, authController.getMe);
 
+router.post('/forgot-password', authController.forgotPassword);
+router.post('/reset-password', authController.resetPassword);
+
 export default router;
 

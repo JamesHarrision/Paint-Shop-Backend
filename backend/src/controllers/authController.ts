@@ -4,9 +4,9 @@ import { AuthRequest } from "../types/express";
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const {email, password, fullName} = req.body;
+    const { email, password, fullName } = req.body;
     // Validate cơ bản
-    if(!email || !password) {
+    if (!email || !password) {
       res.status(400).json({
         messege: 'email && password are required'
       });
@@ -22,11 +22,11 @@ export const register = async (req: Request, res: Response) => {
     });
 
   } catch (error: any) {
-    if(error.messege === 'Email already exists'){
-      res.status(409).json({messege: 'Email already exists'});
-    }else{
+    if (error.messege === 'Email already exists') {
+      res.status(409).json({ messege: 'Email already exists' });
+    } else {
       res.status(500).json({
-        messege: 'Internal Server Error', 
+        messege: 'Internal Server Error',
         error: error.messege
       })
     }
@@ -35,10 +35,10 @@ export const register = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   try {
-    const {email, password} = req.body;
+    const { email, password } = req.body;
 
     //Validate cơ bản
-    if (!email || !password){
+    if (!email || !password) {
       res.status(400).json({
         message: "email && password are required"
       });
@@ -53,20 +53,47 @@ export const login = async (req: Request, res: Response) => {
       data: result
     });
   }
-  catch (error: any){
+  catch (error: any) {
     res.status(401).json({
       message: error.message || 'Login failed'
     });
   }
 }
 
+export const forgotPassword = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Vui lòng cung cấp email" });
+
+    const result = await userService.forgetPassword(email);
+    return res.status(200).json({ message: "Đã gửi email đổi mật khẩu" })
+  } catch (error: any) {
+    console.log("[Forgot password error", error);
+    return res.status(500).json({ message: "Lỗi ở server" });
+  }
+}
+
+export const resetPassword = async (req: Request, res: Response) => {
+  try {
+    const { token, newPassword } = req.body;
+    if (!token || !newPassword) {
+      return res.status(400).json({ message: "Vui lòng cung cấp token và mật khẩu mới" });
+    }
+
+    const result = await userService.resetPassword(token, newPassword);
+    return res.status(200).json({ message: "Đổi mật khẩu thành công" });
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
+  }
+}
+
 export const getMe = async (req: AuthRequest, res: Response) => {
-  
+
   //Lúc này req.user đã có dữ liệu nhờ middleware gác cổng
   const currentUser = req.user
 
-  if(!currentUser){
-    res.status(401).json({message: 'Unauthorized'});
+  if (!currentUser) {
+    res.status(401).json({ message: 'Unauthorized' });
     return;
   }
 

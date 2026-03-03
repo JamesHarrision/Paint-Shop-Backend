@@ -15,8 +15,9 @@ services:
       - mysql_data:/var/lib/mysql
     networks:
       - app_network
-    healthcheck: # (Mới) Đảm bảo DB sống trước khi Backend gọi
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+    healthcheck:
+      # (Mới) Đảm bảo DB sống trước khi Backend gọi
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       timeout: 20s
       retries: 10
 
@@ -40,26 +41,28 @@ services:
 
   # 4. Backend Node.js (CẬP NHẬT LỚN)
   backend:
-    build: 
+    build:
       context: ./backend
       dockerfile: Dockerfile
       target: runner # Chỉ định rõ dùng stage 'runner'
     container_name: paint_shop_backend
     ports:
       - "3000:3000"
-    
+
     # Quan trọng: BỎ volumes mount code nguồn. 
     # Chỉ giữ lại volume cho file upload để không mất ảnh khi restart container.
     volumes:
       - ./backend/uploads:/app/uploads
 
     environment:
+      - MAIL_USER=${MAIL_USER}
+      - MAIL_PASS=${MAIL_PASS}
       - NODE_ENV=production
       - PORT=3000
       # Service Discovery: Gọi 'db' thay vì localhost
       - DATABASE_URL=mysql://root:${MYSQL_ROOT_PASSWORD}@db:3306/${MYSQL_DATABASE}
       # Service Discovery: Gọi 'redis' thay vì localhost
-      - REDIS_URL=${REDIS_URL} 
+      - REDIS_URL=${REDIS_URL}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       # Service Discovery: Gọi 'ai_service' thay vì localhost
@@ -73,10 +76,9 @@ services:
         condition: service_started
       ai_service:
         condition: service_started
-    
+
     networks:
       - app_network
-    
     # KHÔNG dùng 'command: npm run dev' nữa. 
     # Docker sẽ tự dùng CMD ["npm", "start"] trong Dockerfile.
 
