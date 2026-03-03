@@ -72,49 +72,44 @@ export const createProduct = async (req: Request, res: Response) => {
 
 export const updateProduct = async (req: Request, res: Response) => {
   const { id } = req.params;
-  let { name, description, price, stock, colorCode } = req.body;
-
-  let imageUrl = '';
-  // Lấy URL từ Cloudinary
-  if (req.file) {
-    imageUrl = req.file.path;
-  }
+  const { name, description, price, stock, colorCode } = req.body;
 
   try {
-
     const existingProduct = await prisma.product.findUnique({
-      where: {
-        id: Number(id)
-      }
+      where: { id: Number(id) }
     });
 
     if (!existingProduct) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
+    // Build update data object dynamically
+    const updateData: any = {};
+    if (name !== undefined) updateData.name = name;
+    if (description !== undefined) updateData.description = description;
+    if (price !== undefined) updateData.price = Number(price);
+    if (stock !== undefined) updateData.stock = Number(stock);
+    if (colorCode !== undefined) updateData.colorCode = colorCode;
+
+    // Nếu có upload ảnh mới
+    if (req.file) {
+      updateData.imageUrl = req.file.path;
+    }
+
     const updatedProduct = await prisma.product.update({
-      where: {
-        id: Number(id)
-      },
-      data: {
-        name: name,
-        description: description,
-        price: price ? Number(price) : undefined,
-        stock: stock ? Number(stock) : undefined,
-        imageUrl: imageUrl,
-        colorCode: colorCode,
-        updatedAt: new Date()
-      }
+      where: { id: Number(id) },
+      data: updateData
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       status: 'Product updated',
       data: updatedProduct
     });
-  } catch (error: any) {
-    res.status(500).json({ message: 'Error updating product' });
+
+  } catch (error) {
+    return res.status(500).json({ message: 'Error updating product' });
   }
-}
+};
 
 export const deleteProduct = async (req: Request, res: Response) => {
   const { id } = req.params;
