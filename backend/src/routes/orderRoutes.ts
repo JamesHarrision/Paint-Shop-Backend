@@ -8,6 +8,6 @@ const router = Router();
 // POST /api/orders
 router.post('/', authenticate, orderController.createOrder)
 router.get('/', authenticate, orderController.getMyOrder);
-router.post('/:id/status', authenticate, requireAdmin, orderController.updateStatus);
+router.patch('/:id/status', authenticate, requireAdmin, orderController.updateStatus);
 
 export default router;
