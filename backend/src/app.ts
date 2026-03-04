@@ -7,6 +7,7 @@ import productRoutes from './routes/productRoutes'
 import aiRoutes from './routes/aiRoutes'
 import userRoutes from './routes/userRoutes'
 import orderRoutes from './routes/orderRoutes'
+import collectionRoutes from './routes/collection.route'
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes); 
 app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);
+app.use("/api/collections", collectionRoutes);
 
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'Welcome to Paint Shop API 🚀' });
