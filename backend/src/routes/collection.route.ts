@@ -10,4 +10,7 @@ router.post('/', authenticate ,cloudinaryUpload.single('thumbnail'), collectionC
 router.get('/', authenticate, collectionController.getMyCollections);
 router.get('/:id', authenticate, collectionController.getCollectionById);
 
+router.put("/:id", authenticate, cloudinaryUpload.single("thumbnail"), collectionController.updateCollectionById);
+router.delete('/:id', authenticate, collectionController.deleteCollectionById);
+
 export default router;

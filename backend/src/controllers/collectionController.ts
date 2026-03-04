@@ -70,5 +70,56 @@ export class CollectionController {
     }
   }
 
-  
+  public updateCollectionById = async (req: AuthRequest, res: Response) => {
+    const { id } = req.params;
+    const userId = req.user!.userId;
+    let { name, longDesc, shortDesc } = req.body;
+
+    let thumbnailUrl = '';
+    if (req.file) {
+      thumbnailUrl = req.file.path;
+    }
+
+    try {
+      const updatedCollection = await collectionService.updateCollectionById(
+        id as string,
+        name,
+        thumbnailUrl,
+        shortDesc,
+        longDesc,
+        userId
+      )
+      return res.status(200).json({ message: "Cập nhật thành công", updatedCollection })
+    } catch (error: any) {
+      console.log("Error updating collection", error);
+
+      if (error.message === 'NOT_FOUND') res.status(404).json({ error: 'Không tìm thấy' });
+      else if (error.message === 'FORBIDDEN') res.status(403).json({ error: 'Không có quyền' });
+
+      return res.status(500).json({ message: "Lỗi server" });
+    }
+
+  }
+
+  public deleteCollectionById = async (req: AuthRequest, res: Response) => {
+    const { id } = req.params;
+    const userId = req.user!.userId;
+
+    try {
+      const deletedCollection = await collectionService.deleteCollectionById(
+        id as string,
+        userId as number
+      )
+      
+      return res.status(200).json({ message: "Xóa collection thành công", deletedCollection })
+    } catch (error: any) {
+      console.log("Error deleting collection", error);
+
+      if (error.message === 'NOT_FOUND') res.status(404).json({ error: 'Không tìm thấy' });
+      else if (error.message === 'FORBIDDEN') res.status(403).json({ error: 'Không có quyền' });
+
+      return res.status(500).json({ message: "Lỗi server" });
+    }
+
+  }
 }

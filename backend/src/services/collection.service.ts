@@ -51,4 +51,45 @@ export class CollectionService {
       }
     });
   }
+
+  public updateCollectionById = async (
+    collectionId: string,
+    name: string,
+    thumbnail: string,
+    shortDesc: string,
+    longDesc: string,
+    userId: number,
+  ) => {
+    const collection = await prisma.collection.findUnique({ where: { id: collectionId } });
+    if (!collection) throw new Error('NOT_FOUND');
+    if (collection.userId !== userId) throw new Error('FORBIDDEN');
+
+    return await prisma.collection.update({
+      where: {
+        id: collectionId
+      },
+      data: {
+        name,
+        thumbnail,
+        shortDesc,
+        longDesc,
+        userId
+      }
+    })
+  }
+
+  public deleteCollectionById = async (
+    collectionId: string,
+    userId: number
+  ) => {
+    const collection = await prisma.collection.findUnique({ where: { id: collectionId } });
+    if (!collection) throw new Error('NOT_FOUND');
+    if (collection.userId !== userId) throw new Error('FORBIDDEN');
+
+    return await prisma.collection.delete({
+      where: {
+        id: collectionId
+      }
+    })
+  }
 }
