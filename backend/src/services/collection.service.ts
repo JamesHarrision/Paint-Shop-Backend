@@ -28,6 +28,7 @@ export class CollectionService {
       },
       orderBy: { createdAt: "desc" },
       include: {
+        items: true,
         _count: {
           select: {
             items: true
