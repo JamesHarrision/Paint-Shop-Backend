@@ -36,7 +36,8 @@ const getAllProductsForAI = async () => {
 
 export const analyzeRoomColor = async (filePath: string, userId: number) => {
   try {
-    const imageBuffer = fs.readFileSync(filePath);
+    const imageResponse = await axios.get(filePath, { responseType: 'arraybuffer' });
+    const imageBuffer = Buffer.from(imageResponse.data, 'binary');
 
     const formData = new FormData();
     // 'file' là key bắt buộc phải khớp với bên Python (main.py)
