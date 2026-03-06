@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { AuthRequest } from "../types/express";
 
 import { ReviewService } from "../services/review.service";
+import { error } from "node:console";
 
 export class ReviewController {
 
@@ -11,6 +12,11 @@ export class ReviewController {
     try {
       const { productId } = req.params;
       const { rating, comment } = req.body;
+
+      if (!productId) {
+        res.status(400).json({ error: "Missing product id" });
+        return; 
+      } 
 
       // Validate rating
       if (!rating || isNaN(Number(rating)) || Number(rating) < 1 || Number(rating) > 5) {
