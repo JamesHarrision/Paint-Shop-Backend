@@ -5,6 +5,8 @@ import { requireAdmin } from "../middlewares/roleMiddleware";
 import { cloudinaryUpload } from "../services/cloudinaryService";
 const router = Router();
 
+import reviewRoutes from './review.route'
+
 // GET /api/products -> Ai cũng xem được
 router.get('/', productController.getAllProducts);
 
@@ -15,5 +17,7 @@ router.post('/', authenticate, requireAdmin, cloudinaryUpload.single("image"), p
 router.put('/:id', authenticate, requireAdmin, cloudinaryUpload.single("image"), productController.updateProduct);
 
 router.delete('/:id', authenticate, requireAdmin, productController.deleteProduct);
+
+router.use('/:productId/reviews', reviewRoutes);
 
 export default router;
