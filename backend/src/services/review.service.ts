@@ -68,7 +68,7 @@ export class ReviewService {
         skip: skip,
         take: limit,
         include: {
-          User: { select: { id: true, fullName: true } }
+          user: { select: { id: true, fullName: true } }
         }
       }),
       prisma.review.count({ where: { productId: productId } })

@@ -216,9 +216,9 @@ async function main() {
     }
   ];
 
-  // 3. Insert dữ liệu vào DB
+  // 3. Insert dữ liệu vào DB (Chỉ lấy 5 sản phẩm theo yêu cầu)
   await prisma.product.createMany({
-    data: products,
+    data: products.slice(0, 5),
   });
 
   // 1. Tạo mẫu Admin Account
@@ -249,7 +249,7 @@ async function main() {
 
   console.log({ admin, user });
 
-  console.log(`Seeding finished. Created ${products.length} products.`);
+  console.log(`Seeding finished. Created 5 products.`);
 }
 
 main()

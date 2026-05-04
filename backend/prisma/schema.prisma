@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -18,52 +12,95 @@ model User {
   email    String  @unique
   password String
   fullName String?
+  role     Role    @default(USER)
 
-  collections Collection[]
-  reviews     Review[]
+  // Relations
+  refreshTokens RefreshToken[]
+  collections   Collection[]
+  reviews       Review[]
+  orders        Order[]
+  history       AnalysisHistory[]
+  colorGroups   ColorGroup[]
 
-  role Role @default(USER)
-
-  orders  Order[]
-  history AnalysisHistory[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
   @@map("users")
+}
+
+model RefreshToken {
+  id         Int      @id @default(autoincrement())
+  token      String   @unique
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt  DateTime
+  deviceInfo String?  @db.VarChar(255)
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@map("refresh_tokens")
 }
 
 model Product {
   id          Int     @id @default(autoincrement())
   name        String
-  description String? @db.Text // Cho phép lưu văn bản dài
-  price       Decimal @db.Decimal(10, 2) // Tiền tệ nên dùng Decimal để chính xác
+  description String? @db.Text
+  price       Decimal @db.Decimal(10, 2)
   stock       Int     @default(0)
-  imageUrl    String? // URL ảnh (sau này upload)
-  colorCode   String?
+  imageUrl    String?
+  colorCode   String? @db.VarChar(50)
 
-  orderItems OrderItem[]
+  orderItems  OrderItem[]
+  collections CollectionItem[]
+  reviews     Review[]
 
   averageRating Float @default(0.0)
   reviewCount   Int   @default(0)
 
-  collections CollectionItem[]
-  reviews     Review[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? // Phục vụ Soft Delete (Ngày 2)
+
+  @@index([deletedAt])
+  @@map("products")
+}
+
+model ColorGroup {
+  id          Int         @id @default(autoincrement())
+  name        String      @db.VarChar(255)
+  description String?     @db.Text
+  userId      Int?
+  user        User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  colors      ColorItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("products")
+  @@index([userId])
+  @@map("color_groups")
+}
+
+model ColorItem {
+  id           Int        @id @default(autoincrement())
+  colorGroupId Int
+  colorGroup   ColorGroup @relation(fields: [colorGroupId], references: [id], onDelete: Cascade)
+  hexCode      String     @db.VarChar(10)
+  name         String?    @db.VarChar(100)
+
+  @@index([colorGroupId])
+  @@map("color_items")
 }
 
 model AnalysisHistory {
   id        Int      @id @default(autoincrement())
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   imageUrl  String
-  result    Json // Lưu kết quả JSON trả về từ AI
+  result    Json
   createdAt DateTime @default(now())
 
+  @@index([userId])
   @@map("analysis_histories")
 }
 
@@ -72,30 +109,41 @@ model Order {
   userId      Int
   user        User        @relation(fields: [userId], references: [id])
   totalAmount Decimal     @db.Decimal(10, 2)
-  status      OrderStatus @default(PENDING) // Dùng Enum cho chuyên nghiệp
-  items       OrderItem[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  status      OrderStatus @default(PENDING)
 
+  // Các field phục vụ VNPay (Ngày 3)
+  paymentMethod      PaymentMethod @default(COD)
+  paymentStatus      PaymentStatus @default(UNPAID)
+  vnpayTxnRef        String?       @unique // Mã giao dịch gửi đi (Idempotency key)
+  vnpayTransactionNo String? // Mã giao dịch VNPay trả về khi thành công
+
+  items     OrderItem[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([vnpayTxnRef]) // Quan trọng để check IPN callback nhanh
   @@map("orders")
 }
 
 model OrderItem {
   id        Int     @id @default(autoincrement())
   orderId   Int
-  order     Order   @relation(fields: [orderId], references: [id])
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productId Int
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id]) // Không cascade để giữ logic soft delete
   quantity  Int
-  price     Decimal @db.Decimal(10, 2) // Giá tại thời điểm mua (đề phòng Product đổi giá)
+  price     Decimal @db.Decimal(10, 2)
 
+  @@index([orderId])
+  @@index([productId])
   @@map("order_items")
 }
 
 model Collection {
   id     String @id @default(uuid())
-  User   User?  @relation(fields: [userId], references: [id])
   userId Int?
+  user   User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   name      String
   thumbnail String?
@@ -105,34 +153,42 @@ model Collection {
   items     CollectionItem[]
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
+
+  @@index([userId])
+  @@map("collections")
 }
 
 model CollectionItem {
-  id           String      @id @default(uuid())
-  Product      Product?    @relation(fields: [productId], references: [id])
-  productId    Int?
-  Collection   Collection? @relation(fields: [collectionId], references: [id])
-  collectionId String?
-  addedAt      DateTime    @default(now())
+  id           String     @id @default(uuid())
+  collectionId String
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  productId    Int
+  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  addedAt DateTime @default(now())
 
   @@unique([collectionId, productId])
+  @@index([productId])
+  @@map("collection_items")
 }
 
 model Review {
-  id        String   @id @default(uuid())
-  User      User?    @relation(fields: [userId], references: [id])
-  userId    Int?
-  Product   Product? @relation(fields: [productId], references: [id])
-  productId Int?
+  id        String  @id @default(uuid())
+  userId    Int
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   rating  Int
   comment String? @db.Text
-  images  Json
+  images  Json? // Có thể null nếu user không up ảnh
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([userId, productId])
+  @@unique([userId, productId]) // 1 user chỉ review 1 product 1 lần
+  @@index([productId])
+  @@map("reviews")
 }
 
 enum Role {
@@ -142,6 +198,19 @@ enum Role {
 
 enum OrderStatus {
   PENDING
-  COMPLETED
+  PROCESSING
+  SHIPPED
+  DELIVERED
   CANCELLED
+}
+
+enum PaymentMethod {
+  COD
+  VNPAY
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID
+  REFUNDED
 }

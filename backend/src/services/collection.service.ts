@@ -46,7 +46,7 @@ export class CollectionService {
       include: {
         items: {
           include: {
-            Product: true
+            product: true
           }
         }
       }
