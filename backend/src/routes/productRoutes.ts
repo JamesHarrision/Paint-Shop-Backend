@@ -7,17 +7,17 @@ const router = Router();
 
 import reviewRoutes from './review.route'
 
-// GET /api/products -> Ai cũng xem được
+//Ai cũng xem được
 router.get('/', productController.getAllProducts);
-
-// GET /api/products/:id -> Xem chi tiết
 router.get('/:id', productController.getProductDetail);
 
+// Cần phải đăng nhập mới xem được
 router.post('/', authenticate, requireAdmin, cloudinaryUpload.single("image"), productController.createProduct);
 router.put('/:id', authenticate, requireAdmin, cloudinaryUpload.single("image"), productController.updateProduct);
 
 router.delete('/:id', authenticate, requireAdmin, productController.deleteProduct);
 
+// Route review
 router.use('/:productId/reviews', reviewRoutes);
 
 export default router;

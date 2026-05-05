@@ -39,7 +39,9 @@ export const getProductById = async (id: number) => {
 
   // 3. Nếu không có, gọi DB
   const product = await prisma.product.findUnique({
-    where: { id: id }
+    where: {
+      id: id,
+    }
   });
 
 
@@ -72,12 +74,13 @@ export const getProducts = async (params: GetProductsParams) => {
 
   // 3. MISS CACHE -> GỌI DB
   console.log('🐢 Miss Cache List: Fetching from DB...');
-  
+
   // Page 1: skip 0. Page 2: skip 10...
   const skip = (page - 1) * limit;
 
   // Xây dựng câu điều kiện Query (Dynamic Query)
   const whereCondition: Prisma.ProductWhereInput = {
+    deletedAt: null,
     AND: [
       // Tìm kiếm theo tên (nếu có)
       search ? { name: { contains: search } } : {},
@@ -110,10 +113,20 @@ export const getProducts = async (params: GetProductsParams) => {
       totalPages: Math.ceil(total / limit)
     }
   }
-  
+
   // 4. LƯU VÀO REDIS (Set TTL = 60 giây)
   // Dữ liệu sẽ tự động biến mất sau 60s để đảm bảo không bị cũ quá
   redis.set(cacheKey, JSON.stringify(result), 'EX', 60);
 
   return result;
+}
+
+export const deleteProduct = async (id: number) => {
+  await prisma.product.update({
+    where: { id: id },
+    data: {
+      deletedAt: new Date()
+    }
+  });
+  await redis.del(`product:${id}`);
 }

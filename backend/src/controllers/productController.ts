@@ -114,9 +114,7 @@ export const updateProduct = async (req: Request, res: Response) => {
 export const deleteProduct = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    await prisma.product.delete({
-      where: { id: Number(id) }
-    })
+    await productService.deleteProduct(Number(id));
     res.status(200).json({ message: 'Product deleted successfully' });
   } catch (error: any) {
     res.status(500).json({ message: "Error deleting or product not found" });
