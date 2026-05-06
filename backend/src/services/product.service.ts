@@ -1,8 +1,8 @@
 import { prisma } from '../config/prisma'
 import { Prisma, Product } from '@prisma/client'
 import redis from '../config/redis'
-import { redisUtil } from '../utils/cacheUtils'
-import { ProductRepository } from '../repositories/productRepository'
+import { redisUtil } from '../utils/cache.util'
+import { ProductRepository } from '../repositories/product.repository'
 import { FindProductQuery } from '../interfaces/product.interface'
 
 const productRepo = new ProductRepository();

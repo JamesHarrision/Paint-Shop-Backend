@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import * as productService from '../services/productService'
+import * as productService from '../services/product.service'
 import { prisma } from "../config/prisma";
 
 export const getAllProducts = async (req: Request, res: Response) => {

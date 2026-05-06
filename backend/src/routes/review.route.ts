@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { ReviewController } from '../controllers/review.controller';
-import { authenticate } from '../middlewares/authMiddleware';
-import { cloudinaryUpload } from '../services/cloudinaryService';
+import { authenticate } from '../middlewares/auth.middleware';
+import { cloudinaryUpload } from '../services/cloudinary.service';
 
 const reviewController = new ReviewController();
 

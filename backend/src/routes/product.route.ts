@@ -1,8 +1,8 @@
 import { Router } from "express";
-import * as productController from '../controllers/productController'
-import { authenticate } from "../middlewares/authMiddleware";
-import { requireAdmin } from "../middlewares/roleMiddleware";
-import { cloudinaryUpload } from "../services/cloudinaryService";
+import * as productController from '../controllers/product.controller'
+import { authenticate } from "../middlewares/auth.middleware";
+import { requireAdmin } from "../middlewares/role.middleware";
+import { cloudinaryUpload } from "../services/cloudinary.service";
 const router = Router();
 
 import reviewRoutes from './review.route'

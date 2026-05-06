@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authenticate } from "../middlewares/authMiddleware";
+import { authenticate } from "../middlewares/auth.middleware";
 import { ItemCollectionController } from "../controllers/item.collection.controller";
 
 const router = Router({ mergeParams: true });

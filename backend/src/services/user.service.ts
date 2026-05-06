@@ -3,7 +3,7 @@ import { prisma } from '../config/prisma'
 import { comparePassword, hashPassword } from '../utils/password'
 import { generateJwtToken } from '../utils/jwt';
 import redis from '../config/redis';
-import { sendResetPasswordEmail } from '../utils/emailService';
+import { sendResetPasswordEmail } from '../utils/email.service';
 
 export const registerUser = async (
   email: string,

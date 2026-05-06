@@ -1,8 +1,8 @@
 import express from 'express'
-import { multerUpload } from '../middlewares/uploadMiddleware'
-import * as aiController from '../controllers/aiController'
-import { authenticate } from '../middlewares/authMiddleware'
-import { cloudinaryUpload } from '../services/cloudinaryService';
+import { multerUpload } from '../middlewares/upload.middleware'
+import * as aiController from '../controllers/ai.controller'
+import { authenticate } from '../middlewares/auth.middleware'
+import { cloudinaryUpload } from '../services/cloudinary.service';
 
 const router = express.Router();
 

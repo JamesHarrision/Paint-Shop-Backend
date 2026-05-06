@@ -1,6 +1,6 @@
 import { AuthRequest } from "../types/express";
 import { Response } from "express";
-import * as orderService from '../services/orderServices'
+import * as orderService from '../services/order.service'
 
 export const createOrder = async (req: AuthRequest, res: Response) => {
   try {

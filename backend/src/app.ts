@@ -2,11 +2,11 @@ import express from 'express'
 import helmet from 'helmet';
 import cors from 'cors'
 import path from 'path';
-import authRoutes from './routes/authRoutes'
-import productRoutes from './routes/productRoutes'
-import aiRoutes from './routes/aiRoutes'
-import userRoutes from './routes/userRoutes'
-import orderRoutes from './routes/orderRoutes'
+import authRoutes from './routes/auth.route'
+import productRoutes from './routes/product.route'
+import aiRoutes from './routes/ai.route'
+import userRoutes from './routes/user.route'
+import orderRoutes from './routes/order.route'
 import collectionRoutes from './routes/collection.route'
 
 const app = express();

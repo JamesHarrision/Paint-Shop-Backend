@@ -1,7 +1,7 @@
 import axios from "axios";
 import FormData from "form-data";
 import { prisma } from "../config/prisma";
-import { calculateColorDistance } from "../utils/colorUtils";
+import { calculateColorDistance } from "../utils/color.util";
 import redis from "../config/redis";
 import fs from 'fs'
 

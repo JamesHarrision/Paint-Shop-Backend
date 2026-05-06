@@ -1,7 +1,7 @@
-import { CollectionController } from "../controllers/collectionController";
+import { CollectionController } from "../controllers/collection.controller";
 import { Router } from "express";
-import { cloudinaryUpload } from "../services/cloudinaryService";
-import { authenticate } from "../middlewares/authMiddleware";
+import { cloudinaryUpload } from "../services/cloudinary.service";
+import { authenticate } from "../middlewares/auth.middleware";
 import itemCollectionRoute from './item.collection.route'
 
 const router = Router();

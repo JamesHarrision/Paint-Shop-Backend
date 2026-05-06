@@ -1,5 +1,5 @@
 import { Response, NextFunction } from "express";
-import * as aiService from '../services/aiService'
+import * as aiService from '../services/ai.service'
 import { AuthRequest } from "../types/express";
 
 export const getColorSugestion = async (req: AuthRequest, res: Response, next: NextFunction) => {
