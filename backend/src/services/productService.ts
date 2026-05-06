@@ -1,132 +1,77 @@
 import { prisma } from '../config/prisma'
-import { Prisma } from '@prisma/client'
+import { Prisma, Product } from '@prisma/client'
 import redis from '../config/redis'
+import { redisUtil } from '../utils/cacheUtils'
+import { ProductRepository } from '../repositories/productRepository'
+import { FindProductQuery } from '../interfaces/product.interface'
 
-// Interface cho bộ lọc (Filter)
-interface GetProductsParams {
-  page?: number,
-  limit?: number,
-  search?: string,
-  minPrice?: number,
-  maxPrice?: number
-}
+const productRepo = new ProductRepository();
 
-export const createProduct = async (data: any) => {
+export const createProduct = async (data: Prisma.ProductCreateInput) => {
   await redis.del('product:color-lookup');
-
-  return await prisma.product.create({
-    data: {
-      name: data.name,
-      description: data.description,
-      price: data.price,
-      stock: data.stock,
-      imageUrl: data.imageUrl,
-    },
-  });
+  return await productRepo.createProduct(data);
 };
 
 export const getProductById = async (id: number) => {
-  // 1. Tạo Key Cache: ví dụ "product:15"
-  const cacheKey = `product:${id}`;
-
-  // 2. Kiểm tra trong Redis trước
-  const cachedData = await redis.get(cacheKey);
-
-  if (cachedData) {
-    console.log(`⚡ Hit Cache Product Detail: ${id}`);
-    return JSON.parse(cachedData);
-  }
-
-  // 3. Nếu không có, gọi DB
-  const product = await prisma.product.findUnique({
-    where: {
-      id: id,
+  const product = await redisUtil.getOrSetCache<Product | null>(
+    `product:${id}`,
+    60,
+    async (): Promise<Product | null> => {
+      return await productRepo.getProductById(id)
     }
-  });
-
-
+  )
   if (!product) throw new Error('Product not found');
-
-  // 4. Lưu vào Redis (Hết hạn sau 60s)
-  await redis.set(cacheKey, JSON.stringify(product), "EX", 60);
-
   return product;
 }
 
-export const getProducts = async (params: GetProductsParams) => {
-  let { page = 1, limit = 10, search, minPrice, maxPrice } = params;
-  if (!minPrice) minPrice = 0;
-  if (!maxPrice) maxPrice = 1e9;
+export const getProducts = async (params: FindProductQuery) => {
+  const page = Number(params.page) || 1;
+  const limit = Number(params.limit) || 10;
+  const search = params.search?.trim() || '';
+  const minPrice = params.minPrice ? Number(params.minPrice) : 0;
+  const maxPrice = params.maxPrice ? Number(params.maxPrice) : 1e9;
 
-  // 1. TẠO KEY CACHE (Định danh duy nhất cho request này)
-  // Ví dụ: "products:p1:l10:s=Son:min=null:max=null"
-  const cacheKey = `product:p${page}:l${limit}:s=${search || ''}:min=${minPrice || ''}:max=${maxPrice || ''}`;
+  const cacheKey = `product:p${page}:l${limit}:s=${search}:min=${minPrice}:max=${maxPrice}`;
 
-  // 2. CHECK REDIS
-  const cachedData = await redis.get(cacheKey);
+  const result = await redisUtil.getOrSetCache(
+    cacheKey,
+    60,
+    async () => {
+      const { products, total } = await productRepo.findAndCount({
+        page: page,
+        limit: limit,
+        minPrice,
+        maxPrice,
+        search
+      });
 
-  if (cachedData) {
-    // Hit Cache: Có dữ liệu trong RAM -> Trả về ngay
-    console.log('⚡ Hit Cache List: Returning data from Redis');
-    return JSON.parse(cachedData);
-  }
-
-
-  // 3. MISS CACHE -> GỌI DB
-  console.log('🐢 Miss Cache List: Fetching from DB...');
-
-  // Page 1: skip 0. Page 2: skip 10...
-  const skip = (page - 1) * limit;
-
-  // Xây dựng câu điều kiện Query (Dynamic Query)
-  const whereCondition: Prisma.ProductWhereInput = {
-    deletedAt: null,
-    AND: [
-      // Tìm kiếm theo tên (nếu có)
-      search ? { name: { contains: search } } : {},
-      // Lọc theo khoảng giá (nếu có)
-      minPrice ? { price: { gte: minPrice } } : {},
-      maxPrice ? { price: { lte: maxPrice } } : {},
-    ],
-  };
-
-  // Thực hiện 2 query song song (Promise.all) để tối ưu thời gian
-  // 1. Lấy dữ liệu
-  // 2. Đếm tổng số record (để Frontend biết có bao nhiêu trang)
-  const [products, total] = await Promise.all([
-    prisma.product.findMany({
-      where: whereCondition,
-      skip: skip,
-      take: Number(limit),
-      orderBy: { createdAt: 'desc' }, // Mới nhất lên đầu
-    }),
-    prisma.product.count({ where: whereCondition }),
-  ]);
-
-
-  const result = {
-    data: products,
-    pagination: {
-      page: Number(page),
-      limit: Number(limit),
-      total,
-      totalPages: Math.ceil(total / limit)
+      return {
+        data: products,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit)
+        }
+      }
     }
-  }
-
-  // 4. LƯU VÀO REDIS (Set TTL = 60 giây)
-  // Dữ liệu sẽ tự động biến mất sau 60s để đảm bảo không bị cũ quá
-  redis.set(cacheKey, JSON.stringify(result), 'EX', 60);
-
+  );
   return result;
 }
 
+export const updateProduct = async (id: number, data: Prisma.ProductUpdateInput) => {
+  await getProductById(id);
+
+  const updatedProduct = await productRepo.updateProduct(id, data);
+
+  await redis.del(`product:${id}`);
+
+  await redis.del('product:color-lookup');
+
+  return updatedProduct;
+}
+
 export const deleteProduct = async (id: number) => {
-  await prisma.product.update({
-    where: { id: id },
-    data: {
-      deletedAt: new Date()
-    }
-  });
+  await productRepo.softDelete(id);
   await redis.del(`product:${id}`);
 }

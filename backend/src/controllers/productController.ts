@@ -4,22 +4,16 @@ import { prisma } from "../config/prisma";
 
 export const getAllProducts = async (req: Request, res: Response) => {
   try {
-    // Lấy tham số từ Query String (?page=1&limit=10)
     const params = {
-      page: req.query.page ? Number(req.query.page) : 1,
-      limit: req.query.limit ? Number(req.query.limit) : 10,
+      page: Number(req.query.page) || 1,
+      limit: Number(req.query.limit) || 10,
       search: req.query.search as string,
       minPrice: req.query.minPrice ? Number(req.query.minPrice) : undefined,
       maxPrice: req.query.maxPrice ? Number(req.query.maxPrice) : undefined,
-    }
+    };
 
     const result = await productService.getProducts(params);
-    res.status(200).json({
-      message: 'Success',
-      data: result.data,
-      pagination: result.pagination
-    });
-
+    res.status(200).json({ message: 'Success', ...result });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
@@ -27,9 +21,7 @@ export const getAllProducts = async (req: Request, res: Response) => {
 
 export const getProductDetail = async (req: Request, res: Response) => {
   try {
-    const id = Number(req.params.id);
-    //Cần validate xem phải là number ko 
-
+    const id = Number(req.params.id)
     const product = await productService.getProductById(id);
     res.status(200).json({ data: product });
   } catch (error: any) {
@@ -37,32 +29,18 @@ export const getProductDetail = async (req: Request, res: Response) => {
   }
 }
 
-//Admin only
+
 export const createProduct = async (req: Request, res: Response) => {
   try {
-    // Basic validation 
-    if (!req.body.name || !req.body.price) {
-      res.status(400).json({ message: 'Name and price are required' });
-      return;
-    }
-
     const { name, price, description, stock } = req.body;
-    let imageUrl = '';
 
-    // Lấy URL từ Cloudinary
-    if (req.file) {
-      imageUrl = req.file.path;
-    }
-
-    const product = await productService.createProduct(
-      {
-        name,
-        price: Number(price),
-        description,
-        imageUrl,
-        stock,
-      }
-    );
+    const product = await productService.createProduct({
+      name,
+      price: Number(price),
+      description,
+      stock: stock ? Number(stock) : undefined,
+      imageUrl: req.file?.path || '',
+    });
     res.status(201).json({ message: 'Product created', data: product });
   }
   catch (error: any) {
@@ -71,35 +49,15 @@ export const createProduct = async (req: Request, res: Response) => {
 }
 
 export const updateProduct = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { name, description, price, stock, colorCode } = req.body;
-
   try {
-    const existingProduct = await prisma.product.findUnique({
-      where: { id: Number(id) }
-    });
+    const id = Number(req.params.id);
+    const updateData = { ...req.body };
 
-    if (!existingProduct) {
-      return res.status(404).json({ message: 'Product not found' });
-    }
-
-    // Build update data object dynamically
-    const updateData: any = {};
-    if (name !== undefined) updateData.name = name;
-    if (description !== undefined) updateData.description = description;
-    if (price !== undefined) updateData.price = Number(price);
-    if (stock !== undefined) updateData.stock = Number(stock);
-    if (colorCode !== undefined) updateData.colorCode = colorCode;
-
-    // Nếu có upload ảnh mới
     if (req.file) {
       updateData.imageUrl = req.file.path;
     }
 
-    const updatedProduct = await prisma.product.update({
-      where: { id: Number(id) },
-      data: updateData
-    });
+    const updatedProduct = await productService.updateProduct(id, updateData);
 
     return res.status(200).json({
       status: 'Product updated',
