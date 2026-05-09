@@ -1,73 +1,90 @@
 import { AuthRequest } from "../types/express";
 import { Response } from "express";
-import * as orderService from '../services/order.service'
+import { OrderService } from '../services/order.service';
 
-export const createOrder = async (req: AuthRequest, res: Response) => {
-  try {
-    const userId = (req)?.user?.userId;
-    const { items } = req.body;
+const orderService = new OrderService();
 
-    if (!userId) {
-      return res.status(401).json({ message: "User un authenticated. Please login first" });
+export class OrderController {
+  public createOrder = async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = req.user!.userId;
+      const { items } = req.body;
+
+      const order = await orderService.createOrder(userId, items);
+
+      return res.status(201).json({
+        message: "Đặt hàng thành công",
+        data: order
+      });
+
+    } catch (error: any) {
+      console.error("Create order error:", error.message);
+      if (error.message.startsWith('OUT_OF_STOCK')) {
+        return res.status(400).json({ message: "Sản phẩm đã hết hàng" });
+      }
+      if (error.message.startsWith('PRODUCT_NOT_FOUND')) {
+        return res.status(404).json({ message: "Không tìm thấy sản phẩm" });
+      }
+      return res.status(500).json({ message: "Lỗi server khi đặt hàng" });
     }
-
-    const order = await orderService.createOrder(userId, items);
-
-    return res.status(201).json({
-      status: "success",
-      data: order
-    })
-
-  } catch (error: any) {
-    if (error.message.includes('out of stock'))
-      return res.status(400).json({ message: error.message });
-    return res.status(500).json({ message: "Internal server error" });
   }
-}
 
-export const getMyOrder = async (req: AuthRequest, res: Response) => {
-  try {
-    const userId = req?.user?.userId;
+  public getMyOrders = async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = req.user!.userId;
+      const orders = await orderService.getOrdersByUserId(userId);
 
-    if (!userId) {
-      return res.status(401).json({ message: "User un authenticated. Please login first" });
+      return res.status(200).json({
+        message: "success",
+        data: orders
+      });
+    } catch (error: any) {
+      console.error("Get orders error:", error.message);
+      res.status(500).json({ message: "Internal server error" });
     }
-
-    const orders = await orderService.getOrderServiceByUserId(userId);
-
-    return res.status(200).json({
-      message: "success",
-      data: orders
-    });
-
-  } catch (error: any) {
-    console.log(error.message);
-    res.status(500).json({ message: "Internal server error" });
   }
-}
 
-export const updateStatus = async (req: AuthRequest, res: Response) => {
-  try {
+  public updateStatus = async (req: AuthRequest, res: Response) => {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
 
-    const { id } = req.params;
-    const { status } = req.body;
+      const updatedOrder = await orderService.updateOrderStatus(Number(id), status);
 
-    if (!status) {
-      return res.status(400).json('Status is required');
+      return res.status(200).json({
+        message: "Cập nhật trạng thái đơn hàng thành công",
+        data: updatedOrder
+      });
+    } catch (error: any) {
+      console.error("Update order status error:", error);
+      if (error.message === 'ORDER_NOT_FOUND') {
+        return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
+      }
+      return res.status(500).json({ message: "Lỗi khi cập nhật trạng thái" });
     }
+  }
 
-    const updatedOrder = await orderService.updateOrderStatus(Number(id), status);
+  public getOrderDetail = async (req: AuthRequest, res: Response) => {
+    try {
+      const { id } = req.params;
+      const order = await orderService.getOrderById(Number(id));
 
-    return res.status(200).json({
-      status: "Order status updated successfully",
-      data: updatedOrder
-    })
+      if (!order) {
+        return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
+      }
 
-  } catch (error: any) {
-    console.log(error);
-    if (error.message === 'Order not found') {
-      return res.status(404).json({ message: error.message });
+      // Kiểm tra quyền (chỉ chủ đơn hàng hoặc admin mới được xem - admin logic có thể thêm sau)
+      if (order.userId !== req.user!.userId) {
+        return res.status(403).json({ message: "Bạn không có quyền xem đơn hàng này" });
+      }
+
+      return res.status(200).json({
+        message: "success",
+        data: order
+      });
+    } catch (error: any) {
+      console.error("Get order detail error:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
-    return res.status(500).json({ message: "Error updating status" });
   }
 }
