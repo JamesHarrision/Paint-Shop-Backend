@@ -104,6 +104,6 @@ export const getMe = async (req: AuthRequest, res: Response) => {
 
   res.status(200).json({
     message: 'This is your profile data',
-    user: currentUser
+    data: currentUser
   });
 }
