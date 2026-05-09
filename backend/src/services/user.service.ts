@@ -125,3 +125,15 @@ export const logout = async (accessToken: string, refreshToken: string) => {
   await authRepo.deleteToken(refreshToken);
   await redisUtil.addToBlackList(accessToken, 900);
 }
+
+export const getAllUsers = async () => {
+  return await userRepo.findAll();
+}
+
+export const deleteUser = async (id: number) => {
+  return await userRepo.deleteUser(id);
+}
+
+export const getUserById = async (id: number) => {
+  return await userRepo.getUserById(id);
+}

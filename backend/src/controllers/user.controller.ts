@@ -1,80 +1,61 @@
 import { Request, Response } from 'express'
-import { prisma } from '../config/prisma'
-import { json } from 'node:stream/consumers';
-import { stat } from 'node:fs';
+import * as userService from '../services/user.service'
+import { AuthRequest } from '../types/express';
 
-//Admin only
-export const getAllUsers = async (req: Request, res: Response) => {
-  try {
-    const users = await prisma.user.findMany({
-      select: {
-        id: true,
-        email: true,
-        fullName: true,
-        role: true,
-        createdAt: true
-      },
-      orderBy: {
-        createdAt: 'desc'
-      }
-    });
-    res.json({
-      status: "Get all user successfully",
-      data: {
-        users
-      }
-    });
-  } catch (error: any) {
-    res.status(500).json({ message: "Error fetching user . . ." });
-  }
-}
-
-export const getUserDetail = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-
-    const user = await prisma.user.findUnique({
-      where: { id: Number(id) },
-      select: {
-        id: true,
-        email: true,
-        fullName: true,
-        role: true,
-        createdAt: true
-      },
-    });
-
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
+export class UserController {
+  // Admin only
+  public getAllUsers = async (req: Request, res: Response) => {
+    try {
+      const users = await userService.getAllUsers();
+      res.json({
+        message: "Lấy danh sách người dùng thành công",
+        data: users
+      });
+    } catch (error: any) {
+      console.error("Get all users error:", error);
+      res.status(500).json({ message: "Lỗi khi lấy danh sách người dùng" });
     }
-
-    res.json({
-      status: "Get user detail successfully",
-      data: {
-        user
-      }
-    });
-  } catch {
-    res.status(500).json({ message: "Error fetching user detail" });
   }
-}
-export const deleteUser = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
 
-    const currentUser = (req as any).user;
-    if (currentUser && Number(id) === currentUser.id) {
-      return res.status(400).json({ message: "Cannot delete your own admin account" });
-    }
+  public getUserDetail = async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const user = await userService.getUserById(Number(id));
 
-    await prisma.user.delete({
-      where: {
-        id: Number(id)
+      if (!user) {
+        return res.status(404).json({ message: "Người dùng không tồn tại" });
       }
-    });
 
-    res.json({ message: "Delete user successfully" });
-  } catch (error: any) {
-    res.status(500).json({ message: "Error deleting user" });
+      res.json({
+        message: "Lấy chi tiết người dùng thành công",
+        data: {
+          id: user.id,
+          email: user.email,
+          fullName: user.fullName,
+          role: user.role,
+          createdAt: user.createdAt
+        }
+      });
+    } catch (error: any) {
+      console.error("Get user detail error:", error);
+      res.status(500).json({ message: "Lỗi khi lấy chi tiết người dùng" });
+    }
+  }
+
+  public deleteUser = async (req: AuthRequest, res: Response) => {
+    try {
+      const { id } = req.params;
+      const currentUserId = req.user!.userId;
+
+      if (Number(id) === currentUserId) {
+        return res.status(400).json({ message: "Bạn không thể tự xóa tài khoản admin của chính mình" });
+      }
+
+      await userService.deleteUser(Number(id));
+      res.json({ message: "Xóa người dùng thành công" });
+    } catch (error: any) {
+      console.error("Delete user error:", error);
+      res.status(500).json({ message: "Lỗi khi xóa người dùng" });
+    }
   }
 }

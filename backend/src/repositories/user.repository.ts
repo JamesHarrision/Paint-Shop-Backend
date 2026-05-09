@@ -34,4 +34,25 @@ export class UserRepository {
       }
     })
   }
+
+  public async deleteUser(id: number) {
+    return await prisma.user.delete({
+      where: { id }
+    });
+  }
+
+  public async findAll() {
+    return await prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        role: true,
+        createdAt: true
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+  }
 }
