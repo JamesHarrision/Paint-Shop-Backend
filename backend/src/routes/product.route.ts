@@ -1,26 +1,28 @@
 import { Router } from "express";
-import * as productController from '../controllers/product.controller'
+import { ProductController } from '../controllers/product.controller';
 import { authenticate } from "../middlewares/auth.middleware";
 import { requireAdmin } from "../middlewares/role.middleware";
 import { cloudinaryUpload } from "../services/cloudinary.service";
-const router = Router();
-
-import reviewRoutes from './review.route'
-import { createProductSchema, updateProductSchema } from "../validators/product.validator";
 import { validate } from "../middlewares/validate.middleware";
+import { createProductSchema, updateProductSchema } from "../validators/product.validator";
+import reviewRoutes from './review.route';
 
-//Ai cũng xem được
+const router = Router();
+const productController = new ProductController();
+
+// Ai cũng xem được
 router.get('/', productController.getAllProducts);
 router.get('/:id', productController.getProductDetail);
 
-// Cần phải đăng nhập mới xem được
+// Cần phải đăng nhập và là Admin mới thao tác được
 router.post(
   '/',
   authenticate,
   requireAdmin,
   cloudinaryUpload.single("image"),
   validate(createProductSchema),
-  productController.createProduct);
+  productController.createProduct
+);
 
 router.put(
   '/:id',
@@ -28,15 +30,17 @@ router.put(
   requireAdmin,
   cloudinaryUpload.single("image"),
   validate(updateProductSchema),
-  productController.updateProduct);
+  productController.updateProduct
+);
 
 router.delete(
   '/:id',
   authenticate,
   requireAdmin,
-  productController.deleteProduct);
+  productController.deleteProduct
+);
 
-// Route review
+// Route review nested
 router.use('/:productId/reviews', reviewRoutes);
 
 export default router;
