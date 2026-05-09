@@ -1,54 +1,44 @@
 import { Response, NextFunction } from "express";
-import * as aiService from '../services/ai.service'
+import { AiService } from '../services/ai.service'
 import { AuthRequest } from "../types/express";
 
-export const getColorSugestion = async (req: AuthRequest, res: Response, next: NextFunction) => {
-  try {
-    // 1. Kiểm tra file upload
-    if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' });
+export class AiController {
+  private aiService = new AiService();
+
+  public getColorSugestion = async (req: AuthRequest, res: Response, next: NextFunction) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ error: 'Vui lòng upload ảnh để phân tích' });
+      }
+
+      const userId = req.user!.userId;
+      const filePath = req.file.path;
+
+      const result = await this.aiService.analyzeRoomColor(filePath, userId);
+
+      return res.status(200).json({
+        status: 'success',
+        message: 'Phân tích màu sắc thành công',
+        data: result,
+      });
+
+    } catch (error: any) {
+      next(error);
     }
-
-    // 2. Lấy User ID từ Token (Đã qua middleware authenticate)
-    const userId = req?.user?.userId;
-    if (!userId) {
-      return res.status(401).json({ message: 'Unauthorized user' });
-    }
-
-    // 3. Lấy đường dẫn file từ Disk Storage
-    const filePath = req.file.path;
-
-    // 4. Gọi services xử lý & lưu DB
-    // console.log(`Processing image for User ${userId}: ${filePath}...`);
-    const result = await aiService.analyzeRoomColor(filePath, userId);
-
-    //5. Trả về kết quả
-    return res.status(200).json({
-      status: 'success',
-      data: result,
-    });
-
-  } catch (error: any) {
-    next(error);
   }
-}
 
-export const getHistory = async (req: AuthRequest, res: Response, next: NextFunction) => {
-  try {
+  public getHistory = async (req: AuthRequest, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.user!.userId;
+      const history = await this.aiService.getHistoryByUserId(userId);
+      
+      res.status(200).json({
+        status: 'success',
+        data: history
+      });
 
-    const userId = req?.user?.userId;
-    if (!userId) {
-      res.status(401).json({ message: 'Unauthorized user' });
-      return;
+    } catch (error: any) {
+      next(error);
     }
-
-    const history = await aiService.getHistoryByUserId(userId);
-    res.status(200).json({
-      status: 'success',
-      data: history
-    })
-
-  } catch (error: any) {
-    next(error);
   }
 }

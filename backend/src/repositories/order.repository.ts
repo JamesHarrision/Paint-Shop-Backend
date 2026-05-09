@@ -61,20 +61,11 @@ export class OrderRepository {
     });
   }
 
-  public async updatePaymentInfo(id: number, data: {
-    paymentStatus?: PaymentStatus | Prisma.EnumPaymentStatusFieldUpdateOperationsInput;
-    vnpayTransactionNo?: string | null;
-  }, tx?: Prisma.TransactionClient) {
+  public async updatePaymentStatus(id: number, paymentStatus: PaymentStatus, tx?: Prisma.TransactionClient) {
     const client = tx || prisma;
     return await client.order.update({
       where: { id },
-      data
-    });
-  }
-
-  public async findByTxnRef(txnRef: string) {
-    return await prisma.order.findUnique({
-      where: { vnpayTxnRef: txnRef }
+      data: { paymentStatus }
     });
   }
 }

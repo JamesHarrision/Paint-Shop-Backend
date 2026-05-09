@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Paint Shop AI - Chuyên gia màu sắc</title>
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body class="bg-dark text-slate-200">
+    <!-- Navbar -->
+    <nav class="bg-dark/80 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
+      <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-2 cursor-pointer" id="nav-home">
+          <div class="w-10 h-10 bg-gradient-to-tr from-primary to-secondary rounded-xl flex items-center justify-center font-bold text-white text-xl">P</div>
+          <span class="text-2xl font-extrabold tracking-tighter text-white">PAINT SHOP <span class="text-secondary">AI</span></span>
+        </div>
+        
+        <div class="hidden md:flex items-center gap-8 font-medium">
+          <button class="hover:text-secondary transition-colors" id="btn-home">Trang chủ</button>
+          <button class="hover:text-secondary transition-colors" id="btn-products">Sản phẩm</button>
+          <button class="hover:text-secondary transition-colors" id="btn-ai">Phân tích AI</button>
+          <button class="hover:text-secondary transition-colors" id="btn-orders">Đơn hàng</button>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <div id="auth-section" class="flex items-center gap-2">
+            <!-- Sẽ được điền bằng JS dựa trên trạng thái login -->
+            <button class="px-5 py-2 rounded-full border border-white/20 hover:bg-white/10 transition-all" id="btn-login">Đăng nhập</button>
+            <button class="px-5 py-2 rounded-full bg-primary hover:bg-blue-700 text-white font-semibold transition-all" id="btn-register">Đăng ký</button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="app" class="min-h-[calc(100vh-80px)]">
+      <!-- Nội dung sẽ được render động tại đây -->
+      <div class="flex items-center justify-center h-[60vh]">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-white/5 py-12">
+      <div class="container mx-auto px-6 text-center text-slate-500">
+        <p>© 2026 Paint Shop AI Project. Build with Passion.</p>
+      </div>
+    </footer>
+
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>

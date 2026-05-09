@@ -1,145 +1,115 @@
 import axios from "axios";
 import FormData from "form-data";
-import { prisma } from "../config/prisma";
-import { calculateColorDistance } from "../utils/color.util";
 import redis from "../config/redis";
-import fs from 'fs'
+import { calculateColorDistance } from "../utils/color.util";
+import { ProductRepository } from "../repositories/product.repository";
+import { AnalysisRepository } from "../repositories/analysis.repository";
 
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://127.0.0.1:8000';
 const REDIS_COLOR_KEY = 'product:color-lookup';
 
-const getAllProductsForAI = async () => {
-  const cachedData = await redis.get(REDIS_COLOR_KEY);
-  if (cachedData) {
-    return JSON.parse(cachedData);
-  }
+export class AiService {
+  private productRepo = new ProductRepository();
+  private analysisRepo = new AnalysisRepository();
 
-  const products = await prisma.product.findMany({
-    where: {
-      colorCode: { not: null }
-    },
-    select: {
-      id: true,
-      name: true,
-      price: true,
-      imageUrl: true,
-      colorCode: true
+  private async getAllProductsForAI() {
+    const cachedData = await redis.get(REDIS_COLOR_KEY);
+    if (cachedData) {
+      return JSON.parse(cachedData);
     }
-  });
 
-  if (products.length > 0) {
-    await redis.set(REDIS_COLOR_KEY, JSON.stringify(products), 'EX', 60);
+    const { products } = await this.productRepo.findAndCount({
+        page: 1,
+        limit: 1000 // Lấy nhiều một chút để AI tra cứu
+    });
+
+    const productsWithColor = products.filter(p => p.colorCode !== null);
+
+    if (productsWithColor.length > 0) {
+      await redis.set(REDIS_COLOR_KEY, JSON.stringify(productsWithColor), 'EX', 3600);
+    }
+
+    return productsWithColor;
   }
 
-  return products;
-}
+  public analyzeRoomColor = async (filePath: string, userId: number) => {
+    try {
+      // 1. Tải ảnh từ Cloudinary/URL về Buffer
+      const imageResponse = await axios.get(filePath, { responseType: 'arraybuffer' });
+      const imageBuffer = Buffer.from(imageResponse.data, 'binary');
 
-export const analyzeRoomColor = async (filePath: string, userId: number) => {
-  try {
-    const imageResponse = await axios.get(filePath, { responseType: 'arraybuffer' });
-    const imageBuffer = Buffer.from(imageResponse.data, 'binary');
+      const formData = new FormData();
+      formData.append('file', imageBuffer, { filename: 'upload.jpg' });
 
-    const formData = new FormData();
-    // 'file' là key bắt buộc phải khớp với bên Python (main.py)
-    formData.append('file', imageBuffer, { filename: 'upload.jpg' });
-
-    // Lưu ý: Phải set headers từ formData để có đúng Boundary
-    const headers = formData.getHeaders();
-    console.log(`--- [AI Service] Sending to Python: ${AI_SERVICE_URL}/analyze ---`);
-
-    const aiResponse = await axios.post(`${AI_SERVICE_URL}/analyze`, formData, {
-      headers: {
-        ...headers,
-        'Content-Length': headers['content-length'],
-      }
-    });
-    const aiData = aiResponse.data;
-
-    const allProducts = await getAllProductsForAI();
-
-    const enhancedPalette = aiData.palette.map((colorItem: any) => {
-      let bestMatchProduct = null;
-      let minDistance = Infinity;
-
-      for (const product of allProducts) {
-        if (!product.colorCode) continue;
-        const distance = calculateColorDistance(colorItem.hex, product.colorCode);
-        if (distance < minDistance && distance < 10) {
-          bestMatchProduct = product;
-          minDistance = distance;
+      const headers = formData.getHeaders();
+      
+      // 2. Gọi Python AI Service
+      const aiResponse = await axios.post(`${AI_SERVICE_URL}/analyze`, formData, {
+        headers: {
+          ...headers,
+          'Content-Length': headers['content-length'],
         }
-      }
+      });
+      const aiData = aiResponse.data;
 
-      let matchScore = 0;
-      if (minDistance < 10) {
-        matchScore = Math.max(0, Math.round(100 - (minDistance * 10)));
-      }
+      // 3. Tra cứu sản phẩm phù hợp nhất cho bảng màu
+      const allProducts = await this.getAllProductsForAI();
 
+      const enhancedPalette = aiData.palette.map((colorItem: any) => {
+        let bestMatchProduct = null;
+        let minDistance = Infinity;
 
-
-      return {
-        ...colorItem,
-        matchedProduct: bestMatchProduct
-          ? {
-            id: bestMatchProduct.id,
-            name: bestMatchProduct.name,
-            price: bestMatchProduct.price,
-            image: bestMatchProduct.imageUrl,
-            colorCode: bestMatchProduct.colorCode,
-            matchScore,
-            deltaE: parseFloat(minDistance.toFixed(2))
+        for (const product of allProducts) {
+          if (!product.colorCode) continue;
+          const distance = calculateColorDistance(colorItem.hex, product.colorCode);
+          if (distance < minDistance && distance < 10) {
+            bestMatchProduct = product;
+            minDistance = distance;
           }
-          : null
+        }
+
+        let matchScore = 0;
+        if (minDistance < 10) {
+          matchScore = Math.max(0, Math.round(100 - (minDistance * 10)));
+        }
+
+        return {
+          ...colorItem,
+          matchedProduct: bestMatchProduct
+            ? {
+              id: bestMatchProduct.id,
+              name: bestMatchProduct.name,
+              price: bestMatchProduct.price,
+              image: bestMatchProduct.imageUrl,
+              colorCode: bestMatchProduct.colorCode,
+              matchScore,
+              deltaE: parseFloat(minDistance.toFixed(2))
+            }
+            : null
+        }
+      });
+
+      const finalResult = {
+        base_color_rgb: aiData.base_color_rgb,
+        palette: enhancedPalette
       }
 
-    });
-
-    const finalResult = {
-      base_color_rgb: aiData.base_color_rgb,
-      palette: enhancedPalette
-    }
-
-    // LƯU LỊCH SỬ VÀO DB (Logic mới)
-    // Chuyển path hệ thống (uploads\file.jpg) thành URL (uploads/file.jpg)
-    const nomarlizedPath = filePath.replace('/\\/g', '/');
-
-    await prisma.analysisHistory.create({
-      data: {
+      // 4. Lưu lịch sử phân tích
+      await this.analysisRepo.create({
         userId: userId,
-        imageUrl: nomarlizedPath,   // Lưu đường dẫn tương đối
-        result: finalResult as any  // Ép kiểu JSON cho Prisma
-      }
-    });
+        imageUrl: filePath,
+        result: finalResult as any
+      });
 
-    return finalResult;
+      return finalResult;
 
-  } catch (error: any) {
-    console.error('!!! LỖI Ở AI SERVICE !!!');
-    // Log chi tiết lỗi axios để debug
-    if (error.response) {
-      // Server đã trả về status code khác 2xx (ví dụ 422, 500)
-      console.error('Status:', error.response.status);
-      console.error('Data:', error.response.data);
-    } else if (error.request) {
-      // Đã gửi request nhưng không nhận được hồi âm
-      console.error('No response received from Python.');
-    } else {
-      console.error('Error config:', error.message);
+    } catch (error: any) {
+      console.error('!!! LỖI Ở AI SERVICE !!!', error.message);
+      throw new Error(`AI analysis failed: ${error.message}`);
     }
-    throw new Error(`AI service error: ${error}`);
   }
-}
 
-export const getHistoryByUserId = async (userId: number) => {
-  return await prisma.analysisHistory.findMany({
-    where: {
-      userId: userId
-    },
-    select: {
-      id: true,
-      imageUrl: true,
-      createdAt: true,
-      result: true
-    }
-  })
+  public getHistoryByUserId = async (userId: number) => {
+    return await this.analysisRepo.findAllByUserId(userId);
+  }
 }
