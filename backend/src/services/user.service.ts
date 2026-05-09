@@ -1,42 +1,30 @@
-import { error } from 'node:console';
-import { prisma } from '../config/prisma'
 import { comparePassword, hashPassword } from '../utils/password'
-import { generateJwtToken } from '../utils/jwt';
-import redis from '../config/redis';
+import { generateAccessToken, generateAuthTokens, verifyAccessToken, verifyRefreshToken } from '../utils/jwt.util';
 import { sendResetPasswordEmail } from '../utils/email.service';
+import { UserRepository } from '../repositories/user.repository';
+import { redisUtil } from '../utils/cache.util';
+import { AuthRepository } from '../repositories/auth.repository';
+import crypto from 'crypto';
+import { RefreshTokenPayload } from '../interfaces/jwt.interface';
+
+const userRepo = new UserRepository();
+const authRepo = new AuthRepository();
 
 export const registerUser = async (
   email: string,
   password: string,
   fullName: string
 ) => {
-  // 1. Check xem email đã tồn tại chưa
-  const existingUser = await prisma.user.findUnique({
-    where: {
-      email: email
-    }
-  });
+  const existingUser = await userRepo.getUserByEmail(email);
 
-  if (existingUser) {
-    throw new Error('Email already exists');
-  }
+  if (existingUser) { throw new Error('EMAIL_EXISTS'); }
 
-  // 2. Hash mật khẩu
   const hashedPassword = await hashPassword(password);
 
-  // 3. Lưu vào database
-  const newUser = await prisma.user.create({
-    data: {
-      email: email,
-      password: hashedPassword,
-      fullName: fullName
-    },
-    select: {
-      id: true,
-      email: true,
-      fullName: true,
-      createdAt: true
-    }
+  const newUser = await userRepo.createUser({
+    email: email,
+    password: hashedPassword,
+    fullName: fullName
   })
 
   return newUser;
@@ -46,28 +34,16 @@ export const loginUser = async (
   email: string,
   password: string
 ) => {
-  //1. Tìm user theo email
-  const user = await prisma.user.findUnique({
-    where: {
-      email
-    }
-  });
+  const user = await userRepo.getUserByEmail(email);
+  if (!user) throw new Error("INVALID_CREDENTIALS");
 
-  if (!user) {
-    throw new Error("Invalid email or password");
-  }
-
-  //2. So sánh password hash
   const isMatch = await comparePassword(password, user.password);
-  if (!isMatch) {
-    throw new Error("Invalid email or password");
-  }
+  if (!isMatch) throw new Error("INVALID_CREDENTIALS");
 
+  const { accessToken, refreshToken, expiresAt } = generateAuthTokens(user.id, user.role);
 
-  //3. Tạo jwt token
-  const token = generateJwtToken(user.id, user.role);
+  await authRepo.saveRefreshToken(user.id, refreshToken, expiresAt);
 
-  //4. Trả về thông tin (ko trả password nha fen)
   return {
     user: {
       id: user.id,
@@ -75,7 +51,8 @@ export const loginUser = async (
       fullName: user.fullName,
       role: user.role
     },
-    token
+    accessToken,
+    refreshToken
   };
 }
 
@@ -88,17 +65,13 @@ export const forgetPassword = async (
   // Key format: password_reset:{token} -> Value: email
   // 4. Gửi email
 
-  const user = await prisma.user.findFirst({
-    where: { email: email }
-  });
-  if (!user) throw new Error("User không tồn tại trong hệ thống");
+  const user = await userRepo.getUserByEmail(email);
+  // if (!user) throw new Error("USER_NOT_FOUND");
+  if (!user) return { message: 'Email reset mật khẩu đã được gửi' };
 
-  const resetToken = crypto.randomUUID();
-
-  const redisKey = `password_reset:${resetToken}`;
-  await redis.setex(redisKey, 900, email);
-
-  await sendResetPasswordEmail(email, resetToken);
+  const token = crypto.randomUUID();
+  await redisUtil.setResetToken(token, email);
+  await sendResetPasswordEmail(email, token);
 
   return { message: 'Email reset mật khẩu đã được gửi' };
 }
@@ -107,22 +80,48 @@ export const resetPassword = async (
   token: string,
   newPassword: string
 ) => {
-  const redisKey = `password_reset:${token}`;
-
   // 1. Kiểm tra token trong Redis
   // 2. Hash password mới và cập nhật vào MySQL
   // 3. Xóa token khỏi Redis để tránh sử dụng lại (One-time use)
 
-  const email = await redis.get(redisKey);
-  if (!email) throw new Error("Token không tồn tại hoặc đã hết hạn");
+  const email = await redisUtil.getResetToken(token);
+  if (!email) throw new Error("INVALID_TOKEN");
 
   const hashedPassword = await hashPassword(newPassword);
-  await prisma.user.update({
-    where: { email: email },
-    data: { password: hashedPassword }
-  })
+  await userRepo.updateUserPassword(email, hashedPassword)
 
-  await redis.del(redisKey);
+  await redisUtil.deleteResetToken(token);
 
   return { message: 'Đặt lại mật khẩu thành công' };
+}
+
+export const refreshToken = async (token: string) => {
+  let payload: RefreshTokenPayload;
+  try {
+    payload = verifyRefreshToken(token);
+  } catch (error) {
+    throw new Error("INVALID_TOKEN");
+  }
+
+  const savedToken = await authRepo.findValidRefreshToken(token);
+  if (!savedToken) throw new Error("REFRESH_TOKEN_NOT_FOUND");
+
+  await authRepo.deleteToken(token);
+
+  const user = await userRepo.getUserById(payload.userId);
+  if (!user) throw new Error("USER_NOT_FOUND");
+
+  const { accessToken, refreshToken: newRefreshToken, expiresAt } = generateAuthTokens(user.id, user.role);
+
+  await authRepo.saveRefreshToken(user.id, newRefreshToken, expiresAt);
+
+  return {
+    accessToken,
+    refreshToken: newRefreshToken
+  };
+}
+
+export const logout = async (accessToken: string, refreshToken: string) => {
+  await authRepo.deleteToken(refreshToken);
+  await redisUtil.addToBlackList(accessToken, 900);
 }

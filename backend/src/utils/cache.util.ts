@@ -29,5 +29,24 @@ export const redisUtil = {
     await redis.set(key, JSON.stringify(freshData as T), 'EX', ttl);
 
     return freshData;
+  },
+
+  setResetToken: async (token: string, email: string, ttl: number = 1800) => {
+    return await redis.set(`reset_token:${token}`, email, 'EX', ttl);
+  },
+  getResetToken: async (token: string) => {
+    return await redis.get(`reset_token:${token}`);
+  },
+  deleteResetToken: async (token: string) => {
+    return await redis.del(`reset_token:${token}`);
+  },
+
+  addToBlackList: async (accessToken: string, ttl: number) => {
+    return await redis.set(`black_list:${accessToken}`, 1, "EX", ttl);
+  },
+
+  isBlacklisted: async (token: string) => {
+    const result = await redis.get(`black_list:${token}`);
+    return (result) ? true : false;
   }
 }
