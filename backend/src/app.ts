@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //Route
-app.use('/api/v1/ai', aiRoutes);
+app.use('/api/ai', aiRoutes);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes); 

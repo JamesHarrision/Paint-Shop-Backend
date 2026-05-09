@@ -62,15 +62,15 @@ export class AiService {
         for (const product of allProducts) {
           if (!product.colorCode) continue;
           const distance = calculateColorDistance(colorItem.hex, product.colorCode);
-          if (distance < minDistance && distance < 10) {
+          if (distance < minDistance && distance < 30) {
             bestMatchProduct = product;
             minDistance = distance;
           }
         }
 
         let matchScore = 0;
-        if (minDistance < 10) {
-          matchScore = Math.max(0, Math.round(100 - (minDistance * 10)));
+        if (minDistance < 30) {
+          matchScore = Math.max(0, Math.round(100 - (minDistance * 3.33)));
         }
 
         return {

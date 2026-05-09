@@ -29,6 +29,7 @@ async function main() {
     { name: 'Sơn Dulux Nâu Đất Trầm Ấm', description: 'Tông nâu đất cổ điển, ấm cúng và gần gũi', price: 980000, stock: 50, imageUrl: 'https://placehold.co/600x400/6B4C37/fff?text=Dulux+Nâu+Đất', colorCode: '#6B4C37' },
     { name: 'Sơn Dulux Vàng Kem Sunshine', description: 'Vàng kem tươi sáng, năng động và vui vẻ', price: 1150000, stock: 35, imageUrl: 'https://placehold.co/600x400/FFFACD/333?text=Dulux+Vàng+Kem', colorCode: '#FFFACD' },
     { name: 'Sơn Dulux Xanh Lá Nhẹ', description: 'Xanh lá cây dịu dàng, mang lại sự thư giãn', price: 920000, stock: 48, imageUrl: 'https://placehold.co/600x400/90EE90/333?text=Dulux+Xanh+Lá', colorCode: '#90EE90' },
+    { name: 'Sơn Dulux Nâu Hoàng Gia', description: 'Tông nâu đặc biệt cao cấp, sang trọng', price: 1250000, stock: 20, imageUrl: 'https://placehold.co/600x400/8c6d54/fff?text=Nâu+Hoàng+Gia', colorCode: '#8C6D54' },
 
     { name: 'Sơn Dulux Trắng Phấn', description: 'Trắng hơi hướng phấn, thanh lịch và nhẹ nhàng', price: 810000, stock: 65, imageUrl: 'https://placehold.co/600x400/F5F5F5/666?text=Dulux+Trắng+Phấn', colorCode: '#F5F5F5' },
     { name: 'Sơn Dulux Xám Nhạt Tối Giản', description: 'Xám nhạt hiện đại, dễ phối đồ nội thất', price: 740000, stock: 70, imageUrl: 'https://placehold.co/600x400/A9A9A9/fff?text=Dulux+Xám+Nhạt', colorCode: '#A9A9A9' },
@@ -218,7 +219,7 @@ async function main() {
 
   // 3. Insert dữ liệu vào DB (Chỉ lấy 5 sản phẩm theo yêu cầu)
   await prisma.product.createMany({
-    data: products.slice(0, 5),
+    data: products
   });
 
   // 1. Tạo mẫu Admin Account
@@ -249,7 +250,6 @@ async function main() {
 
   console.log({ admin, user });
 
-  console.log(`Seeding finished. Created 5 products.`);
 }
 
 main()
