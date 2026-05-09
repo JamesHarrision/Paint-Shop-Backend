@@ -1,6 +1,8 @@
-import { prisma } from "../config/prisma";
+import { CollectionRepository } from "../repositories/collection.repository";
 
 export class CollectionService {
+  private collectionRepo = new CollectionRepository();
+
   public createNewCollection = async (
     name: string,
     thumbnail: string,
@@ -8,49 +10,25 @@ export class CollectionService {
     longDesc: string,
     userId: number,
   ) => {
-    return await prisma.collection.create({
-      data: {
-        name,
-        thumbnail,
-        shortDesc,
-        longDesc,
-        userId: userId
-      }
-    })
+    return await this.collectionRepo.create({
+      name,
+      thumbnail,
+      shortDesc,
+      longDesc,
+      userId
+    });
   }
 
   public getAllCollectionByUserId = async (
     userId: number
   ) => {
-    return await prisma.collection.findMany({
-      where: {
-        userId: userId
-      },
-      orderBy: { createdAt: "desc" },
-      include: {
-        items: true,
-        _count: {
-          select: {
-            items: true
-          }
-        }
-      }
-    })
+    return await this.collectionRepo.findAllByUserId(userId);
   }
 
   public getCollectionById = async (
     id: string
   ) => {
-    return await prisma.collection.findUnique({
-      where: { id },
-      include: {
-        items: {
-          include: {
-            product: true
-          }
-        }
-      }
-    });
+    return await this.collectionRepo.findById(id);
   }
 
   public updateCollectionById = async (
@@ -61,36 +39,26 @@ export class CollectionService {
     longDesc: string,
     userId: number,
   ) => {
-    const collection = await prisma.collection.findUnique({ where: { id: collectionId } });
+    const collection = await this.collectionRepo.findById(collectionId);
     if (!collection) throw new Error('NOT_FOUND');
     if (collection.userId !== userId) throw new Error('FORBIDDEN');
 
-    return await prisma.collection.update({
-      where: {
-        id: collectionId
-      },
-      data: {
-        name,
-        thumbnail,
-        shortDesc,
-        longDesc,
-        userId
-      }
-    })
+    return await this.collectionRepo.update(collectionId, {
+      name,
+      thumbnail,
+      shortDesc,
+      longDesc
+    });
   }
 
   public deleteCollectionById = async (
     collectionId: string,
     userId: number
   ) => {
-    const collection = await prisma.collection.findUnique({ where: { id: collectionId } });
+    const collection = await this.collectionRepo.findById(collectionId);
     if (!collection) throw new Error('NOT_FOUND');
     if (collection.userId !== userId) throw new Error('FORBIDDEN');
 
-    return await prisma.collection.delete({
-      where: {
-        id: collectionId
-      }
-    })
+    return await this.collectionRepo.delete(collectionId);
   }
 }

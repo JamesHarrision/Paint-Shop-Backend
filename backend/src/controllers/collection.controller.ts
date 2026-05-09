@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { AuthRequest } from "../types/express";
 import { sanitizeHtml } from "../utils/sanitize.html";
 import { CollectionService } from "../services/collection.service";
@@ -6,81 +6,78 @@ import { CollectionService } from "../services/collection.service";
 const collectionService = new CollectionService();
 
 export class CollectionController {
-  public createCollection = async (req: AuthRequest, res: Response) => {
-    const userId = req.user!.userId;
-    let { name, longDesc, shortDesc } = req.body;
-
-    if (!userId) return res.status(401).json({ message: "Unauthorized" });
-
-    let thumbnailUrl = '';
-    // Nếu có file ảnh gửi lên (qua Multer/Cloudinary middleware)
-    if (req.file) {
-      thumbnailUrl = req.file.path;
-    }
-    // Sanitize chuỗi HTML từ TinyMCE để chống XSS
-    longDesc = sanitizeHtml(longDesc);
-
+  public async createCollection(req: AuthRequest, res: Response) {
     try {
+      const userId = req.user!.userId;
+      let { name, longDesc, shortDesc } = req.body;
+
+      const thumbnailUrl = req.file ? req.file.path : '';
+
+      if (longDesc) {
+        longDesc = sanitizeHtml(longDesc);
+      }
+
       const newCollection = await collectionService.createNewCollection(
         name,
         thumbnailUrl,
         shortDesc,
         longDesc,
         userId
-      )
+      );
 
-      return res.status(201).json({ message: 'Tạo collection thành công', data: newCollection });
+      return res.status(201).json({
+        message: 'Tạo collection thành công',
+        data: newCollection
+      });
+
     } catch (error: any) {
       console.error('Error creating collection:', error);
-      res.status(500).json({ error: 'Lỗi server khi tạo collection' });
+      res.status(500).json({ message: 'Lỗi server khi tạo collection' });
     }
-
   }
 
   public getMyCollections = async (req: AuthRequest, res: Response) => {
-    const userId = req.user?.userId;
-    if (!userId) return res.status(401).json({ message: "Unauthorized" });
-
     try {
+      const userId = req.user!.userId;
       const collections = await collectionService.getAllCollectionByUserId(userId);
       res.status(200).json({ data: collections });
     } catch (error) {
-      res.status(500).json({ error: 'Lỗi server khi lấy danh sách collection' });
+      res.status(500).json({ message: 'Lỗi server khi lấy danh sách collection' });
     }
   }
 
   public getCollectionById = async (req: AuthRequest, res: Response) => {
-    const { id } = req.params;
-    const userId = req.user?.userId
-
     try {
-      const collection = await collectionService.getCollectionById(id as string);
+      const { id } = req.params;
+      const userId = req.user!.userId;
+      const collection = await collectionService.getCollectionById(id);
 
       if (!collection) {
-        return res.status(404).json({ error: 'Không tìm thấy collection' });
+        return res.status(404).json({ message: 'Không tìm thấy bộ sưu tập' });
       }
 
       if (collection.userId !== userId) {
-        return res.status(403).json({ error: "Không có quyền xem collection của người khác" })
+        return res.status(403).json({ message: "Không có quyền xem bộ sưu tập của người khác" });
       }
 
       res.status(200).json({ data: collection });
     } catch (error: any) {
-      res.status(500).json({ error: 'Lỗi server khi lấy chi tiết collection' });
+      res.status(500).json({ message: 'Lỗi server khi lấy chi tiết bộ sưu tập' });
     }
   }
 
   public updateCollectionById = async (req: AuthRequest, res: Response) => {
-    const { id } = req.params;
-    const userId = req.user!.userId;
-    let { name, longDesc, shortDesc } = req.body;
-
-    let thumbnailUrl = '';
-    if (req.file) {
-      thumbnailUrl = req.file.path;
-    }
-
     try {
+      const { id } = req.params;
+      const userId = req.user!.userId;
+      let { name, longDesc, shortDesc } = req.body;
+
+      const thumbnailUrl = req.file ? req.file.path : '';
+
+      if (longDesc) {
+        longDesc = sanitizeHtml(longDesc);
+      }
+
       const updatedCollection = await collectionService.updateCollectionById(
         id as string,
         name,
@@ -88,38 +85,50 @@ export class CollectionController {
         shortDesc,
         longDesc,
         userId
-      )
-      return res.status(200).json({ message: "Cập nhật thành công", updatedCollection })
+      );
+
+      return res.status(200).json({
+        message: "Cập nhật bộ sưu tập thành công",
+        data: updatedCollection
+      });
+
     } catch (error: any) {
-      console.log("Error updating collection", error);
+      console.error("Error updating collection:", error);
 
-      if (error.message === 'NOT_FOUND') res.status(404).json({ error: 'Không tìm thấy' });
-      else if (error.message === 'FORBIDDEN') res.status(403).json({ error: 'Không có quyền' });
+      if (error.message === 'NOT_FOUND') {
+        return res.status(404).json({ message: 'Không tìm thấy bộ sưu tập' });
+      }
+      if (error.message === 'FORBIDDEN') {
+        return res.status(403).json({ message: 'Không có quyền chỉnh sửa bộ sưu tập này' });
+      }
 
-      return res.status(500).json({ message: "Lỗi server" });
+      return res.status(500).json({ message: "Lỗi server khi cập nhật bộ sưu tập" });
     }
-
   }
 
   public deleteCollectionById = async (req: AuthRequest, res: Response) => {
-    const { id } = req.params;
-    const userId = req.user!.userId;
-
     try {
-      const deletedCollection = await collectionService.deleteCollectionById(
-        id as string,
-        userId as number
-      )
-      
-      return res.status(200).json({ message: "Xóa collection thành công", deletedCollection })
+      const { id } = req.params;
+      const userId = req.user!.userId;
+
+      const deletedCollection = await collectionService.deleteCollectionById(id as string, userId);
+
+      return res.status(200).json({
+        message: "Xóa bộ sưu tập thành công",
+        data: deletedCollection
+      });
+
     } catch (error: any) {
-      console.log("Error deleting collection", error);
+      console.error("Error deleting collection:", error);
 
-      if (error.message === 'NOT_FOUND') res.status(404).json({ error: 'Không tìm thấy' });
-      else if (error.message === 'FORBIDDEN') res.status(403).json({ error: 'Không có quyền' });
+      if (error.message === 'NOT_FOUND') {
+        return res.status(404).json({ message: 'Không tìm thấy bộ sưu tập' });
+      }
+      if (error.message === 'FORBIDDEN') {
+        return res.status(403).json({ message: 'Không có quyền xóa bộ sưu tập này' });
+      }
 
-      return res.status(500).json({ message: "Lỗi server" });
+      return res.status(500).json({ message: "Lỗi server khi xóa bộ sưu tập" });
     }
-
   }
 }
