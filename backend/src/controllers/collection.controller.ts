@@ -50,7 +50,7 @@ export class CollectionController {
     try {
       const { id } = req.params;
       const userId = req.user!.userId;
-      const collection = await collectionService.getCollectionById(id);
+      const collection = await collectionService.getCollectionById(id as string);
 
       if (!collection) {
         return res.status(404).json({ message: 'Không tìm thấy bộ sưu tập' });
