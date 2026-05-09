@@ -5,8 +5,10 @@ import { ItemCollectionController } from "../controllers/item.collection.control
 const router = Router({ mergeParams: true });
 const itemCollectionController = new ItemCollectionController();
 
-router.post("/", authenticate, itemCollectionController.addItem);
-router.delete("/:productId", authenticate, itemCollectionController.removeItem)
+// Tất cả các route thao tác với item trong collection đều cần đăng nhập
+router.use(authenticate);
 
+router.post("/", itemCollectionController.addItem);
+router.delete("/:productId", itemCollectionController.removeItem);
 
 export default router;
