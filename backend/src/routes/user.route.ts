@@ -6,11 +6,14 @@ import { requireAdmin } from '../middlewares/role.middleware';
 const router = Router();
 const userController = new UserController();
 
-// Tất cả các route user management đều cần quyền Admin
-router.use(authenticate, requireAdmin);
+// Route cho người dùng cá nhân (Chỉ cần đăng nhập)
+router.get('/me', authenticate, userController.getProfile);
+router.patch('/me', authenticate, userController.updateProfile);
+router.patch('/me/change-password', authenticate, userController.changePassword);
 
-router.get('/', userController.getAllUsers);
-router.get('/:id', userController.getUserDetail);
-router.delete('/:id', userController.deleteUser);
+// Route cho Admin quản lý (Cần quyền Admin)
+router.get('/', authenticate, requireAdmin, userController.getAllUsers);
+router.get('/:id', authenticate, requireAdmin, userController.getUserDetail);
+router.delete('/:id', authenticate, requireAdmin, userController.deleteUser);
 
 export default router;

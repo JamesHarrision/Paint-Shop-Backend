@@ -137,3 +137,18 @@ export const deleteUser = async (id: number) => {
 export const getUserById = async (id: number) => {
   return await userRepo.getUserById(id);
 }
+
+export const updateUser = async (id: number, data: { fullName: string }) => {
+  return await userRepo.update(id, data);
+}
+
+export const changePassword = async (id: number, currentPass: string, newPass: string) => {
+  const user = await userRepo.getUserById(id);
+  if (!user) throw new Error("USER_NOT_FOUND");
+
+  const isMatch = await comparePassword(currentPass, user.password);
+  if (!isMatch) throw new Error("Mật khẩu hiện tại không chính xác");
+
+  const hashedNewPassword = await hashPassword(newPass);
+  await userRepo.update(id, { password: hashedNewPassword });
+}

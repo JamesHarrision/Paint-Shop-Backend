@@ -3,6 +3,67 @@ import * as userService from '../services/user.service'
 import { AuthRequest } from '../types/express';
 
 export class UserController {
+  public getProfile = async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = req.user!.userId;
+      const user = await userService.getUserById(userId);
+
+      if (!user) {
+        return res.status(404).json({ message: "Không tìm thấy thông tin người dùng" });
+      }
+
+      res.json({
+        message: "Lấy thông tin cá nhân thành công",
+        data: {
+          id: user.id,
+          email: user.email,
+          fullName: user.fullName,
+          role: user.role,
+          createdAt: user.createdAt
+        }
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Lỗi server khi lấy thông tin cá nhân" });
+    }
+  }
+
+  public updateProfile = async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = req.user!.userId;
+      const { fullName } = req.body;
+
+      if (!fullName) {
+        return res.status(400).json({ message: "Họ tên không được để trống" });
+      }
+
+      const updatedUser = await userService.updateUser(userId, { fullName });
+
+      res.json({
+        message: "Cập nhật thông tin thành công",
+        data: updatedUser
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Lỗi khi cập nhật thông tin" });
+    }
+  }
+
+  public changePassword = async (req: AuthRequest, res: Response) => {
+    try {
+      const userId = req.user!.userId;
+      const { currentPassword, newPassword } = req.body;
+
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({ message: "Vui lòng cung cấp đầy đủ mật khẩu cũ và mới" });
+      }
+
+      await userService.changePassword(userId, currentPassword, newPassword);
+
+      res.json({ message: "Đổi mật khẩu thành công" });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message || "Lỗi khi đổi mật khẩu" });
+    }
+  }
+
   // Admin only
   public getAllUsers = async (req: Request, res: Response) => {
     try {

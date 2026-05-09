@@ -35,6 +35,20 @@ export class UserRepository {
     })
   }
 
+  public async update(id: number, data: any) {
+    return await prisma.user.update({
+      where: { id },
+      data: data,
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        role: true,
+        createdAt: true
+      }
+    });
+  }
+
   public async deleteUser(id: number) {
     return await prisma.user.delete({
       where: { id }
