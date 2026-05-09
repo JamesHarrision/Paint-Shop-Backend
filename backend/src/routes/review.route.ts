@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { ReviewController } from '../controllers/review.controller';
 import { authenticate } from '../middlewares/auth.middleware';
 import { cloudinaryUpload } from '../services/cloudinary.service';
+import { validate } from '../middlewares/validate.middleware';
+import { createReviewSchema, updateReviewSchema } from '../validators/review.validator';
 
 const reviewController = new ReviewController();
 
@@ -15,8 +17,19 @@ router.get('/', reviewController.getProductReviews);
 router.use(authenticate);
 
 // Cho phép upload mảng file (tối đa 5 ảnh), field name là 'images'
-router.post('/', cloudinaryUpload.array('images', 5), reviewController.createReview);
-router.put('/:id', cloudinaryUpload.array('images', 5), reviewController.updateReview);
+router.post(
+  '/', 
+  cloudinaryUpload.array('images', 5), 
+  validate(createReviewSchema),
+  reviewController.createReview
+);
+
+router.put(
+  '/:id', 
+  cloudinaryUpload.array('images', 5), 
+  validate(updateReviewSchema),
+  reviewController.updateReview
+);
 router.delete('/:id', reviewController.deleteReview);
 
 export default router;

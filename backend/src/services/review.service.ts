@@ -1,54 +1,40 @@
 import { prisma } from '../config/prisma'
+import { ReviewRepository } from '../repositories/review.repository';
+import { ProductRepository } from '../repositories/product.repository';
 
 export class ReviewService {
+  private reviewRepo = new ReviewRepository();
+  private productRepo = new ProductRepository();
 
-  // Hàm helper dùng chung để tính toán và cập nhật lại Rating cho Product
-  public updateProductRating = async (
-    tx: any,
-    productId: number
-  ) => {
-    const aggregation = await tx.review.aggregate({
-      where: {
-        productId: productId
-      },
-      _avg: { rating: true },
-      _count: true
-    });
+  private updateProductRating = async (tx: any, productId: number) => {
+    const aggregation = await this.reviewRepo.aggregateRating(productId, tx);
 
-    const avgRating = aggregation._avg.rating ? (Number(aggregation._avg.rating).toFixed(1)) : 0;
+    const avgRating = aggregation._avg.rating ? Number(aggregation._avg.rating.toFixed(1)) : 0;
     const count = aggregation._count;
 
-    return await tx.product.update({
-      where: { id: productId },
-      data: {
-        reviewCount: count,
-        averageRating: Number(avgRating)
-      }
-    })
+    return await this.productRepo.updateProduct(productId, {
+      reviewCount: count,
+      averageRating: avgRating
+    });
   }
 
   public createReview = async (
     userId: number,
     productId: number,
-    data: any) => {
-    // Dùng transaction để đảm bảo tính toàn vẹn dữ liệu
+    data: { rating: number; comment?: string; images?: string[] }
+  ) => {
     return await prisma.$transaction(async (tx) => {
-      // 1. Kiểm tra sản phẩm có tồn tại không
-      const product = await tx.product.findUnique({ where: { id: productId } });
+      const product = await this.productRepo.getProductById(productId);
       if (!product) throw new Error('PRODUCT_NOT_FOUND');
 
-      // 2. Tạo review (nếu user đã review rồi, Prisma sẽ quăng lỗi P2002 do constraint @@unique)
-      const review = await tx.review.create({
-        data: {
-          userId,
-          productId,
-          rating: Number(data.rating),
-          comment: data.comment,
-          images: data.images || [],
-        },
-      });
+      const review = await this.reviewRepo.create({
+        userId,
+        productId,
+        rating: data.rating,
+        comment: data.comment,
+        images: data.images || [],
+      }, tx);
 
-      // 3. Cập nhật lại averageRating và reviewCount của Product
       await this.updateProductRating(tx, productId);
 
       return review;
@@ -61,19 +47,7 @@ export class ReviewService {
     limit: number = 10
   ) => {
     const skip = (page - 1) * limit;
-
-    const [reviews, total] = await Promise.all([
-      prisma.review.findMany({
-        where: { productId },
-        skip: skip,
-        take: limit,
-        include: {
-          user: { select: { id: true, fullName: true } }
-        }
-      }),
-      prisma.review.count({ where: { productId: productId } })
-    ])
-
+    const [reviews, total] = await this.reviewRepo.findAndCount(productId, skip, limit);
 
     return {
       reviews,
@@ -86,42 +60,35 @@ export class ReviewService {
   public updateReview = async (
     reviewId: string,
     userId: number,
-    data: any
+    data: { rating?: number; comment?: string; images?: string[] }
   ) => {
     return await prisma.$transaction(async (tx) => {
-      const review = await tx.review.findUnique({ where: { id: reviewId } });
+      const review = await this.reviewRepo.findById(reviewId);
       if (!review) throw new Error('REVIEW_NOT_FOUND');
-      if (review.userId !== userId) throw new Error('FORBIDDEN')
+      if (review.userId !== userId) throw new Error('FORBIDDEN');
 
-      const updatedReview = await tx.review.update({
-        where: { id: reviewId },
-        data: {
-          rating: data.rating ? Number(data.rating) : review.rating,
-          comment: data.comment !== undefined ? data.comment : review.comment,
-          images: data.images ? data.images : review.images,
-        }
-      });
+      const updatedReview = await this.reviewRepo.update(reviewId, {
+        rating: data.rating,
+        comment: data.comment,
+        images: data.images,
+      }, tx);
 
       if (data.rating) {
-        await this.updateProductRating(
-          tx,
-          updatedReview.productId as number)
+        await this.updateProductRating(tx, updatedReview.productId);
       }
 
       return updatedReview;
     });
   }
 
-  public deleteReview = async (
-    reviewId: string,
-    userId: number) => {
+  public deleteReview = async (reviewId: string, userId: number) => {
     return await prisma.$transaction(async (tx) => {
-      const review = await tx.review.findUnique({ where: { id: reviewId } });
+      const review = await this.reviewRepo.findById(reviewId);
       if (!review) throw new Error('REVIEW_NOT_FOUND');
       if (review.userId !== userId) throw new Error('FORBIDDEN');
 
-      await tx.review.delete({ where: { id: reviewId } });
-      await this.updateProductRating(tx, review.productId as number);
+      await this.reviewRepo.delete(reviewId, tx);
+      await this.updateProductRating(tx, review.productId);
 
       return true;
     });
