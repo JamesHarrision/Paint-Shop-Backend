@@ -15,7 +15,7 @@ export class ReviewService {
     return await this.productRepo.updateProduct(productId, {
       reviewCount: count,
       averageRating: avgRating
-    });
+    }, tx);
   }
 
   public createReview = async (

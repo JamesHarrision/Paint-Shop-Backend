@@ -41,8 +41,9 @@ export class ProductRepository {
     return { products, total }
   }
 
-  public updateProduct = async (id: number, data: Prisma.ProductUpdateInput) => {
-    return await prisma.product.update({
+  public updateProduct = async (id: number, data: Prisma.ProductUpdateInput, tx?: Prisma.TransactionClient) => {
+    const client = tx || prisma;
+    return await client.product.update({
       where: { id: id },
       data
     });
@@ -53,5 +54,28 @@ export class ProductRepository {
       where: { id: id },
       data: { deletedAt: new Date() }
     })
+  }
+
+  public decrementStock = async (id: number, quantity: number, tx?: Prisma.TransactionClient) => {
+    const client = tx || prisma;
+    return await client.product.updateMany({
+      where: {
+        id,
+        stock: { gte: quantity }
+      },
+      data: {
+        stock: { decrement: quantity }
+      }
+    });
+  }
+
+  public incrementStock = async (id: number, quantity: number, tx?: Prisma.TransactionClient) => {
+    const client = tx || prisma;
+    return await client.product.update({
+      where: { id },
+      data: {
+        stock: { increment: quantity }
+      }
+    });
   }
 }
