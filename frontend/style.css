@@ -1,24 +1,133 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap');
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --color-cream: #FDF6E3;
+  --color-terracotta: #E2725B;
+  --color-teal: #2A5D84;
+  --color-charcoal: #2D2D2D;
+  --color-border: #2D2D2D;
+}
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #0f172a;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@theme {
+  --color-cream: var(--color-cream);
+  --color-terracotta: var(--color-terracotta);
+  --color-teal: var(--color-teal);
+  --color-charcoal: var(--color-charcoal);
 }
 
 body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
+  background-color: var(--color-cream);
+  color: var(--color-charcoal);
+  font-family: 'Outfit', sans-serif;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Hiệu ứng Grain (Nhiễu hạt) toàn trang */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+h1, h2, h3, .font-serif {
+  font-family: 'Playfair Display', serif;
+}
+
+/* Custom Shadow Bauhaus (Hard Shadow) */
+.shadow-retro {
+  box-shadow: 6px 6px 0px 0px var(--color-charcoal);
+}
+
+.shadow-retro-sm {
+  box-shadow: 4px 4px 0px 0px var(--color-charcoal);
+}
+
+.shadow-retro-hover:hover {
+  box-shadow: 2px 2px 0px 0px var(--color-charcoal);
+  transform: translate(4px, 4px);
+}
+
+/* Custom Utilities using CSS only (Tailwind 4 safe) */
+.btn-retro {
+  padding: 0.75rem 2rem;
+  background-color: var(--color-terracotta);
+  color: white;
+  font-weight: 800;
+  border: 2px solid var(--color-charcoal);
+  box-shadow: 6px 6px 0px 0px var(--color-charcoal);
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.btn-retro:active {
+  box-shadow: 0px 0px 0px 0px var(--color-charcoal);
+  transform: translate(6px, 6px);
+}
+
+.card-retro {
+  background-color: white;
+  border: 2px solid var(--color-charcoal);
+  padding: 1.5rem;
+  box-shadow: 6px 6px 0px 0px var(--color-charcoal);
+  transition: all 0.2s;
+}
+
+.bg-terracotta { background-color: var(--color-terracotta); }
+.bg-teal { background-color: var(--color-teal); }
+.border-charcoal { border-color: var(--color-charcoal); }
+.text-charcoal { color: var(--color-charcoal); }
+.text-terracotta { color: var(--color-terracotta); }
+
+/* --- Toast Notifications --- */
+#toast-container {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.toast {
+    padding: 1rem 1.5rem;
+    background: white;
+    border: 2px solid var(--color-charcoal);
+    box-shadow: 6px 6px 0px 0px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 320px;
+    animation: toast-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    transition: all 0.3s ease;
+}
+
+.toast.success { border-left-width: 8px; border-left-color: #2D2D2D; }
+.toast.error { border-left-width: 8px; border-left-color: #E2725B; }
+
+.toast-msg {
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-charcoal);
+}
+
+@keyframes toast-in {
+    from { transform: translateX(110%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.toast-out {
+    transform: translateX(120%);
+    opacity: 0;
 }

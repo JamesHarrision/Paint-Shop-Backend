@@ -1,0 +1,83 @@
+// src/handlers/admin/products.handler.js
+import { productApi } from '../../api.js';
+import { Pagination } from '../../components/Pagination.js';
+import { showToast } from '../../ui.js';
+
+export const renderAdminProducts = async (page = 1) => {
+    const list = document.querySelector('#admin-product-list');
+    const paginationContainer = document.querySelector('#admin-product-pagination');
+    if (!list) return;
+    try {
+        const { data } = await productApi.getAll({ page, limit: 10 });
+        const products = data.data;
+        const countEl = document.querySelector('#admin-product-count');
+        if (countEl) countEl.innerText = data.pagination.total;
+
+        list.innerHTML = products.map(p => `
+            <tr class="border-b border-slate-200 hover:bg-slate-50 transition-all font-bold text-sm text-charcoal">
+                <td class="p-6 text-center">
+                    <img src="${p.imageUrl || 'https://via.placeholder.com/100'}" class="w-12 h-12 object-cover border-2 border-charcoal shadow-retro-sm mx-auto">
+                </td>
+                <td class="p-6 truncate max-w-[200px]" title="${p.name}">${p.name}</td>
+                <td class="p-6">${new Intl.NumberFormat('vi-VN').format(p.price)}đ</td>
+                <td class="p-6">
+                    <span class="${p.stock < 10 ? 'text-terracotta' : ''}">${p.stock}</span>
+                </td>
+                <td class="p-6 text-center">
+                    <div class="w-6 h-6 rounded-full border-2 border-charcoal mx-auto shadow-retro-sm" style="background-color: ${p.colorCode || '#ccc'}"></div>
+                </td>
+                <td class="p-6 text-center">
+                    <div class="flex justify-center gap-4">
+                        <button class="text-charcoal hover:text-terracotta transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                        </button>
+                        <button onclick="window.deleteProduct(${p.id})" class="text-terracotta hover:scale-125 transition-transform">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+
+        if (paginationContainer) {
+            paginationContainer.innerHTML = Pagination(data.pagination, 'changeAdminProductPage');
+        }
+    } catch (err) {
+        list.innerHTML = '<tr><td colspan="6" class="p-10 text-center text-red-500 font-bold italic">Lỗi nạp sản phẩm</td></tr>';
+    }
+};
+
+export const initProductFormHandler = () => {
+    const form = document.querySelector('#add-product-form');
+    if (!form) return;
+
+    form.onsubmit = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        
+        try {
+            window.toggleLoader(true);
+            await productApi.create(formData);
+            showToast('✅ Thêm sản phẩm thành công!');
+            window.closeAddProductModal();
+            renderAdminProducts();
+        } catch (err) {
+            showToast('❌ Lỗi: ' + (err.response?.data?.message || err.message), 'error');
+        } finally {
+            window.toggleLoader(false);
+        }
+    };
+};
+
+window.deleteProduct = async (id) => {
+    if (!confirm('Xác nhận xóa sản phẩm này?')) return;
+    try {
+        await productApi.delete(id);
+        showToast('🗑️ Đã xóa sản phẩm.');
+        renderAdminProducts();
+    } catch (err) { showToast('❌ Lỗi: ' + err.message, 'error'); }
+};

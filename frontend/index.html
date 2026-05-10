@@ -4,49 +4,28 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Paint Shop AI - Chuyên gia màu sắc</title>
+    <title>Paint Shop AI | Sáng Tạo Không Gian</title>
     <link rel="stylesheet" href="./style.css">
   </head>
-  <body class="bg-dark text-slate-200">
-    <!-- Navbar -->
-    <nav class="bg-dark/80 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
-      <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-        <div class="flex items-center gap-2 cursor-pointer" id="nav-home">
-          <div class="w-10 h-10 bg-gradient-to-tr from-primary to-secondary rounded-xl flex items-center justify-center font-bold text-white text-xl">P</div>
-          <span class="text-2xl font-extrabold tracking-tighter text-white">PAINT SHOP <span class="text-secondary">AI</span></span>
-        </div>
-        
-        <div class="hidden md:flex items-center gap-8 font-medium">
-          <button class="hover:text-secondary transition-colors" id="btn-home">Trang chủ</button>
-          <button class="hover:text-secondary transition-colors" id="btn-products">Sản phẩm</button>
-          <button class="hover:text-secondary transition-colors" id="btn-ai">Phân tích AI</button>
-          <button class="hover:text-secondary transition-colors" id="btn-orders">Đơn hàng</button>
-        </div>
+  <body class="selection:bg-terracotta selection:text-white bg-cream text-charcoal">
+    <!-- Overlay Grain Texture -->
+    <div class="fixed inset-0 pointer-events-none z-[9999] opacity-[0.03]" style="background-image: url('https://www.transparenttextures.com/patterns/stardust.png');"></div>
 
-        <div class="flex items-center gap-4">
-          <div id="auth-section" class="flex items-center gap-2">
-            <!-- Sẽ được điền bằng JS dựa trên trạng thái login -->
-            <button class="px-5 py-2 rounded-full border border-white/20 hover:bg-white/10 transition-all" id="btn-login">Đăng nhập</button>
-            <button class="px-5 py-2 rounded-full bg-primary hover:bg-blue-700 text-white font-semibold transition-all" id="btn-register">Đăng ký</button>
-          </div>
+    <!-- Global Loading Overlay -->
+    <div id="global-loader" class="fixed inset-0 z-[10001] bg-cream flex items-center justify-center transition-opacity duration-500">
+        <div class="flex flex-col items-center">
+            <div class="w-16 h-16 border-8 border-charcoal border-t-terracotta rounded-full animate-spin shadow-retro-sm"></div>
+            <p class="mt-6 text-[10px] font-black uppercase tracking-[0.3em] animate-pulse">Initializing Paint Lab...</p>
         </div>
-      </div>
-    </nav>
+    </div>
 
-    <!-- Main Content Area -->
-    <main id="app" class="min-h-[calc(100vh-80px)]">
-      <!-- Nội dung sẽ được render động tại đây -->
-      <div class="flex items-center justify-center h-[60vh]">
-        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+    <!-- App Content Wrapper -->
+    <main id="app" class="min-h-screen">
+      <!-- Loading State -->
+      <div class="flex items-center justify-center h-[80vh]">
+        <div class="w-12 h-12 border-4 border-charcoal border-t-terracotta animate-spin"></div>
       </div>
     </main>
-
-    <!-- Footer -->
-    <footer class="bg-slate-900 border-t border-white/5 py-12">
-      <div class="container mx-auto px-6 text-center text-slate-500">
-        <p>© 2026 Paint Shop AI Project. Build with Passion.</p>
-      </div>
-    </footer>
 
     <script type="module" src="/main.js"></script>
   </body>
