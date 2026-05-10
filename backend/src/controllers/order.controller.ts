@@ -32,11 +32,13 @@ export class OrderController {
   public getMyOrders = async (req: AuthRequest, res: Response) => {
     try {
       const userId = req.user!.userId;
-      const orders = await orderService.getOrdersByUserId(userId);
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 10;
+      const result = await orderService.getOrdersByUserId(userId, page, limit);
 
       return res.status(200).json({
-        message: "success",
-        data: orders
+        message: "Lấy danh sách đơn hàng thành công",
+        ...result
       });
     } catch (error: any) {
       console.error("Get orders error:", error.message);
@@ -64,7 +66,7 @@ export class OrderController {
     }
   }
 
-  public getOrderDetail = async (req: AuthRequest, res: Response) => {
+  public getOrderById = async (req: AuthRequest, res: Response) => {
     try {
       const { id } = req.params;
       const order = await orderService.getOrderById(Number(id));
@@ -74,7 +76,7 @@ export class OrderController {
       }
 
       // Kiểm tra quyền (chỉ chủ đơn hàng hoặc admin mới được xem - admin logic có thể thêm sau)
-      if (order.userId !== req.user!.userId) {
+      if (order.userId !== req.user!.userId && req.user!.role !== 'ADMIN') {
         return res.status(403).json({ message: "Bạn không có quyền xem đơn hàng này" });
       }
 
@@ -85,6 +87,22 @@ export class OrderController {
     } catch (error: any) {
       console.error("Get order detail error:", error);
       res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
+  public getAllOrders = async (req: AuthRequest, res: Response) => {
+    try {
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 10;
+      const result = await orderService.getAllOrders(page, limit);
+
+      return res.status(200).json({
+        message: "Lấy danh sách tất cả đơn hàng thành công",
+        ...result
+      });
+    } catch (error: any) {
+      console.error("Get all orders error:", error);
+      res.status(500).json({ message: "Lỗi khi lấy danh sách đơn hàng" });
     }
   }
 }

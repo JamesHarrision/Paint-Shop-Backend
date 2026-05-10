@@ -55,8 +55,10 @@ export class UserRepository {
     });
   }
 
-  public async findAll() {
+  public async findAll(skip?: number, take?: number) {
     return await prisma.user.findMany({
+      skip,
+      take,
       select: {
         id: true,
         email: true,
@@ -68,5 +70,9 @@ export class UserRepository {
         createdAt: 'desc'
       }
     });
+  }
+
+  public async countAll() {
+    return await prisma.user.count();
   }
 }

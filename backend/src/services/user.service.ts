@@ -126,8 +126,20 @@ export const logout = async (accessToken: string, refreshToken: string) => {
   await redisUtil.addToBlackList(accessToken, 900);
 }
 
-export const getAllUsers = async () => {
-  return await userRepo.findAll();
+export const getAllUsers = async (page: number = 1, limit: number = 10) => {
+  const skip = (page - 1) * limit;
+  const users = await userRepo.findAll(skip, limit);
+  const total = await userRepo.countAll();
+
+  return {
+    data: users,
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit)
+    }
+  };
 }
 
 export const deleteUser = async (id: number) => {

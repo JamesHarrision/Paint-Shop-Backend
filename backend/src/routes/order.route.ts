@@ -14,11 +14,14 @@ router.use(authenticate);
 // POST /api/orders - Checkout
 router.post('/', validate(checkoutSchema), orderController.createOrder);
 
-// GET /api/orders - Lấy danh sách đơn hàng của tôi
-router.get('/', orderController.getMyOrders);
+// GET /api/orders/me - Lấy danh sách đơn hàng của tôi
+router.get('/me', orderController.getMyOrders);
+
+// GET /api/orders/all - Lấy tất cả đơn hàng (Admin)
+router.get('/all', requireAdmin, orderController.getAllOrders);
 
 // GET /api/orders/:id - Chi tiết đơn hàng
-router.get('/:id', orderController.getOrderDetail);
+router.get('/:id', orderController.getOrderById);
 
 // PATCH /api/orders/:id/status - Cập nhật trạng thái (Chỉ Admin)
 router.patch('/:id/status', requireAdmin, validate(updateOrderStatusSchema), orderController.updateStatus);

@@ -67,10 +67,12 @@ export class UserController {
   // Admin only
   public getAllUsers = async (req: Request, res: Response) => {
     try {
-      const users = await userService.getAllUsers();
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 10;
+      const result = await userService.getAllUsers(page, limit);
       res.json({
         message: "Lấy danh sách người dùng thành công",
-        data: users
+        ...result
       });
     } catch (error: any) {
       console.error("Get all users error:", error);

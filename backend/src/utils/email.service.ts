@@ -12,7 +12,7 @@ export const sendResetPasswordEmail = async (
   to: string,
   resetToken: string
 ) => {
-  const resetLink = `${process.env.CLIENT_URL}/reset-password?token=${resetToken}`;
+  const resetLink = `${process.env.CLIENT_URL}/#/reset-password?token=${resetToken}`;
   const mailOptions = {
     from: `"Paint Shop" <${process.env.MAIL_USER}>`,
     to,

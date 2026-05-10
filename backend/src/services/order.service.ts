@@ -79,8 +79,20 @@ export class OrderService {
     }
   }
 
-  public getOrdersByUserId = async (userId: number) => {
-    return await this.orderRepo.findAllByUserId(userId);
+  public getOrdersByUserId = async (userId: number, page: number = 1, limit: number = 10) => {
+    const skip = (page - 1) * limit;
+    const orders = await this.orderRepo.findAllByUserId(userId, skip, limit);
+    const total = await this.orderRepo.countByUserId(userId);
+
+    return {
+      data: orders,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+      }
+    };
   }
 
   public updateOrderStatus = async (orderId: number, newStatus: OrderStatus) => {
@@ -104,5 +116,21 @@ export class OrderService {
   
   public getOrderById = async (orderId: number) => {
     return await this.orderRepo.findById(orderId);
+  }
+
+  public getAllOrders = async (page: number = 1, limit: number = 10) => {
+    const skip = (page - 1) * limit;
+    const orders = await this.orderRepo.findAll(skip, limit);
+    const total = await this.orderRepo.countAll();
+
+    return {
+      data: orders,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+      }
+    };
   }
 }

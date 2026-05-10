@@ -33,9 +33,11 @@ export class OrderRepository {
     });
   }
 
-  public async findAllByUserId(userId: number) {
+  public async findAllByUserId(userId: number, skip?: number, take?: number) {
     return await prisma.order.findMany({
       where: { userId },
+      skip,
+      take,
       include: {
         items: {
           include: {
@@ -53,6 +55,12 @@ export class OrderRepository {
     });
   }
 
+  public async countByUserId(userId: number) {
+    return await prisma.order.count({
+      where: { userId }
+    });
+  }
+
   public async updateStatus(id: number, status: OrderStatus, tx?: Prisma.TransactionClient) {
     const client = tx || prisma;
     return await client.order.update({
@@ -67,5 +75,36 @@ export class OrderRepository {
       where: { id },
       data: { paymentStatus }
     });
+  }
+
+  public async findAll(skip?: number, take?: number) {
+    return await prisma.order.findMany({
+      skip,
+      take,
+      include: {
+        user: {
+          select: {
+            fullName: true,
+            email: true
+          }
+        },
+        items: {
+          include: {
+            product: {
+              select: {
+                name: true,
+                colorCode: true,
+                imageUrl: true
+              }
+            }
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
+
+  public async countAll() {
+    return await prisma.order.count();
   }
 }
