@@ -46,7 +46,7 @@ export class ProductController {
 
   public createProduct = async (req: Request, res: Response) => {
     try {
-      const { name, price, description, stock } = req.body;
+      const { name, price, description, stock, colorCode } = req.body;
 
       const product = await productService.createProduct({
         name,
@@ -54,6 +54,7 @@ export class ProductController {
         description,
         stock: stock ? Number(stock) : undefined,
         imageUrl: req.file?.path || '',
+        colorCode,
       });
       res.status(201).json({ message: 'Tạo sản phẩm thành công', data: product });
     } catch (error: any) {
@@ -65,14 +66,15 @@ export class ProductController {
   public updateProduct = async (req: Request, res: Response) => {
     try {
       const id = Number(req.params.id);
-      const updateData = { ...req.body };
+      const { name, price, description, stock, colorCode } = req.body;
+      const updateData: any = { name, description, colorCode };
 
       if (req.file) {
         updateData.imageUrl = req.file.path;
       }
 
-      if (updateData.price) updateData.price = Number(updateData.price);
-      if (updateData.stock) updateData.stock = Number(updateData.stock);
+      if (price) updateData.price = Number(price);
+      if (stock) updateData.stock = Number(stock);
 
       const updatedProduct = await productService.updateProduct(id, updateData);
 
