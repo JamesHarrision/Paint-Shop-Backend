@@ -42,3 +42,39 @@ export const ProductListTemplate = (products = [], formatPrice, pagination) => `
     `}
   </section>
 `;
+
+export const ProductsPageTemplate = () => `
+    <section class="py-24 container mx-auto px-6">
+        <div class="flex flex-col lg:flex-row gap-12">
+            <!-- Sidebar Filters -->
+            <aside class="lg:w-1/4 space-y-12">
+                <div>
+                    <h2 class="text-4xl font-black uppercase italic leading-none mb-8">Tìm <br> <span class="not-italic text-terracotta">Kiếm</span></h2>
+                    <div class="relative">
+                        <input type="text" id="filter-search" placeholder="Tên sản phẩm..." class="w-full bg-white border-4 border-charcoal p-4 outline-none focus:bg-slate-50 transition-colors font-bold shadow-retro-sm">
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6">Khoảng giá</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <input type="number" id="filter-min-price" placeholder="Từ" class="w-1/2 bg-white border-2 border-charcoal p-3 outline-none text-xs font-bold">
+                            <span class="font-black">-</span>
+                            <input type="number" id="filter-max-price" placeholder="Đến" class="w-1/2 bg-white border-2 border-charcoal p-3 outline-none text-xs font-bold">
+                        </div>
+                    </div>
+                </div>
+
+                <button id="btn-apply-filter" class="w-full py-4 bg-charcoal text-cream font-black uppercase text-[10px] tracking-widest hover:bg-terracotta transition-all shadow-retro">Áp dụng lọc</button>
+            </aside>
+
+            <!-- Product Grid Container -->
+            <div class="lg:w-3/4" id="products-container">
+                <div class="flex items-center justify-center h-[60vh]">
+                    <div class="w-8 h-8 border-4 border-charcoal border-t-terracotta animate-spin"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+`;

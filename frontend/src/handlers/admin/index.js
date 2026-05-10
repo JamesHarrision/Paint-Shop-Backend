@@ -35,10 +35,21 @@ export const initAdminHandler = (currentUserId) => {
         }
     };
 
-    window.showAddProductModal = () => {
+    window.showAddProductModal = (isEdit = false) => {
         const modal = document.querySelector('#add-product-modal');
         if (modal) {
             modal.classList.remove('hidden');
+            if (!isEdit) {
+                const form = modal.querySelector('#add-product-form');
+                if (form) {
+                    form.reset();
+                    form.querySelector('#product-id').value = '';
+                }
+                const title = modal.querySelector('#product-modal-title');
+                if (title) title.innerHTML = `Tạo <br> <span class="not-italic text-terracotta">Sản phẩm mới</span>`;
+                const btn = modal.querySelector('#btn-product-submit');
+                if (btn) btn.innerText = 'Đăng sản phẩm ngay';
+            }
             initProductFormHandler();
         }
     };

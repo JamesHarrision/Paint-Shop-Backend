@@ -35,11 +35,12 @@ export const AdminProductsTemplate = () => `
         <div class="absolute inset-0 bg-charcoal/60 backdrop-blur-sm"></div>
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-cream border-4 border-charcoal shadow-retro p-10 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-start mb-8">
-                <h2 class="text-4xl font-black uppercase italic leading-none">Tạo <br> <span class="not-italic text-terracotta">Sản phẩm mới</span></h2>
+                <h2 id="product-modal-title" class="text-4xl font-black uppercase italic leading-none">Tạo <br> <span class="not-italic text-terracotta">Sản phẩm mới</span></h2>
                 <button onclick="window.closeAddProductModal()" class="text-4xl font-black hover:text-terracotta transition-colors">&times;</button>
             </div>
             
             <form id="add-product-form" class="space-y-6">
+                <input type="hidden" name="id" id="product-id">
                 <div class="grid grid-cols-2 gap-6">
                     <div class="space-y-2">
                         <label class="text-[10px] uppercase font-black tracking-widest">Tên sản phẩm</label>
@@ -72,7 +73,7 @@ export const AdminProductsTemplate = () => `
                     <input type="file" name="image" accept="image/*" class="w-full bg-white border-2 border-charcoal p-3 outline-none focus:bg-slate-50 transition-colors font-bold text-sm">
                 </div>
 
-                <button type="submit" class="w-full py-4 bg-charcoal text-cream font-black uppercase text-xs tracking-widest hover:bg-terracotta transition-all shadow-retro">Đăng sản phẩm ngay</button>
+                <button type="submit" id="btn-product-submit" class="w-full py-4 bg-charcoal text-cream font-black uppercase text-xs tracking-widest hover:bg-terracotta transition-all shadow-retro">Đăng sản phẩm ngay</button>
             </form>
         </div>
     </div>

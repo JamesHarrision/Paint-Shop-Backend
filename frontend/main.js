@@ -11,6 +11,7 @@ import { AITemplate } from './src/templates/ai.js';
 import { LoginTemplate, RegisterTemplate, ForgotPasswordTemplate, ResetPasswordTemplate } from './src/templates/auth.js';
 import { ProfileTemplate } from './src/templates/profile.js';
 import { AdminTemplate } from './src/templates/admin/layout.js';
+import { ProductsPageTemplate } from './src/templates/products.js';
 import { CartTemplate, CheckoutTemplate } from './src/templates/cart.js';
 
 // Handlers
@@ -25,8 +26,8 @@ import { renderOrdersPage } from './src/handlers/order.handler.js';
 const app = document.querySelector('#app');
 
 const routeConfig = {
-    home: { template: HomeTemplate, init: () => renderProductsPage(app.querySelector('#products-container')), layout: true },
-    products: { template: HomeTemplate, init: () => renderProductsPage(app.querySelector('#products-container')), layout: true },
+    home: { template: HomeTemplate, init: () => renderProductsPage(document.querySelector('#products-container'), { limit: 4 }), layout: true },
+    products: { template: ProductsPageTemplate, init: () => renderProductsPage(document.querySelector('#products-container')), layout: true },
     ai: { template: AITemplate, init: initAIHandlers, layout: true },
     login: { template: LoginTemplate, init: initLoginHandler, layout: true },
     register: { template: RegisterTemplate, init: initRegisterHandler, layout: true },

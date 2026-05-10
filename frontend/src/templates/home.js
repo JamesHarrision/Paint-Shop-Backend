@@ -24,4 +24,11 @@ export const HomeTemplate = () => `
       </div>
     </div>
   </section>
+
+  <div id="products-container" class="bg-white">
+      <div class="py-24 text-center">
+          <div class="w-12 h-12 border-4 border-charcoal border-t-terracotta animate-spin mx-auto mb-4"></div>
+          <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Đang nạp bộ sưu tập...</p>
+      </div>
+  </div>
 `;
