@@ -2,6 +2,7 @@ import { CollectionController } from "../controllers/collection.controller";
 import { Router } from "express";
 import { cloudinaryUpload } from "../services/cloudinary.service";
 import { authenticate } from "../middlewares/auth.middleware";
+import { requireAdmin } from "../middlewares/role.middleware";
 import { validate } from "../middlewares/validate.middleware";
 import { createCollectionSchema, updateCollectionSchema } from "../validators/collection.validator";
 import itemCollectionRoute from './item.collection.route';
@@ -18,6 +19,18 @@ router.post(
 );
 
 router.get(
+  '/public',
+  collectionController.getPublicCollections
+);
+
+router.get(
+  '/admin',
+  authenticate,
+  requireAdmin,
+  collectionController.getAllCollectionsForAdmin
+);
+
+router.get(
   '/', 
   authenticate, 
   collectionController.getMyCollections
@@ -25,7 +38,6 @@ router.get(
 
 router.get(
   '/:id', 
-  authenticate, 
   collectionController.getCollectionById
 );
 

@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Response, Request } from "express";
 import { AuthRequest } from "../types/express";
 import { sanitizeHtml } from "../utils/sanitize.html";
 import { CollectionService } from "../services/collection.service";
@@ -46,18 +46,31 @@ export class CollectionController {
     }
   }
 
+  public getPublicCollections = async (req: Request, res: Response) => {
+    try {
+      const collections = await collectionService.getAllPublicCollections();
+      res.status(200).json({ data: collections });
+    } catch (error) {
+      res.status(500).json({ message: 'Lỗi server khi lấy danh sách bộ sưu tập cộng đồng' });
+    }
+  }
+
+  public getAllCollectionsForAdmin = async (req: Request, res: Response) => {
+    try {
+      const collections = await collectionService.getAllCollectionsForAdmin();
+      res.status(200).json({ data: collections });
+    } catch (error) {
+      res.status(500).json({ message: 'Lỗi server khi lấy danh sách bộ sưu tập cho Admin' });
+    }
+  }
+
   public getCollectionById = async (req: AuthRequest, res: Response) => {
     try {
       const { id } = req.params;
-      const userId = req.user!.userId;
       const collection = await collectionService.getCollectionById(id as string);
 
       if (!collection) {
         return res.status(404).json({ message: 'Không tìm thấy bộ sưu tập' });
-      }
-
-      if (collection.userId !== userId) {
-        return res.status(403).json({ message: "Không có quyền xem bộ sưu tập của người khác" });
       }
 
       res.status(200).json({ data: collection });
@@ -70,6 +83,7 @@ export class CollectionController {
     try {
       const { id } = req.params;
       const userId = req.user!.userId;
+      const isAdmin = req.user!.role === 'ADMIN';
       let { name, longDesc, shortDesc } = req.body;
 
       const thumbnailUrl = req.file ? req.file.path : '';
@@ -84,7 +98,8 @@ export class CollectionController {
         thumbnailUrl,
         shortDesc,
         longDesc,
-        userId
+        userId,
+        isAdmin
       );
 
       return res.status(200).json({
@@ -110,8 +125,9 @@ export class CollectionController {
     try {
       const { id } = req.params;
       const userId = req.user!.userId;
+      const isAdmin = req.user!.role === 'ADMIN';
 
-      const deletedCollection = await collectionService.deleteCollectionById(id as string, userId);
+      const deletedCollection = await collectionService.deleteCollectionById(id as string, userId, isAdmin);
 
       return res.status(200).json({
         message: "Xóa bộ sưu tập thành công",

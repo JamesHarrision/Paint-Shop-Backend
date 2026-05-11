@@ -53,6 +53,30 @@ export class CollectionRepository {
     });
   }
 
+  public async findAllPublic() {
+    return await prisma.collection.findMany({
+      orderBy: { createdAt: "desc" },
+      include: {
+        user: {
+          select: { id: true, fullName: true, email: true }
+        },
+        _count: {
+          select: { items: true }
+        }
+      }
+    });
+  }
+
+  public async findAll() {
+    return await prisma.collection.findMany({
+      orderBy: { createdAt: "desc" },
+      include: {
+        user: { select: { id: true, fullName: true, email: true } },
+        _count: { select: { items: true } }
+      }
+    });
+  }
+
   public async delete(id: string) {
     return await prisma.collection.delete({
       where: { id }

@@ -10,11 +10,13 @@ export class ItemCollectionController {
       const { collectionId } = req.params;
       const { productId } = req.body;
       const userId = req.user!.userId;
+      const isAdmin = req.user!.role === 'ADMIN';
 
       const newItem = await this.itemCollectionService.addItemToCollection(
         collectionId as string,
         Number(productId),
-        userId
+        userId,
+        isAdmin
       );
       res.status(201).json({ 
         message: 'Thêm sản phẩm vào bộ sưu tập thành công', 
@@ -40,11 +42,13 @@ export class ItemCollectionController {
     try {
       const { collectionId, productId } = req.params;
       const userId = req.user!.userId;
+      const isAdmin = req.user!.role === 'ADMIN';
 
       await this.itemCollectionService.removeItemFromCollection(
         collectionId as string,
         Number(productId),
-        userId
+        userId,
+        isAdmin
       );
       res.status(200).json({ message: 'Xóa sản phẩm khỏi bộ sưu tập thành công' });
     } catch (error: any) {
