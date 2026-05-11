@@ -10,12 +10,13 @@ export class ItemCollectionService {
   public addItemToCollection = async (
     collectionId: string,
     productId: number,
-    userId: number
+    userId: number,
+    isAdmin: boolean = false
   ) => {
     // 1. Kiểm tra collection có tồn tại và thuộc về user không
     const collection = await this.collectionRepo.findById(collectionId);
     if (!collection) throw new Error('COLLECTION_NOT_FOUND');
-    if (collection.userId !== userId) throw new Error('FORBIDDEN');
+    if (collection.userId !== userId && !isAdmin) throw new Error('FORBIDDEN');
 
     // 2. Kiểm tra product có tồn tại không
     const product = await this.productRepo.getProductById(productId);
@@ -34,10 +35,11 @@ export class ItemCollectionService {
     collectionId: string,
     productId: number,
     userId: number,
+    isAdmin: boolean = false
   ) => {
     const collection = await this.collectionRepo.findById(collectionId);
     if (!collection) throw new Error('COLLECTION_NOT_FOUND');
-    if (collection.userId !== userId) throw new Error('FORBIDDEN');
+    if (collection.userId !== userId && !isAdmin) throw new Error('FORBIDDEN');
 
     try {
       return await this.itemRepo.delete(collectionId, productId);

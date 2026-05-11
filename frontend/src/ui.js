@@ -20,6 +20,18 @@ export const renderLayout = (contentTemplate) => {
     `;
 
     // Re-bind events for the newly rendered header
+    bindHeaderEvents();
+};
+
+export const updateHeader = () => {
+    const existingHeader = document.querySelector('header');
+    if (existingHeader) {
+        existingHeader.outerHTML = Header();
+        bindHeaderEvents();
+    }
+};
+
+const bindHeaderEvents = () => {
     const btnLogout = document.querySelector('#btn-logout');
     if (btnLogout) btnLogout.onclick = logout;
 

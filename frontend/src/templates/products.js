@@ -17,16 +17,17 @@ export const ProductListTemplate = (products = [], formatPrice, pagination) => `
     ` : `
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           ${products.map(p => `
-            <div class="group relative card-retro flex flex-col p-0 overflow-hidden hover:-translate-y-2 transition-all">
-              <div class="aspect-[4/5] overflow-hidden border-b-2 border-charcoal bg-slate-100">
+            <div class="group relative card-retro flex flex-col p-0 overflow-hidden hover:-translate-y-2 transition-all cursor-pointer">
+              <div onclick="window.navigate('products/${p.id}')" class="absolute inset-0 z-10"></div>
+              <div class="aspect-[4/5] overflow-hidden border-b-2 border-charcoal bg-slate-100 relative">
                 <img src="${p.imageUrl || 'https://via.placeholder.com/400x500?text=Paint+Shop'}" alt="${p.name}" class="w-full h-full object-cover transition-transform group-hover:scale-105 grayscale-[0.2] group-hover:grayscale-0">
               </div>
-              <div class="p-6 flex flex-col flex-1">
+              <div class="p-6 flex flex-col flex-1 relative z-20">
                 <div class="flex justify-between items-start mb-4">
                     <h3 class="font-black uppercase text-sm tracking-tight leading-none">${p.name}</h3>
                     <div class="w-6 h-6 rounded-full border border-charcoal shadow-retro-sm shrink-0" style="background-color: ${p.colorCode || '#ccc'}"></div>
                 </div>
-                <div class="flex justify-between items-end mt-auto">
+                <div class="flex justify-between items-end mt-auto relative z-20">
                   <span class="text-xl font-black">${formatPrice ? formatPrice(p.price) : p.price}</span>
                   <button onclick="window.addToCart(${p.id})" class="w-10 h-10 bg-charcoal text-white flex items-center justify-center hover:bg-terracotta transition-colors shadow-retro-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

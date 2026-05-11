@@ -7,14 +7,29 @@ import { FindProductQuery } from '../interfaces/product.interface'
 export class ProductService {
   private productRepo = new ProductRepository();
 
+  private async getProductCacheVersion() {
+    const version = await redis.get('product:version');
+    if (!version) {
+      await redis.set('product:version', 1);
+      return '1';
+    }
+    return version;
+  }
+
+  private async incrementProductVersion() {
+    await redis.incr('product:version');
+  }
+
   public createProduct = async (data: Prisma.ProductCreateInput) => {
-    await redis.del('product:color-lookup');
-    return await this.productRepo.createProduct(data);
+    const result = await this.productRepo.createProduct(data);
+    await this.incrementProductVersion();
+    return result;
   };
 
   public getProductById = async (id: number) => {
+    const version = await this.getProductCacheVersion();
     const product = await redisUtil.getOrSetCache<Product | null>(
-      `product:${id}`,
+      `product:${id}:v${version}`,
       60,
       async (): Promise<Product | null> => {
         return await this.productRepo.getProductById(id)
@@ -31,7 +46,8 @@ export class ProductService {
     const minPrice = params.minPrice ? Number(params.minPrice) : 0;
     const maxPrice = params.maxPrice ? Number(params.maxPrice) : 1e9;
 
-    const cacheKey = `product:p${page}:l${limit}:s=${search}:min=${minPrice}:max=${maxPrice}`;
+    const version = await this.getProductCacheVersion();
+    const cacheKey = `product:v${version}:p${page}:l${limit}:s=${search}:min=${minPrice}:max=${maxPrice}`;
 
     return await redisUtil.getOrSetCache(
       cacheKey,
@@ -63,15 +79,13 @@ export class ProductService {
     if (!existing) throw new Error('PRODUCT_NOT_FOUND');
 
     const updatedProduct = await this.productRepo.updateProduct(id, data);
-
-    await redis.del(`product:${id}`);
-    await redis.del('product:color-lookup');
+    await this.incrementProductVersion();
 
     return updatedProduct;
   }
 
   public deleteProduct = async (id: number) => {
     await this.productRepo.softDelete(id);
-    await redis.del(`product:${id}`);
+    await this.incrementProductVersion();
   }
 }

@@ -3,12 +3,26 @@ import { orderApi } from '../../api.js';
 import { Pagination } from '../../components/Pagination.js';
 import { showToast } from '../../ui.js';
 
+let orderSearch = '';
+
 export const renderAdminOrders = async (page = 1) => {
     const list = document.querySelector('#admin-order-list');
     const paginationContainer = document.querySelector('#admin-order-pagination');
+    const searchBtn = document.querySelector('#btn-admin-order-search');
+    const searchInput = document.querySelector('#admin-order-search');
+
     if (!list) return;
+
+    if (searchBtn && !searchBtn.onclick) {
+        searchBtn.onclick = () => {
+            orderSearch = searchInput.value;
+            renderAdminOrders(1);
+        };
+        searchInput.onkeypress = (e) => { if (e.key === 'Enter') searchBtn.click(); };
+    }
+
     try {
-        const { data } = await orderApi.getAll({ page, limit: 10 });
+        const { data } = await orderApi.getAll({ page, limit: 10, search: orderSearch });
         const orders = data.data;
         const countEl = document.querySelector('#admin-order-count');
         if (countEl) countEl.innerText = data.pagination.total;

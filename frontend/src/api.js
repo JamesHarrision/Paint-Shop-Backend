@@ -106,6 +106,8 @@ export const userApi = {
   changePassword: (data) => api.patch('/users/me/change-password', data),
   // Admin only
   getAll: (params) => api.get('/users', { params }),
+  create: (data) => api.post('/users', data),
+  update: (id, data) => api.put(`/users/${id}`, data),
   delete: (id) => api.delete(`/users/${id}`),
 };
 
@@ -122,11 +124,22 @@ export const productApi = {
 };
 
 export const collectionApi = {
+  getPublicAll: () => api.get('/collections/public'),
+  getAdminAll: () => api.get('/collections/admin'),
   getAll: () => api.get('/collections'),
   getById: (id) => api.get(`/collections/${id}`),
-  create: (data) => api.post('/collections', data),
-  update: (id, data) => api.put(`/collections/${id}`, data),
+  create: (data) => api.post('/collections', data, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  update: (id, data) => api.put(`/collections/${id}`, data, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
   delete: (id) => api.delete(`/collections/${id}`),
+};
+
+export const itemCollectionApi = {
+  add: (collectionId, productId) => api.post(`/collections/${collectionId}/items`, { productId }),
+  remove: (collectionId, productId) => api.delete(`/collections/${collectionId}/items/${productId}`)
 };
 
 export const aiApi = {

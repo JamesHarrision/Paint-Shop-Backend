@@ -118,10 +118,10 @@ export class OrderService {
     return await this.orderRepo.findById(orderId);
   }
 
-  public getAllOrders = async (page: number = 1, limit: number = 10) => {
+  public getAllOrders = async (page: number = 1, limit: number = 10, search?: string) => {
     const skip = (page - 1) * limit;
-    const orders = await this.orderRepo.findAll(skip, limit);
-    const total = await this.orderRepo.countAll();
+    const orders = await this.orderRepo.findAll(skip, limit, search);
+    const total = await this.orderRepo.countAll(search);
 
     return {
       data: orders,

@@ -13,6 +13,8 @@ import { ProfileTemplate } from './src/templates/profile.js';
 import { AdminTemplate } from './src/templates/admin/layout.js';
 import { ProductsPageTemplate } from './src/templates/products.js';
 import { CartTemplate, CheckoutTemplate } from './src/templates/cart.js';
+import { CollectionsPageTemplate } from './src/templates/collections.js';
+import { Error404Template, Error403Template } from './src/templates/error.js';
 
 // Handlers
 import { initLoginHandler, initRegisterHandler, initForgotPasswordHandler, initResetPasswordHandler } from './src/handlers/auth.handler.js';
@@ -21,29 +23,41 @@ import { renderCartDetails, initCheckoutHandler, formatPrice } from './src/handl
 import { initProfileHandler } from './src/handlers/profile.handler.js';
 import { initAdminHandler } from './src/handlers/admin/index.js';
 import { renderProductsPage } from './src/handlers/products.handler.js';
+import { initProductDetailHandler } from './src/handlers/product_detail.handler.js';
 import { renderOrdersPage } from './src/handlers/order.handler.js';
+import { initCollectionsHandler } from './src/handlers/collections.handler.js';
+import { initCollectionDetailHandler } from './src/handlers/collection_detail.handler.js';
 
 const app = document.querySelector('#app');
 
 const routeConfig = {
     home: { template: HomeTemplate, init: () => renderProductsPage(document.querySelector('#products-container'), { limit: 4 }), layout: true },
-    products: { template: ProductsPageTemplate, init: () => renderProductsPage(document.querySelector('#products-container')), layout: true },
+    products: { template: ProductsPageTemplate, init: (params) => renderProductsPage(document.querySelector('#products-container'), params), layout: true },
+    product_detail: { template: () => '<div id="product-detail-container"></div>', init: (params) => initProductDetailHandler(params.id), layout: true },
     ai: { template: AITemplate, init: initAIHandlers, layout: true },
     login: { template: LoginTemplate, init: initLoginHandler, layout: true },
     register: { template: RegisterTemplate, init: initRegisterHandler, layout: true },
     'forgot-password': { template: ForgotPasswordTemplate, init: initForgotPasswordHandler, layout: true },
     'reset-password': { template: ResetPasswordTemplate, init: initResetPasswordHandler, layout: true },
-    profile: { template: ProfileTemplate, init: initProfileHandler, layout: true },
+    profile: { template: () => ProfileTemplate(state.user), init: initProfileHandler, layout: true },
     cart: { template: CartTemplate, init: renderCartDetails, layout: true },
     checkout: { template: (order) => CheckoutTemplate(order, formatPrice), init: initCheckoutHandler, layout: true },
     orders: { template: () => '<div id="orders-container"></div>', init: () => renderOrdersPage(app.querySelector('#orders-container')), layout: true },
-    admin: { template: AdminTemplate, init: () => initAdminHandler(state.user?.id), layout: false }
+    collections: { template: CollectionsPageTemplate, init: initCollectionsHandler, layout: true },
+    collection_detail: { template: () => '<div id="collection-detail-container"></div>', init: (params) => initCollectionDetailHandler(params.id), layout: true },
+    admin: { template: AdminTemplate, init: () => { navigate('admin/users'); }, layout: false },
+    'admin/users': { template: AdminTemplate, init: () => initAdminHandler('users'), layout: false },
+    'admin/products': { template: AdminTemplate, init: () => initAdminHandler('products'), layout: false },
+    'admin/collections': { template: AdminTemplate, init: () => initAdminHandler('collections'), layout: false },
+    'admin/orders': { template: AdminTemplate, init: () => initAdminHandler('orders'), layout: false },
+    '404': { template: Error404Template, init: null, layout: true },
+    '403': { template: Error403Template, init: null, layout: true }
 };
 
 const handleRouteMatch = async (routeName, params = null) => {
     const config = routeConfig[routeName];
     if (!config) {
-        navigate('home');
+        navigate('404');
         return;
     }
 
@@ -81,25 +95,10 @@ const initApp = async () => {
 
 // Lắng nghe sự thay đổi state để cập nhật UI (ví dụ: giỏ hàng, avatar)
 window.addEventListener('state-change', (e) => {
-    const hash = window.location.hash || '#/';
-    const currentPath = hash.split('?')[0];
-    
-    // Tìm routeName hiện tại
-    import('./src/router.js').then(({ routes }) => {
-        let currentRouteName = 'home';
-        for (const [name, config] of Object.entries(routes)) {
-            if (config.path === currentPath) {
-                currentRouteName = name;
-                break;
-            }
-        }
-        
-        const config = routeConfig[currentRouteName];
-        if (config && config.layout) {
-            // Re-render layout để cập nhật Header/Footer mà không làm mất trạng thái của main-content nếu được (tương lai)
-            // Hiện tại renderLayout là cách nhanh nhất để đồng bộ Header
-            renderLayout(document.querySelector('#main-content')?.innerHTML || '');
-        }
+    // Chỉ cập nhật phần Header thay vì render lại toàn bộ layout
+    // tránh làm mất các sự kiện (events) đã gắn vào main-content.
+    import('./src/ui.js').then(({ updateHeader }) => {
+        updateHeader();
     });
 });
 

@@ -38,7 +38,7 @@ export const ProfileTemplate = (user) => {
                     </div>
                     <div class="pb-4">
                         <p class="text-[10px] uppercase font-black text-slate-400 mb-1">Ngày gia nhập</p>
-                        <p class="text-lg font-bold text-slate-600">${new Date(user.createdAt).toLocaleDateString('vi-VN')}</p>
+                        <p class="text-lg font-bold text-slate-600">${user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN') : 'N/A'}</p>
                     </div>
                 </div>
             </div>

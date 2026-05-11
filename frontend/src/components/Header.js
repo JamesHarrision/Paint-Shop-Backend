@@ -13,6 +13,9 @@ export const Header = () => {
           </h1>
           <nav class="hidden md:flex gap-8 uppercase text-[10px] font-black tracking-widest opacity-60">
             <button onclick="window.navigate('home')" class="hover:text-terracotta hover:opacity-100 transition-all">Trang chủ</button>
+            <button onclick="window.navigate('products')" class="hover:text-terracotta hover:opacity-100 transition-all">Sản phẩm</button>
+            <button onclick="window.navigate('collections')" class="hover:text-terracotta hover:opacity-100 transition-all">Bộ sưu tập</button>
+            <button onclick="window.navigate('orders')" class="hover:text-terracotta hover:opacity-100 transition-all">Đơn hàng</button>
             <button onclick="window.navigate('ai')" class="hover:text-terracotta hover:opacity-100 transition-all text-teal">AI Color Lab</button>
           </nav>
         </div>

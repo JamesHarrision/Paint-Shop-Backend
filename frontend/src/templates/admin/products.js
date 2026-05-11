@@ -1,12 +1,18 @@
 // src/templates/admin/products.js
 
 export const AdminProductsTemplate = () => `
-    <div class="flex justify-between items-end mb-12">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
         <div>
             <h2 class="text-5xl font-black uppercase leading-none italic text-charcoal">Quản lý <br> <span class="not-italic text-terracotta">Sản phẩm</span></h2>
             <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mt-4 italic">Tồn kho hiện tại: <span id="admin-product-count" class="text-charcoal border-b border-charcoal">...</span> mẫu sơn</p>
         </div>
-        <button onclick="window.showAddProductModal()" class="px-8 py-3 bg-charcoal text-cream font-black uppercase text-[10px] tracking-widest hover:bg-terracotta transition-all shadow-retro border-2 border-charcoal">Thêm sản phẩm mới</button>
+        <div class="flex flex-col gap-4">
+            <div class="flex items-center gap-2">
+                <input type="text" id="admin-product-search" placeholder="Tìm sản phẩm..." class="px-4 py-3 border-2 border-charcoal outline-none font-bold text-sm w-64">
+                <button id="btn-admin-product-search" class="px-6 py-3 bg-charcoal text-cream font-black uppercase text-[10px] tracking-widest hover:bg-terracotta transition-all shadow-retro">Tìm</button>
+            </div>
+            <button onclick="window.showAddProductModal()" class="px-8 py-3 bg-charcoal text-cream font-black uppercase text-[10px] tracking-widest hover:bg-terracotta transition-all shadow-retro border-2 border-charcoal">Thêm sản phẩm mới</button>
+        </div>
     </div>
 
     <div class="card-retro !p-0 overflow-hidden bg-white shadow-retro border-4 border-charcoal">

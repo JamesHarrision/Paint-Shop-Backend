@@ -1,10 +1,14 @@
 // src/templates/admin/orders.js
 
 export const AdminOrdersTemplate = () => `
-    <div class="flex justify-between items-end mb-12">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
         <div>
             <h2 class="text-5xl font-black uppercase leading-none italic text-charcoal">Quản lý <br> <span class="not-italic text-terracotta">Đơn hàng</span></h2>
             <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mt-4 italic">Tổng số đơn hàng: <span id="admin-order-count" class="text-charcoal border-b border-charcoal">...</span> vận đơn</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <input type="text" id="admin-order-search" placeholder="Mã đơn/Tên khách..." class="px-4 py-3 border-2 border-charcoal outline-none font-bold text-sm w-64 shadow-retro-sm">
+            <button id="btn-admin-order-search" class="px-6 py-3 bg-charcoal text-cream font-black uppercase text-[10px] tracking-widest hover:bg-terracotta transition-all shadow-retro">Tìm</button>
         </div>
     </div>
 

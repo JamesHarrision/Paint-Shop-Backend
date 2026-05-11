@@ -126,10 +126,10 @@ export const logout = async (accessToken: string, refreshToken: string) => {
   await redisUtil.addToBlackList(accessToken, 900);
 }
 
-export const getAllUsers = async (page: number = 1, limit: number = 10) => {
+export const getAllUsers = async (page: number = 1, limit: number = 10, search?: string) => {
   const skip = (page - 1) * limit;
-  const users = await userRepo.findAll(skip, limit);
-  const total = await userRepo.countAll();
+  const users = await userRepo.findAll(skip, limit, search);
+  const total = await userRepo.countAll(search);
 
   return {
     data: users,
@@ -163,4 +163,23 @@ export const changePassword = async (id: number, currentPass: string, newPass: s
 
   const hashedNewPassword = await hashPassword(newPass);
   await userRepo.update(id, { password: hashedNewPassword });
+}
+
+export const createUserByAdmin = async (data: any) => {
+  const existingUser = await userRepo.getUserByEmail(data.email);
+  if (existingUser) throw new Error("EMAIL_EXISTS");
+
+  const hashedPassword = await hashPassword(data.password || "123456");
+  const newUser = await userRepo.createUser({
+    ...data,
+    password: hashedPassword
+  });
+  return newUser;
+}
+
+export const updateUserByAdmin = async (id: number, data: any) => {
+  if (data.password) {
+    data.password = await hashPassword(data.password);
+  }
+  return await userRepo.update(id, data);
 }

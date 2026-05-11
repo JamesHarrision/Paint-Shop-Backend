@@ -25,7 +25,7 @@ export const initProfileHandler = () => {
                 state.setUser({ ...state.user, fullName });
                 showToast('✅ Cập nhật thông tin thành công!');
                 // Render lại trang profile để thấy tên mới
-                navigate('profile');
+                window.dispatchEvent(new Event('hashchange'));
             } catch (err) { 
                 showToast('❌ Thất bại: ' + (err.response?.data?.message || err.message), 'error'); 
             }
@@ -42,7 +42,7 @@ export const initProfileHandler = () => {
                 await userApi.changePassword({ currentPassword, newPassword });
                 showToast('🔐 Đã cập nhật mã khóa mới!');
                 togglePass(false);
-                navigate('profile');
+                window.dispatchEvent(new Event('hashchange'));
             } catch (err) { 
                 showToast('❌ Lỗi: ' + (err.response?.data?.message || err.message), 'error'); 
             }

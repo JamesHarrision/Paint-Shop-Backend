@@ -3,12 +3,26 @@ import { productApi } from '../../api.js';
 import { Pagination } from '../../components/Pagination.js';
 import { showToast } from '../../ui.js';
 
+let productSearch = '';
+
 export const renderAdminProducts = async (page = 1) => {
     const list = document.querySelector('#admin-product-list');
     const paginationContainer = document.querySelector('#admin-product-pagination');
+    const searchBtn = document.querySelector('#btn-admin-product-search');
+    const searchInput = document.querySelector('#admin-product-search');
+
     if (!list) return;
+
+    if (searchBtn && !searchBtn.onclick) {
+        searchBtn.onclick = () => {
+            productSearch = searchInput.value;
+            renderAdminProducts(1);
+        };
+        searchInput.onkeypress = (e) => { if (e.key === 'Enter') searchBtn.click(); };
+    }
+
     try {
-        const { data } = await productApi.getAll({ page, limit: 10 });
+        const { data } = await productApi.getAll({ page, limit: 10, search: productSearch });
         const products = data.data;
         const countEl = document.querySelector('#admin-product-count');
         if (countEl) countEl.innerText = data.pagination.total;
@@ -110,10 +124,21 @@ window.editProduct = async (id) => {
 };
 
 window.deleteProduct = async (id) => {
-    if (!confirm('Xác nhận xóa sản phẩm này?')) return;
+    console.log('🗑️ Attempting to delete product with ID:', id);
+    if (!id) {
+        showToast('❌ Lỗi: Không tìm thấy ID sản phẩm', 'error');
+        return;
+    }
+    if (!confirm(`Xác nhận xóa sản phẩm #${id}?`)) return;
     try {
+        window.toggleLoader(true);
         await productApi.delete(id);
-        showToast('🗑️ Đã xóa sản phẩm.');
+        showToast('🗑️ Đã xóa sản phẩm thành công.');
         renderAdminProducts();
-    } catch (err) { showToast('❌ Lỗi: ' + err.message, 'error'); }
+    } catch (err) { 
+        console.error('Delete error:', err);
+        showToast('❌ Lỗi: ' + (err.response?.data?.message || err.message), 'error'); 
+    } finally {
+        window.toggleLoader(false);
+    }
 };

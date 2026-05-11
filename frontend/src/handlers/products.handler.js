@@ -14,8 +14,12 @@ let currentFilters = {
 export const renderProductsPage = async (container, options = {}) => {
     if (!container) return;
 
-    // Override default filters if options provided
-    if (options.limit) currentFilters.limit = options.limit;
+    // Override default filters if options provided from URL query
+    if (options.limit) currentFilters.limit = Number(options.limit);
+    if (options.page) currentFilters.page = Number(options.page);
+    if (options.search !== undefined) currentFilters.search = options.search;
+    if (options.minPrice !== undefined) currentFilters.minPrice = options.minPrice ? Number(options.minPrice) : undefined;
+    if (options.maxPrice !== undefined) currentFilters.maxPrice = options.maxPrice ? Number(options.maxPrice) : undefined;
     
     // Show skeleton/loader in container
     container.innerHTML = `
@@ -32,12 +36,12 @@ export const renderProductsPage = async (container, options = {}) => {
         // Bind pagination function globally for the template
         window.changeUserProductPage = (newPage) => {
             currentFilters.page = newPage;
-            renderProductsPage(container, options);
+            applyFiltersToUrl();
             window.scrollTo({ top: container.offsetTop - 100, behavior: 'smooth' });
         };
 
         // Bind filter UI if present
-        initFilterHandlers(container, options);
+        initFilterHandlers();
 
     } catch (err) {
         console.error('Render products error:', err);
@@ -50,7 +54,18 @@ export const renderProductsPage = async (container, options = {}) => {
     }
 };
 
-const initFilterHandlers = (container, options) => {
+const applyFiltersToUrl = () => {
+    const params = new URLSearchParams();
+    if (currentFilters.page > 1) params.set('page', currentFilters.page);
+    if (currentFilters.search) params.set('search', currentFilters.search);
+    if (currentFilters.minPrice) params.set('minPrice', currentFilters.minPrice);
+    if (currentFilters.maxPrice) params.set('maxPrice', currentFilters.maxPrice);
+    
+    const queryString = params.toString();
+    window.navigate(queryString ? `products?${queryString}` : 'products');
+};
+
+const initFilterHandlers = () => {
     const btnApply = document.querySelector('#btn-apply-filter');
     const inputSearch = document.querySelector('#filter-search');
     const inputMin = document.querySelector('#filter-min-price');
@@ -68,7 +83,7 @@ const initFilterHandlers = (container, options) => {
         currentFilters.minPrice = inputMin?.value ? Number(inputMin.value) : undefined;
         currentFilters.maxPrice = inputMax?.value ? Number(inputMax.value) : undefined;
         currentFilters.page = 1; // Reset to page 1 on new filter
-        renderProductsPage(container, options);
+        applyFiltersToUrl();
     };
 
     // Allow Enter key to apply filter
