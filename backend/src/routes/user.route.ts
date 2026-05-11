@@ -13,7 +13,9 @@ router.patch('/me/change-password', authenticate, userController.changePassword)
 
 // Route cho Admin quản lý (Cần quyền Admin)
 router.get('/', authenticate, requireAdmin, userController.getAllUsers);
+router.post('/', authenticate, requireAdmin, userController.createUser);
 router.get('/:id', authenticate, requireAdmin, userController.getUserDetail);
+router.put('/:id', authenticate, requireAdmin, userController.updateUser);
 router.delete('/:id', authenticate, requireAdmin, userController.deleteUser);
 
 export default router;

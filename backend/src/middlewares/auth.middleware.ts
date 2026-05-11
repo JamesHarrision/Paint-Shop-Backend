@@ -26,6 +26,7 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
   try {
     // 3. Xác thực token
     const decoded = verifyAccessToken(token);
+    console.log(`[Auth] Decoded Token: userId=${decoded.userId}, role=${decoded.role}`);
 
     // 4. Gán thông tin user vào request để các hàm sau dùng
     req.user = decoded;
@@ -33,7 +34,8 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     // 5. Cho phép đi tiếp
     next();
   }
-  catch (error) {
-    res.status(403).json({ message: 'Invalid or expired token' });
+  catch (error: any) {
+    console.error(`[Auth] Token verification failed: ${error.message}`);
+    res.status(401).json({ message: 'Invalid or expired token' });
   }
-} 
+}

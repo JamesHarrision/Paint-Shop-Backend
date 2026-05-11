@@ -14,11 +14,13 @@ export const requireAdmin = (
   }
 
   // So sánh với enum Role.ADMIN thay vì string
+  console.log(`[RoleCheck] Checking if user ${req.user.userId} has role ADMIN. Current role: ${req.user.role}`);
   if (req.user.role !== Role.ADMIN) {
+    console.warn(`[RoleCheck] Access denied for user ${req.user.userId}. Role ${req.user.role} is not ADMIN`);
     res.status(403).json({ message: 'Access denied. Admin only.' });
     return; 
   }
 
-  console.log("=> OK: Là Admin, cho qua next()");
+  console.log(`=> OK: User ${req.user.userId} is Admin, proceeding.`);
   next(); 
 };

@@ -35,5 +35,9 @@ app.get('/', (req, res) => {
   res.status(200).json({ message: 'Welcome to Paint Shop API 🚀' });
 });
 
+app.post('/api/users_test', (req, res) => {
+  res.status(200).json({ message: 'POST test ok' });
+});
+
 
 export default app

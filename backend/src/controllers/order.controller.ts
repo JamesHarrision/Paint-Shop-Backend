@@ -94,7 +94,8 @@ export class OrderController {
     try {
       const page = Number(req.query.page) || 1;
       const limit = Number(req.query.limit) || 10;
-      const result = await orderService.getAllOrders(page, limit);
+      const search = req.query.search as string;
+      const result = await orderService.getAllOrders(page, limit, search);
 
       return res.status(200).json({
         message: "Lấy danh sách tất cả đơn hàng thành công",

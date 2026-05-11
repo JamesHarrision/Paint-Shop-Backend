@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "../config/prisma"
 import { CreateUserDTO } from "../interfaces/user.interface"
 
@@ -55,8 +56,17 @@ export class UserRepository {
     });
   }
 
-  public async findAll(skip?: number, take?: number) {
+  public async findAll(skip?: number, take?: number, search?: string) {
+    const where: Prisma.UserWhereInput = {};
+    if (search) {
+      where.OR = [
+        { email: { contains: search } },
+        { fullName: { contains: search } }
+      ];
+    }
+
     return await prisma.user.findMany({
+      where,
       skip,
       take,
       select: {
@@ -72,7 +82,14 @@ export class UserRepository {
     });
   }
 
-  public async countAll() {
-    return await prisma.user.count();
+  public async countAll(search?: string) {
+    const where: Prisma.UserWhereInput = {};
+    if (search) {
+      where.OR = [
+        { email: { contains: search } },
+        { fullName: { contains: search } }
+      ];
+    }
+    return await prisma.user.count({ where });
   }
 }

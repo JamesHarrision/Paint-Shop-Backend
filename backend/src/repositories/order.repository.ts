@@ -77,8 +77,22 @@ export class OrderRepository {
     });
   }
 
-  public async findAll(skip?: number, take?: number) {
+  public async findAll(skip?: number, take?: number, search?: string) {
+    const where: Prisma.OrderWhereInput = {};
+    if (search) {
+      const idSearch = Number(search);
+      const orConditions: Prisma.OrderWhereInput[] = [
+        { user: { fullName: { contains: search } } },
+        { user: { email: { contains: search } } }
+      ];
+      if (!isNaN(idSearch)) {
+        orConditions.push({ id: idSearch });
+      }
+      where.OR = orConditions;
+    }
+
     return await prisma.order.findMany({
+      where,
       skip,
       take,
       include: {
@@ -104,7 +118,19 @@ export class OrderRepository {
     });
   }
 
-  public async countAll() {
-    return await prisma.order.count();
+  public async countAll(search?: string) {
+    const where: Prisma.OrderWhereInput = {};
+    if (search) {
+      const idSearch = Number(search);
+      const orConditions: Prisma.OrderWhereInput[] = [
+        { user: { fullName: { contains: search } } },
+        { user: { email: { contains: search } } }
+      ];
+      if (!isNaN(idSearch)) {
+        orConditions.push({ id: idSearch });
+      }
+      where.OR = orConditions;
+    }
+    return await prisma.order.count({ where });
   }
 }

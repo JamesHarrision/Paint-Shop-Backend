@@ -69,7 +69,8 @@ export class UserController {
     try {
       const page = Number(req.query.page) || 1;
       const limit = Number(req.query.limit) || 10;
-      const result = await userService.getAllUsers(page, limit);
+      const search = req.query.search as string;
+      const result = await userService.getAllUsers(page, limit, search);
       res.json({
         message: "Lấy danh sách người dùng thành công",
         ...result
@@ -119,6 +120,36 @@ export class UserController {
     } catch (error: any) {
       console.error("Delete user error:", error);
       res.status(500).json({ message: "Lỗi khi xóa người dùng" });
+    }
+  }
+
+  public createUser = async (req: Request, res: Response) => {
+    try {
+      const user = await userService.createUserByAdmin(req.body);
+      res.status(201).json({
+        message: "Tạo người dùng thành công",
+        data: user
+      });
+    } catch (error: any) {
+      console.error("Create user error:", error);
+      if (error.message === 'EMAIL_EXISTS') {
+        return res.status(400).json({ message: "Email đã tồn tại trong hệ thống" });
+      }
+      res.status(500).json({ message: "Lỗi khi tạo người dùng" });
+    }
+  }
+
+  public updateUser = async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const user = await userService.updateUserByAdmin(Number(id), req.body);
+      res.json({
+        message: "Cập nhật người dùng thành công",
+        data: user
+      });
+    } catch (error: any) {
+      console.error("Update user error:", error);
+      res.status(500).json({ message: "Lỗi khi cập nhật người dùng" });
     }
   }
 }
