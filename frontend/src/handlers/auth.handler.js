@@ -5,29 +5,29 @@ import { navigate } from '../router.js';
 import { showToast } from '../ui.js';
 
 export const initLoginHandler = () => {
-  const form = document.querySelector('#login-form');
-  if(!form) return;
-  form.onsubmit = async (e) => {
-    e.preventDefault();
-    const email = document.querySelector('#login-email').value;
-    const password = document.querySelector('#login-password').value;
-    try {
-      window.toggleLoader(true);
-      const { data } = await authApi.login({ email, password });
-      state.setUser(data.data.user);
-      showToast('✅ Kích hoạt phiên bản thành công!');
-      navigate('home');
-    } catch (err) {
-      showToast('❌ Lỗi truy cập: ' + (err.response?.data?.message || err.message), 'error');
-    } finally {
-      window.toggleLoader(false);
-    }
-  };
+    const form = document.querySelector('#login-form');
+    if (!form) return;
+    form.onsubmit = async (e) => {
+        e.preventDefault();
+        const email = document.querySelector('#login-email').value;
+        const password = document.querySelector('#login-password').value;
+        try {
+            window.toggleLoader(true);
+            const { data } = await authApi.login({ email, password });
+            state.setUser(data.data.user);
+            showToast('✅ Đăng nhập thành công!');
+            navigate('home');
+        } catch (err) {
+            showToast('❌ Lỗi truy cập: ' + (err.response?.data?.message || err.message), 'error');
+        } finally {
+            window.toggleLoader(false);
+        }
+    };
 };
 
 export const initRegisterHandler = () => {
     const form = document.querySelector('#register-form');
-    if(!form) return;
+    if (!form) return;
     form.onsubmit = async (e) => {
         e.preventDefault();
         const fullName = document.querySelector('#reg-name').value;
@@ -48,7 +48,7 @@ export const initRegisterHandler = () => {
 
 export const initForgotPasswordHandler = () => {
     const form = document.querySelector('#forgot-form');
-    if(!form) return;
+    if (!form) return;
     form.onsubmit = async (e) => {
         e.preventDefault();
         const email = document.querySelector('#forgot-email').value;
@@ -67,11 +67,11 @@ export const initForgotPasswordHandler = () => {
 
 export const initResetPasswordHandler = () => {
     const form = document.querySelector('#reset-form');
-    if(!form) return;
+    if (!form) return;
 
     form.onsubmit = async (e) => {
         e.preventDefault();
-        
+
         // Lấy token từ URL hash (#/reset-password?token=...)
         const hash = window.location.hash;
         const queryString = hash.split('?')[1];
@@ -105,8 +105,8 @@ export const initResetPasswordHandler = () => {
 };
 
 export const logout = () => {
-  localStorage.removeItem('accessToken');
-  localStorage.removeItem('refreshToken');
-  state.setUser(null);
-  navigate('home');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    state.setUser(null);
+    navigate('home');
 };

@@ -43,13 +43,12 @@ export const renderAdminOrders = async (page = 1) => {
                     </select>
                 </td>
                 <td class="p-6 text-center">
-                    <select onchange="window.updateOrderStatus(${o.id}, this.value)" class="border-2 border-charcoal text-[10px] font-black uppercase px-2 py-2 outline-none cursor-pointer focus:bg-cream transition-colors shadow-retro-sm ${
-                        o.status === 'PENDING' ? 'bg-yellow-200' :
-                        o.status === 'PROCESSING' ? 'bg-blue-200' :
-                        o.status === 'SHIPPED' ? 'bg-orange-200' :
+                    <select onchange="window.updateOrderStatus(${o.id}, this.value)" class="border-2 border-charcoal text-[10px] font-black uppercase px-2 py-2 outline-none cursor-pointer focus:bg-cream transition-colors shadow-retro-sm ${o.status === 'PENDING' ? 'bg-yellow-200' :
+                o.status === 'PROCESSING' ? 'bg-blue-200' :
+                    o.status === 'SHIPPED' ? 'bg-orange-200' :
                         o.status === 'DELIVERED' ? 'bg-teal text-white' :
-                        'bg-red-200 text-charcoal'
-                    }">
+                            'bg-red-200 text-charcoal'
+            }">
                         <option value="PENDING" ${o.status === 'PENDING' ? 'selected' : ''}>Chờ xử lý</option>
                         <option value="PROCESSING" ${o.status === 'PROCESSING' ? 'selected' : ''}>Đang pha màu</option>
                         <option value="SHIPPED" ${o.status === 'SHIPPED' ? 'selected' : ''}>Đang giao</option>
