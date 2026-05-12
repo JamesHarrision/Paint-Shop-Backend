@@ -1,35 +1,35 @@
 // src/templates/admin/orders.js
 
 export const AdminOrdersTemplate = () => `
-    <div class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-16 gap-12">
         <div>
-            <h2 class="text-5xl font-black uppercase leading-none italic text-charcoal">Quản lý <span class="not-italic text-terracotta">Đơn hàng</span></h2>
-            <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mt-4 italic">Tổng số đơn hàng: <span id="admin-order-count" class="text-charcoal border-b border-charcoal">...</span> vận đơn</p>
+            <h2 class="text-6xl font-black uppercase tracking-tighter">Quản trị <span class="bg-[#FF4D4D] text-white px-2 border-2 border-black">Đơn hàng</span></h2>
+            <p class="text-sm font-black uppercase tracking-widest text-gray-500 mt-6 italic border-l-4 border-black pl-4">Vận hành: <span id="admin-order-count" class="text-black bg-[#C5FF2E] px-2">...</span> kiện hàng</p>
         </div>
-        <div class="flex items-center gap-2">
-            <input type="text" id="admin-order-search" placeholder="Mã đơn/Tên khách..." class="px-4 py-3 border-2 border-charcoal outline-none font-bold text-sm w-64 shadow-retro-sm">
-            <button id="btn-admin-order-search" class="px-6 py-3 bg-charcoal text-cream font-black uppercase text-[10px] tracking-widest hover:bg-terracotta transition-all shadow-retro">Tìm</button>
+        <div class="flex items-center gap-0 w-full md:w-auto">
+            <input type="text" id="admin-order-search" placeholder="Mã đơn / Tên khách..." class="input-brutal !w-64">
+            <button id="btn-admin-order-search" class="btn-brutal bg-black text-white px-8 !shadow-none">TÌM</button>
         </div>
     </div>
 
-    <div class="card-retro !p-0 overflow-hidden bg-white shadow-retro border-4 border-charcoal">
+    <div class="card-brutal !p-0 overflow-hidden bg-white">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr class="bg-charcoal text-cream uppercase text-[10px] font-black tracking-widest">
-                        <th class="p-6 border-r border-cream/20">Mã đơn</th>
-                        <th class="p-6 border-r border-cream/20">Khách hàng</th>
-                        <th class="p-6 border-r border-cream/20">Giá trị</th>
-                        <th class="p-6 border-r border-cream/20">Thanh toán</th>
-                        <th class="p-6 border-r border-cream/20">Trạng thái</th>
-                        <th class="p-6 text-center">Thao tác</th>
+                    <tr class="bg-black text-white uppercase text-[12px] font-black tracking-widest">
+                        <th class="p-6 border-r-2 border-white/20">Mã vận đơn</th>
+                        <th class="p-6 border-r-2 border-white/20">Khách hàng</th>
+                        <th class="p-6 border-r-2 border-white/20">Tổng giá trị</th>
+                        <th class="p-6 border-r-2 border-white/20">Thanh toán</th>
+                        <th class="p-6 border-r-2 border-white/20 text-center">Trạng thái</th>
+                        <th class="p-6 text-center">Xử lý</th>
                     </tr>
                 </thead>
-                <tbody id="admin-order-list">
+                <tbody id="admin-order-list" class="font-bold text-sm">
                     <!-- Rendered via JS -->
                 </tbody>
             </table>
         </div>
     </div>
-    <div id="admin-order-pagination"></div>
+    <div id="admin-order-pagination" class="mt-12"></div>
 `;
