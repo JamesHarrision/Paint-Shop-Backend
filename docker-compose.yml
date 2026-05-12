@@ -6,9 +6,8 @@ services:
     image: mysql:8.0
     container_name: paint_shop_mysql
     restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    env_file:
+      - .env
     ports:
       - '${MYSQL_PORT}:3306'
     volumes:
@@ -54,25 +53,15 @@ services:
     volumes:
       - ./backend/uploads:/app/uploads
 
+    env_file:
+      - .env
     environment:
-      - MAIL_USER=${MAIL_USER}
-      - MAIL_PASS=${MAIL_PASS}
       - NODE_ENV=production
       - PORT=3000
-      # Service Discovery: Gọi 'db' thay vì localhost
+      # Override networking for Docker Internal Communication
       - DATABASE_URL=mysql://root:${MYSQL_ROOT_PASSWORD}@db:3306/${MYSQL_DATABASE}
-      # Service Discovery: Gọi 'redis' thay vì localhost
-      - REDIS_URL=${REDIS_URL}
       - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      # Service Discovery: Gọi 'python_service' thay vì localhost
       - AI_SERVICE_URL=http://python_service:8000
-      - JWT_ACCESS_TOKEN_SECRET=${JWT_ACCESS_TOKEN_SECRET}
-      - JWT_REFRESH_TOKEN_SECRET=${JWT_REFRESH_TOKEN_SECRET}
-      - CLIENT_URL=${CLIENT_URL}
-      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
-      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
-      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
 
     depends_on:
       db:

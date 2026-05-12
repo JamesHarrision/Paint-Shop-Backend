@@ -15,7 +15,7 @@ export const Header = () => {
             <button onclick="window.navigate('home')" class="hover:underline decoration-4 underline-offset-4 decoration-[#E2725B]">Trang chủ</button>
             <button onclick="window.navigate('products')" class="hover:underline decoration-4 underline-offset-4 decoration-[#20B2AA]">Sản phẩm</button>
             <button onclick="window.navigate('collections')" class="hover:underline decoration-4 underline-offset-4 decoration-[#E2725B]">Bộ sưu tập</button>
-            <button onclick="window.navigate('ai')" class="px-3 py-1 bg-[#20B2AA] text-white border-2 border-black shadow-[2px_2px_0px_#000] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_#000] transition-all">AI Lab</button>
+            <button onclick="window.navigate('ai')" class="px-3 py-1 bg-[#20B2AA] text-white border-2 border-black shadow-[2px_2px_0px_#000] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_#000] transition-all">Python Lab</button>
           </nav>
         </div>
 
