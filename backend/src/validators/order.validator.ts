@@ -12,9 +12,9 @@ export const checkoutSchema = z.object({
 
 export const updateOrderStatusSchema = z.object({
   body: z.object({
-    status: z.nativeEnum(OrderStatus, {
+    status: z.enum(['PENDING', 'PROCESSING', 'SHIPPING', 'SHIPPED', 'DELIVERED', 'CANCELLED'], {
       errorMap: () => ({ message: "Trạng thái đơn hàng không hợp lệ" })
-    })
+    }).transform(val => (val === 'SHIPPING' ? 'SHIPPED' : val) as OrderStatus)
   })
 });
 

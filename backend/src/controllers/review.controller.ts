@@ -37,6 +37,8 @@ export class ReviewController {
         res.status(400).json({ message: 'Bạn đã đánh giá sản phẩm này rồi' });
       } else if (error.message === 'PRODUCT_NOT_FOUND') {
         res.status(404).json({ message: 'Không tìm thấy sản phẩm' });
+      } else if (error.message === 'NOT_PURCHASED') {
+        res.status(403).json({ message: 'Chỉ người đã mua mới được đánh giá sản phẩm này' });
       } else {
         res.status(500).json({ message: 'Lỗi server khi tạo đánh giá' });
       }

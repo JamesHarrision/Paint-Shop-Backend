@@ -2,9 +2,12 @@ import { prisma } from '../config/prisma'
 import { ReviewRepository } from '../repositories/review.repository';
 import { ProductRepository } from '../repositories/product.repository';
 
+import { OrderRepository } from '../repositories/order.repository';
+
 export class ReviewService {
   private reviewRepo = new ReviewRepository();
   private productRepo = new ProductRepository();
+  private orderRepo = new OrderRepository();
 
   private updateProductRating = async (tx: any, productId: number) => {
     const aggregation = await this.reviewRepo.aggregateRating(productId, tx);
@@ -26,6 +29,9 @@ export class ReviewService {
     return await prisma.$transaction(async (tx) => {
       const product = await this.productRepo.getProductById(productId);
       if (!product) throw new Error('PRODUCT_NOT_FOUND');
+
+      const hasPurchased = await this.orderRepo.hasUserPurchasedProduct(userId, productId);
+      if (!hasPurchased) throw new Error('NOT_PURCHASED');
 
       const review = await this.reviewRepo.create({
         userId,

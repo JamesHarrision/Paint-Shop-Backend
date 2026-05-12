@@ -116,7 +116,8 @@ export class OrderController {
       const limit = Number(req.query.limit) || 10;
       const search = req.query.search as string;
       const result = await orderService.getAllOrders(page, limit, search);
-
+      
+      res.set('Cache-Control', 'no-store');
       return res.status(200).json({
         message: "Lấy danh sách tất cả đơn hàng thành công",
         ...result
