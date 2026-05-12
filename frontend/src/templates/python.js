@@ -1,5 +1,5 @@
 // src/templates/ai.js
-export const AITemplate = () => `
+export const PythonTemplate = () => `
   <section class="py-12 md:py-24 container mx-auto px-6 max-w-6xl">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-16">
         <div class="lg:col-span-4">

@@ -15,7 +15,7 @@ export const HomeTemplate = () => `
           Cuộc cách mạng hóa không gian sống của bạn bằng sức mạnh của AI. Chụp ảnh, phân tích và khoác lên lớp áo mới cho tổ ấm của bạn ngay hôm nay.
         </p>
         <div class="flex flex-wrap gap-6">
-          <button onclick="window.navigate('ai')" class="btn-brutal bg-[#E2725B] text-lg md:text-xl px-10">Khám phá AI Lab</button>
+          <button onclick="window.navigate('ai')" class="btn-brutal bg-[#E2725B] text-lg md:text-xl px-10">Khám phá Python Lab</button>
           <button onclick="window.navigate('products')" class="btn-brutal bg-white text-black text-lg px-10">Xem sản phẩm</button>
         </div>
       </div>
