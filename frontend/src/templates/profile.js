@@ -1,13 +1,13 @@
 // src/templates/profile.js
 export const ProfileTemplate = (user) => {
-  if (!user) return `
+    if (!user) return `
     <section class="py-24 text-center">
         <div class="loader-box mx-auto mb-6"></div>
         <p class="font-black uppercase text-[10px] tracking-widest">Đang nạp hồ sơ...</p>
     </section>
   `;
 
-  return `
+    return `
   <section class="py-12 md:py-24 container mx-auto px-6 max-w-5xl">
     <div class="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
         <div class="md:col-span-4">
@@ -38,7 +38,7 @@ export const ProfileTemplate = (user) => {
                         <p class="text-xl md:text-2xl font-black">${user.fullName}</p>
                     </div>
                     <div>
-                        <p class="text-[10px] uppercase font-black text-gray-400 mb-2 italic">Ngày gia nhập hệ thống</p>
+                        <p class="text-[10px] uppercase font-black text-gray-400 mb-2 italic">Ngày đăng ký hệ thống</p>
                         <p class="text-lg md:text-xl font-black text-gray-600">${user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN') : 'N/A'}</p>
                     </div>
                 </div>

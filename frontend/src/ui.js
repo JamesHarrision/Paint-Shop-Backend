@@ -45,20 +45,29 @@ const bindHeaderEvents = () => {
 
 export const toggleLoader = (show) => {
     let loader = document.querySelector('#global-loader');
-    if (show && !loader) {
+    
+    if (show) {
+        if (loader) return; // Already showing
         const div = document.createElement('div');
         div.id = 'global-loader';
-        div.className = 'fixed inset-0 z-[10001] bg-cream flex items-center justify-center transition-opacity duration-500';
+        div.className = 'fixed inset-0 z-[10001] bg-[#FDF6E3] flex items-center justify-center transition-opacity duration-300';
         div.innerHTML = `
             <div class="flex flex-col items-center">
-                <div class="w-16 h-16 border-8 border-charcoal border-t-terracotta rounded-full animate-spin shadow-retro-sm"></div>
+                <div class="w-16 h-16 border-8 border-black border-t-[#E2725B] rounded-full animate-spin shadow-[6px_6px_0px_#000]"></div>
                 <p class="mt-6 text-[10px] font-black uppercase tracking-[0.3em] animate-pulse">Processing Request...</p>
             </div>
         `;
         document.body.appendChild(div);
-    } else if (!show && loader) {
+    } else {
+        if (!loader) return; // Already hidden
         loader.classList.add('opacity-0');
-        setTimeout(() => loader.remove(), 500);
+        // Force removal if it takes too long
+        const removeLoader = () => {
+            if (loader && loader.parentNode) {
+                loader.remove();
+            }
+        };
+        setTimeout(removeLoader, 300);
     }
 };
 

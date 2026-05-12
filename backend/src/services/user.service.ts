@@ -166,20 +166,31 @@ export const changePassword = async (id: number, currentPass: string, newPass: s
 }
 
 export const createUserByAdmin = async (data: any) => {
-  const existingUser = await userRepo.getUserByEmail(data.email);
+  const { email, fullName, role, password } = data;
+  
+  const existingUser = await userRepo.getUserByEmail(email);
   if (existingUser) throw new Error("EMAIL_EXISTS");
 
-  const hashedPassword = await hashPassword(data.password || "123456");
+  const hashedPassword = await hashPassword(password || "123456");
   const newUser = await userRepo.createUser({
-    ...data,
+    email,
+    fullName,
+    role,
     password: hashedPassword
   });
   return newUser;
 }
 
 export const updateUserByAdmin = async (id: number, data: any) => {
-  if (data.password) {
-    data.password = await hashPassword(data.password);
+  const { fullName, email, role, password } = data;
+  const updateData: any = { fullName, email, role };
+
+  if (password) {
+    updateData.password = await hashPassword(password);
   }
-  return await userRepo.update(id, data);
-}
+
+  // Remove undefined fields
+  Object.keys(updateData).forEach(key => updateData[key] === undefined && delete updateData[key]);
+
+  return await userRepo.update(id, updateData);
+}

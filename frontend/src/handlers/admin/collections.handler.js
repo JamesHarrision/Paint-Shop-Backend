@@ -1,23 +1,27 @@
 // src/handlers/admin/collections.handler.js
 import { collectionApi } from '../../api.js';
+import { showToast, toggleLoader } from '../../ui.js';
 
 let adminCollections = [];
 
 export const renderAdminCollections = async () => {
     const loader = document.querySelector('#admin-collections-loader');
     const tbody = document.querySelector('#admin-collections-list');
-    
-    if (!loader || !tbody) return;
+    const countBadge = document.querySelector('#admin-collection-count');
 
-    loader.classList.remove('hidden');
+    if (!tbody) return;
+
+    if (loader) loader.classList.remove('hidden');
     tbody.innerHTML = '';
 
     try {
         const res = await collectionApi.getAdminAll();
         adminCollections = res.data.data;
 
+        if (countBadge) countBadge.innerText = adminCollections.length;
+
         if (adminCollections.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-slate-400">Chưa có bộ sưu tập nào</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" class="p-10 text-center font-bold text-black/20 italic">Chưa có bộ sưu tập nào</td></tr>';
         } else {
             tbody.innerHTML = adminCollections.map(col => {
                 const defaultThumb = 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&q=80&w=800';
@@ -25,29 +29,46 @@ export const renderAdminCollections = async () => {
                 if (col.thumbnail) {
                     thumbUrl = col.thumbnail.startsWith('http') ? col.thumbnail : `http://localhost:3000/${col.thumbnail}`;
                 }
-                
+
                 return `
-                <tr class="border-b border-charcoal/10 hover:bg-slate-50 transition-colors">
-                    <td class="p-4 border-r border-charcoal/10">
-                        <div class="flex items-center gap-4 cursor-pointer hover:text-terracotta" onclick="window.navigate('collections/${col.id}')">
-                            <img src="${thumbUrl}" class="w-12 h-12 object-cover border border-charcoal">
-                            <span class="font-black uppercase">${col.name}</span>
+                <tr class="hover:bg-black/[0.02] transition-colors group">
+                    <td class="p-5 border-r border-black/10">
+                        <div class="flex items-center gap-4 cursor-pointer" onclick="window.navigate('collections/${col.id}')">
+                            <img src="${thumbUrl}" class="w-12 h-12 object-cover border-2 border-black shadow-[3px_3px_0px_#000]">
+                            <span class="font-black uppercase tracking-tight group-hover:text-[#E2725B] transition-colors">${col.name}</span>
                         </div>
                     </td>
-                    <td class="p-4 border-r border-charcoal/10 text-xs">
-                        ${col.shortDesc || '-'}
+                    <td class="p-5 border-r border-black/10">
+                        <p class="text-xs line-clamp-2 text-black/60 font-bold">${col.shortDesc || 'Không có mô tả'}</p>
                     </td>
-                    <td class="p-4 border-r border-charcoal/10 text-center">
+                    <td class="p-5 border-r border-black/10 text-center font-black">
                         ${col._count?.items || 0}
                     </td>
-                    <td class="p-4 border-r border-charcoal/10">
-                        ${col.user?.fullName || 'Ẩn danh'} <br>
-                        <span class="text-[10px] font-normal opacity-60">${col.user?.email || ''}</span>
+                    <td class="p-5 border-r border-black/10">
+                        <div class="flex items-center gap-2">
+                             <div class="w-6 h-6 bg-black text-white text-[8px] flex items-center justify-center font-black uppercase">
+                                ${col.user?.fullName?.charAt(0) || 'A'}
+                             </div>
+                             <div>
+                                <p class="text-[10px] font-black leading-none">${col.user?.fullName || 'Ẩn danh'}</p>
+                                <p class="text-[9px] font-bold opacity-40 leading-none mt-1">${col.user?.email || ''}</p>
+                             </div>
+                        </div>
                     </td>
-                    <td class="p-4">
+                    <td class="p-5">
                         <div class="flex justify-center gap-2">
-                            <button onclick="window.editAdminCollection('${col.id}')" class="px-3 py-1 bg-teal text-white text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-transform">Sửa</button>
-                            <button onclick="window.deleteAdminCollection('${col.id}')" class="px-3 py-1 bg-terracotta text-white text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-transform">Xóa</button>
+                            <button onclick="window.editAdminCollection('${col.id}')" 
+                                class="w-8 h-8 flex items-center justify-center border-2 border-black hover:bg-black hover:text-white transition-all shadow-[2px_2px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                            </button>
+                            <button onclick="window.deleteAdminCollection('${col.id}')" 
+                                class="w-8 h-8 flex items-center justify-center border-2 border-black text-[#FF4D4D] hover:bg-[#FF4D4D] hover:text-white transition-all shadow-[2px_2px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -56,122 +77,90 @@ export const renderAdminCollections = async () => {
         }
     } catch (err) {
         console.error('Lỗi khi lấy collections', err);
-        window.showToast('Lỗi khi tải danh sách bộ sưu tập', 'error');
+        showToast('Lỗi khi tải danh sách bộ sưu tập', 'error');
     } finally {
-        loader.classList.add('hidden');
+        if (loader) loader.classList.add('hidden');
     }
 
-    window.deleteAdminCollection = async (id) => {
-        if (confirm('Admin: Xóa bộ sưu tập này?')) {
-            window.toggleLoader(true);
+    // Initialize Form Event
+    const form = document.querySelector('#admin-collection-form');
+    if (form) {
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const id = document.querySelector('#col-id').value;
+            const name = document.querySelector('#col-name').value;
+            const shortDesc = document.querySelector('#col-shortDesc').value;
+            const longDesc = document.querySelector('#col-longDesc').value;
+            const thumbnail = document.querySelector('#col-thumbnail').files[0];
+
+            const formData = new FormData();
+            formData.append('name', name);
+            if (shortDesc) formData.append('shortDesc', shortDesc);
+            if (longDesc) formData.append('longDesc', longDesc);
+            if (thumbnail) formData.append('thumbnail', thumbnail);
+
+            toggleLoader(true);
             try {
-                await collectionApi.delete(id);
-                window.showToast('Đã xóa bộ sưu tập');
+                if (id) {
+                    await collectionApi.update(id, formData);
+                    showToast('✅ Cập nhật bộ sưu tập thành công');
+                } else {
+                    await collectionApi.create(formData);
+                    showToast('✅ Tạo bộ sưu tập thành công');
+                }
+                document.querySelector('#collection-modal').classList.add('hidden');
                 renderAdminCollections();
             } catch (err) {
-                window.showToast(err.response?.data?.message || 'Lỗi khi xóa', 'error');
+                showToast('❌ ' + (err.response?.data?.message || 'Có lỗi xảy ra'), 'error');
             } finally {
-                window.toggleLoader(false);
+                toggleLoader(false);
             }
+        };
+    }
+};
+
+window.editAdminCollection = (id) => {
+    const col = adminCollections.find(c => c.id === id);
+    if (!col) return;
+
+    const modal = document.querySelector('#collection-modal');
+    if (!modal) return;
+
+    document.querySelector('#col-id').value = col.id;
+    document.querySelector('#col-name').value = col.name;
+    document.querySelector('#col-shortDesc').value = col.shortDesc || '';
+    document.querySelector('#col-longDesc').value = col.longDesc || '';
+    document.querySelector('#col-thumbnail').value = '';
+
+    document.querySelector('#collection-modal-title').innerHTML = 'SỬA <span class="italic text-[#E2725B] normal-case">Bộ sưu tập</span>';
+    modal.classList.remove('hidden');
+};
+
+window.showAddCollectionModal = () => {
+    const modal = document.querySelector('#collection-modal');
+    if (!modal) return;
+
+    document.querySelector('#col-id').value = '';
+    document.querySelector('#col-name').value = '';
+    document.querySelector('#col-shortDesc').value = '';
+    document.querySelector('#col-longDesc').value = '';
+    document.querySelector('#col-thumbnail').value = '';
+
+    document.querySelector('#collection-modal-title').innerHTML = 'TẠO <span class="italic text-[#E2725B] normal-case">Bộ sưu tập</span>';
+    modal.classList.remove('hidden');
+};
+
+window.deleteAdminCollection = async (id) => {
+    if (confirm('Bạn có chắc chắn muốn xóa bộ sưu tập này?')) {
+        toggleLoader(true);
+        try {
+            await collectionApi.delete(id);
+            showToast('🗑️ Đã xóa bộ sưu tập thành công');
+            renderAdminCollections();
+        } catch (err) {
+            showToast('❌ ' + (err.response?.data?.message || 'Lỗi khi xóa'), 'error');
+        } finally {
+            toggleLoader(false);
         }
-    };
-
-    const getOrCreateModal = () => {
-        let modal = document.querySelector('#collection-modal');
-        if (!modal) {
-            const div = document.createElement('div');
-            div.innerHTML = `
-                <div id="collection-modal" class="fixed inset-0 z-[10005] bg-cream/90 flex items-center justify-center hidden">
-                    <div class="bg-white border-4 border-charcoal p-8 max-w-lg w-full mx-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative">
-                        <button onclick="document.querySelector('#collection-modal').classList.add('hidden')" class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center border-2 border-charcoal hover:bg-terracotta hover:text-white transition-all font-black">&times;</button>
-                        <h3 id="collection-modal-title" class="text-2xl font-black uppercase mb-6 text-charcoal">Sửa <span class="text-terracotta italic">Bộ sưu tập</span></h3>
-                        
-                        <form id="admin-collection-form" class="space-y-6 text-charcoal">
-                            <input type="hidden" id="col-id">
-                            <div>
-                                <label class="block text-[10px] font-black uppercase tracking-widest mb-2">Tên bộ sưu tập</label>
-                                <input type="text" id="col-name" required class="w-full bg-transparent border-b-2 border-charcoal p-2 focus:border-terracotta outline-none font-bold">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-black uppercase tracking-widest mb-2">Mô tả ngắn</label>
-                                <input type="text" id="col-shortDesc" class="w-full bg-transparent border-b-2 border-charcoal p-2 focus:border-terracotta outline-none font-bold">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-black uppercase tracking-widest mb-2">Ảnh bìa</label>
-                                <input type="file" id="col-thumbnail" accept="image/*" class="w-full text-xs">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-black uppercase tracking-widest mb-2">Chi tiết</label>
-                                <textarea id="col-longDesc" rows="4" class="w-full border-2 border-charcoal p-2 outline-none focus:border-terracotta"></textarea>
-                            </div>
-                            <button type="submit" id="btn-col-submit" class="btn-retro w-full">Lưu thay đổi</button>
-                        </form>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(div.firstElementChild);
-            modal = document.querySelector('#collection-modal');
-            
-            document.querySelector('#admin-collection-form').onsubmit = async (e) => {
-                e.preventDefault();
-                const id = document.querySelector('#col-id').value;
-                const name = document.querySelector('#col-name').value;
-                const shortDesc = document.querySelector('#col-shortDesc').value;
-                const longDesc = document.querySelector('#col-longDesc').value;
-                const thumbnail = document.querySelector('#col-thumbnail').files[0];
-
-                const formData = new FormData();
-                formData.append('name', name);
-                if (shortDesc) formData.append('shortDesc', shortDesc);
-                if (longDesc) formData.append('longDesc', longDesc);
-                if (thumbnail) formData.append('thumbnail', thumbnail);
-
-                window.toggleLoader(true);
-                try {
-                    if (id) {
-                        await collectionApi.update(id, formData);
-                        window.showToast('Cập nhật bộ sưu tập thành công');
-                    } else {
-                        await collectionApi.create(formData);
-                        window.showToast('Tạo bộ sưu tập thành công');
-                    }
-                    modal.classList.add('hidden');
-                    renderAdminCollections();
-                } catch (err) {
-                    window.showToast(err.response?.data?.message || 'Có lỗi xảy ra', 'error');
-                } finally {
-                    window.toggleLoader(false);
-                }
-            };
-        }
-        return modal;
-    };
-
-    window.editAdminCollection = (id) => {
-        const col = adminCollections.find(c => c.id === id);
-        if (!col) return;
-
-        const modal = getOrCreateModal();
-
-        document.querySelector('#col-id').value = col.id;
-        document.querySelector('#col-name').value = col.name;
-        document.querySelector('#col-shortDesc').value = col.shortDesc || '';
-        document.querySelector('#col-longDesc').value = col.longDesc || '';
-        document.querySelector('#col-thumbnail').value = '';
-        
-        document.querySelector('#collection-modal-title').innerHTML = 'Sửa <span class="text-terracotta italic">Bộ sưu tập</span>';
-        modal.classList.remove('hidden');
-    };
-
-    window.showAddCollectionModal = () => {
-        const modal = getOrCreateModal();
-        document.querySelector('#col-id').value = '';
-        document.querySelector('#col-name').value = '';
-        document.querySelector('#col-shortDesc').value = '';
-        document.querySelector('#col-longDesc').value = '';
-        document.querySelector('#col-thumbnail').value = '';
-        
-        document.querySelector('#collection-modal-title').innerHTML = 'Tạo <span class="text-terracotta italic">Bộ sưu tập</span>';
-        modal.classList.remove('hidden');
-    };
+    }
 };

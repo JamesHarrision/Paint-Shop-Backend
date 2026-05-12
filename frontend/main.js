@@ -62,6 +62,15 @@ const handleRouteMatch = async (routeName, params = null) => {
         return;
     }
 
+    // --- Route Guard ---
+    if (routeName.startsWith('admin')) {
+        if (!state.user || state.user.role !== 'ADMIN') {
+            showToast('❌ Bạn không có quyền truy cập khu vực này!', 'error');
+            navigate('home');
+            return;
+        }
+    }
+
     if (config.layout) {
         renderLayout(config.template(params));
     } else {
@@ -77,7 +86,9 @@ const handleRouteMatch = async (routeName, params = null) => {
 
 // Khởi tạo ứng dụng
 const initApp = async () => {
+    // Show loader initially
     toggleLoader(true);
+    
     try {
         const token = localStorage.getItem('accessToken');
         if (token) {
@@ -85,9 +96,11 @@ const initApp = async () => {
             state.setUser(res.data.data);
         }
     } catch (err) {
+        console.error("Init Auth Error:", err);
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
     } finally {
+        // ALWAYS hide loader before starting router
         toggleLoader(false);
         const startRoute = initRouter(handleRouteMatch);
         startRoute();

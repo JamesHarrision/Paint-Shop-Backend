@@ -28,27 +28,34 @@ export const renderAdminProducts = async (page = 1) => {
         if (countEl) countEl.innerText = data.pagination.total;
 
         list.innerHTML = products.map(p => `
-            <tr class="border-b border-slate-200 hover:bg-slate-50 transition-all font-bold text-sm text-charcoal">
-                <td class="p-6 text-center">
-                    <img src="${p.imageUrl || 'https://via.placeholder.com/100'}" class="w-12 h-12 object-cover border-2 border-charcoal shadow-retro-sm mx-auto">
+            <tr class="hover:bg-black/[0.02] transition-colors group">
+                <td class="p-6 border-r border-black/10 text-center">
+                    <img src="${p.imageUrl || 'https://via.placeholder.com/100'}" 
+                        class="w-12 h-12 object-cover border-2 border-black shadow-[3px_3px_0px_#000] mx-auto grayscale group-hover:grayscale-0 transition-all">
                 </td>
-                <td class="p-6 truncate max-w-[200px]" title="${p.name}">${p.name}</td>
-                <td class="p-6">${new Intl.NumberFormat('vi-VN').format(p.price)}đ</td>
-                <td class="p-6 text-center">
-                    <span class="${p.stock < 10 ? 'text-terracotta' : ''}">${p.stock}</span>
+                <td class="p-6 border-r border-black/10 font-black uppercase tracking-tight truncate max-w-[200px]" title="${p.name}">${p.name}</td>
+                <td class="p-6 border-r border-black/10 font-black text-black">
+                    ${new Intl.NumberFormat('vi-VN').format(p.price)}<span class="text-[10px] ml-1 opacity-40">VND</span>
+                </td>
+                <td class="p-6 border-r border-black/10 text-center font-black">
+                    <span class="${p.stock < 10 ? 'text-[#FF4D4D]' : ''}">${p.stock}</span>
+                </td>
+                <td class="p-6 border-r border-black/10 text-center">
+                    <div class="w-6 h-6 border-2 border-black mx-auto shadow-[2px_2px_0px_#000]" style="background-color: ${p.colorCode || '#ccc'}"></div>
                 </td>
                 <td class="p-6 text-center">
-                    <div class="w-6 h-6 rounded-full border-2 border-charcoal mx-auto shadow-retro-sm" style="background-color: ${p.colorCode || '#ccc'}"></div>
-                </td>
-                <td class="p-6 text-center">
-                    <div class="flex justify-center gap-4">
-                        <button onclick="window.editProduct(${p.id})" class="text-charcoal hover:text-terracotta transition-colors" title="Chỉnh sửa">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div class="flex justify-center gap-2">
+                        <button onclick="window.editProduct(${p.id})" 
+                            class="w-8 h-8 flex items-center justify-center border-2 border-black hover:bg-black hover:text-white transition-all shadow-[2px_2px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none" 
+                            title="Chỉnh sửa">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                         </button>
-                        <button onclick="window.deleteProduct(${p.id})" class="text-terracotta hover:scale-125 transition-transform" title="Xóa">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <button onclick="window.deleteProduct(${p.id})" 
+                            class="w-8 h-8 flex items-center justify-center border-2 border-black text-[#FF4D4D] hover:bg-[#FF4D4D] hover:text-white transition-all shadow-[2px_2px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+                            title="Xóa">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
                         </button>
@@ -73,7 +80,7 @@ export const initProductFormHandler = () => {
         e.preventDefault();
         const formData = new FormData(form);
         const id = formData.get('id');
-        
+
         try {
             window.toggleLoader(true);
             if (id) {
@@ -103,7 +110,7 @@ window.editProduct = async (id) => {
         const form = document.querySelector('#add-product-form');
         if (!form) return;
         form.reset();
-        
+
         form.querySelector('#product-id').value = p.id;
         form.querySelector('input[name="name"]').value = p.name;
         form.querySelector('input[name="price"]').value = p.price;
@@ -135,9 +142,9 @@ window.deleteProduct = async (id) => {
         await productApi.delete(id);
         showToast('🗑️ Đã xóa sản phẩm thành công.');
         renderAdminProducts();
-    } catch (err) { 
+    } catch (err) {
         console.error('Delete error:', err);
-        showToast('❌ Lỗi: ' + (err.response?.data?.message || err.message), 'error'); 
+        showToast('❌ Lỗi: ' + (err.response?.data?.message || err.message), 'error');
     } finally {
         window.toggleLoader(false);
     }

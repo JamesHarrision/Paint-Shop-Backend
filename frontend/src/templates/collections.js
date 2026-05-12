@@ -2,7 +2,7 @@
 import { state } from '../state.js';
 
 export const CollectionsPageTemplate = () => {
-  return `
+    return `
     <section class="py-24 bg-cream min-h-screen">
         <div class="container mx-auto px-6 max-w-6xl">
             <div class="flex justify-between items-end mb-12 border-b-4 border-charcoal pb-4">
@@ -84,7 +84,7 @@ export const renderCollectionCard = (col, isMyTab) => {
     if (col.thumbnail) {
         thumbUrl = col.thumbnail.startsWith('http') ? col.thumbnail : `http://localhost:3000/${col.thumbnail}`;
     }
-    
+
     return `
         <div class="card-retro group flex flex-col relative">
             <div onclick="window.navigate('collections/${col.id}')" class="cursor-pointer absolute inset-0 z-10"></div>

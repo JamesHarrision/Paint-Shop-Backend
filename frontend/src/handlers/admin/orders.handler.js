@@ -28,36 +28,54 @@ export const renderAdminOrders = async (page = 1) => {
         if (countEl) countEl.innerText = data.pagination.total;
 
         list.innerHTML = orders.map(o => `
-            <tr class="border-b border-slate-200 hover:bg-slate-50 transition-all font-bold text-sm text-charcoal">
-                <td class="p-6 text-slate-400 font-black">#${o.id}</td>
-                <td class="p-6">
-                    <p class="font-black truncate w-32" title="${o.user.fullName}">${o.user.fullName}</p>
-                    <p class="text-[10px] text-slate-400 font-normal italic">${o.user.email}</p>
+            <tr class="hover:bg-black/[0.02] transition-colors group">
+                <td class="px-6 py-6 border-r border-black/10 font-black text-black/30">#${o.id}</td>
+                <td class="px-6 py-6 border-r border-black/10">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-black text-white flex items-center justify-center font-black text-xs shrink-0">
+                            ${o.user.fullName.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="overflow-hidden">
+                            <p class="font-black uppercase tracking-tight truncate" title="${o.user.fullName}">${o.user.fullName}</p>
+                            <p class="text-[10px] font-bold text-black/40 truncate italic">${o.user.email}</p>
+                        </div>
+                    </div>
                 </td>
-                <td class="p-6 font-black text-slate-600">${new Intl.NumberFormat('vi-VN').format(o.totalAmount)}đ</td>
-                <td class="p-6">
-                    <select onchange="window.updatePaymentStatus(${o.id}, this.value)" class="border-2 border-charcoal text-[10px] font-black uppercase px-2 py-2 outline-none cursor-pointer focus:bg-cream transition-colors shadow-retro-sm ${o.paymentStatus === 'PAID' ? 'bg-teal text-white' : 'bg-slate-200 text-slate-500'}">
-                        <option value="UNPAID" ${o.paymentStatus === 'UNPAID' ? 'selected' : ''}>CHỜ THÊM</option>
-                        <option value="PAID" ${o.paymentStatus === 'PAID' ? 'selected' : ''}>ĐÃ TRẢ</option>
-                        <option value="REFUNDED" ${o.paymentStatus === 'REFUNDED' ? 'selected' : ''}>ĐÃ HOÀN</option>
-                    </select>
+                <td class="px-6 py-6 border-r border-black/10 font-black text-black leading-none">
+                    ${new Intl.NumberFormat('vi-VN').format(o.totalAmount)}<span class="text-[10px] ml-1 opacity-40">VND</span>
                 </td>
-                <td class="p-6 text-center">
-                    <select onchange="window.updateOrderStatus(${o.id}, this.value)" class="border-2 border-charcoal text-[10px] font-black uppercase px-2 py-2 outline-none cursor-pointer focus:bg-cream transition-colors shadow-retro-sm ${o.status === 'PENDING' ? 'bg-yellow-200' :
-                o.status === 'PROCESSING' ? 'bg-blue-200' :
-                    o.status === 'SHIPPED' ? 'bg-orange-200' :
-                        o.status === 'DELIVERED' ? 'bg-teal text-white' :
-                            'bg-red-200 text-charcoal'
-            }">
-                        <option value="PENDING" ${o.status === 'PENDING' ? 'selected' : ''}>Chờ xử lý</option>
-                        <option value="PROCESSING" ${o.status === 'PROCESSING' ? 'selected' : ''}>Đang pha màu</option>
-                        <option value="SHIPPED" ${o.status === 'SHIPPED' ? 'selected' : ''}>Đang giao</option>
-                        <option value="DELIVERED" ${o.status === 'DELIVERED' ? 'selected' : ''}>Đã giao</option>
-                        <option value="CANCELLED" ${o.status === 'CANCELLED' ? 'selected' : ''}>Đã hủy</option>
-                    </select>
+                <td class="px-6 py-6 border-r border-black/10">
+                    <div class="flex justify-center">
+                        <select onchange="window.updatePaymentStatus(${o.id}, this.value)" 
+                            class="text-[9px] font-black uppercase tracking-widest border-2 border-black px-3 py-1.5 outline-none cursor-pointer transition-colors ${
+                                o.paymentStatus === 'PAID' ? 'bg-[#C5FF2E] text-black' : 
+                                o.paymentStatus === 'REFUNDED' ? 'bg-black text-white' : 'bg-white text-black'
+                            }">
+                            <option value="UNPAID" ${o.paymentStatus === 'UNPAID' ? 'selected' : ''}>CHỜ THANH TOÁN</option>
+                            <option value="PAID" ${o.paymentStatus === 'PAID' ? 'selected' : ''}>ĐÃ THANH TOÁN</option>
+                            <option value="REFUNDED" ${o.paymentStatus === 'REFUNDED' ? 'selected' : ''}>ĐÃ HOÀN TIỀN</option>
+                        </select>
+                    </div>
                 </td>
-                <td class="p-6 text-center">
-                    <button class="text-charcoal hover:scale-125 transition-transform" title="Xem chi tiết">
+                <td class="px-6 py-6 border-r border-black/10">
+                    <div class="flex justify-center">
+                        <select onchange="window.updateOrderStatus(${o.id}, this.value)" 
+                            class="text-[9px] font-black uppercase tracking-widest border-2 border-black px-3 py-1.5 outline-none cursor-pointer transition-colors ${
+                                o.status === 'DELIVERED' ? 'bg-[#20B2AA] text-white' : 
+                                o.status === 'CANCELLED' ? 'bg-[#FF4D4D] text-white' : 'bg-[#E2725B] text-white'
+                            }">
+                            <option value="PENDING" ${o.status === 'PENDING' ? 'selected' : ''}>CHỜ XỬ LÝ</option>
+                            <option value="PROCESSING" ${o.status === 'PROCESSING' ? 'selected' : ''}>ĐANG XỬ LÝ</option>
+                            <option value="SHIPPED" ${o.status === 'SHIPPED' ? 'selected' : ''}>ĐANG GIAO</option>
+                            <option value="DELIVERED" ${o.status === 'DELIVERED' ? 'selected' : ''}>ĐÃ GIAO HÀNG</option>
+                            <option value="CANCELLED" ${o.status === 'CANCELLED' ? 'selected' : ''}>ĐÃ HỦY ĐƠN</option>
+                        </select>
+                    </div>
+                </td>
+                <td class="px-6 py-6 text-center">
+                    <button onclick="window.navigate('checkout', { id: '${o.id}' })"
+                        class="w-10 h-10 inline-flex items-center justify-center border-2 border-black hover:bg-black hover:text-white transition-all shadow-[3px_3px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none" 
+                        title="Xem chi tiết">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />

@@ -88,7 +88,7 @@ export const AdminProductsTemplate = () => `
                 </div>
                 <div>
                     <label class="form-label">Mô tả ngắn</label>
-                    <input type="text" name="description" class="input-brutal">
+                    <textarea name="description" class="input-brutal" rows="2"></textarea>
                 </div>
                 <div>
                     <label class="form-label">Chi tiết</label>

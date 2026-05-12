@@ -71,27 +71,28 @@ body::before {
   box-shadow: none !important;
 }
 
-/* ── Underline Input ── */
+/* ── Brutalist Input (Boxed) ── */
 .input-brutal {
   display: block !important;
   width: 100% !important;
-  padding: 0.6rem 0 !important;
-  border: none !important;
-  border-bottom: 2px solid #000 !important;
-  background: transparent !important;
-  font-size: 1rem !important;
-  font-weight: 500 !important;
+  padding: 0.8rem 1rem !important;
+  border: 3px solid #000 !important;
+  background: #fff !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
   font-family: inherit !important;
   color: #1A1A1A !important;
   outline: none !important;
   border-radius: 0 !important;
-  box-shadow: none !important;
-  transition: border-color 0.2s !important;
+  box-shadow: 4px 4px 0px #000 !important;
+  transition: all 0.2s !important;
   box-sizing: border-box !important;
 }
 
 .input-brutal:focus {
-  border-bottom-color: #E2725B !important;
+  border-color: #E2725B !important;
+  box-shadow: 6px 6px 0px #E2725B !important;
+  transform: translate(-2px, -2px);
 }
 
 /* Full-border for textarea */
@@ -127,26 +128,27 @@ textarea.input-brutal:focus {
   border-color: #E2725B !important;
 }
 
-/* ── Admin underline input ── */
+/* ── Admin Boxed Input ── */
 .admin-input {
   display: block !important;
   width: 100% !important;
-  padding: 0.6rem 0 !important;
-  border: none !important;
-  border-bottom: 2px solid #000 !important;
-  background: transparent !important;
-  font-size: 0.9rem !important;
-  font-weight: 500 !important;
+  padding: 0.75rem 1rem !important;
+  border: 3px solid #000 !important;
+  background: #fff !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
   font-family: inherit !important;
   outline: none !important;
   border-radius: 0 !important;
-  box-shadow: none !important;
-  transition: border-color 0.2s !important;
+  box-shadow: 4px 4px 0px #000 !important;
+  transition: all 0.2s !important;
   box-sizing: border-box !important;
 }
 
 .admin-input:focus {
-  border-bottom-color: #E2725B !important;
+  border-color: #E2725B !important;
+  box-shadow: 6px 6px 0px #000 !important;
+  background-color: #F9F7F2 !important;
 }
 
 textarea.admin-input {
@@ -172,30 +174,35 @@ textarea.admin-input {
 .marquee-container {
   background: #000;
   color: #fff;
-  padding: 0.9rem 0;
+  padding: 1.2rem 0;
   overflow: hidden;
   white-space: nowrap;
   border-top: 4px solid #000;
   border-bottom: 4px solid #000;
+  position: relative;
+  width: 100%;
 }
 
 .marquee-track {
-  display: inline-block;
-  white-space: nowrap;
-  animation: marquee-scroll 35s linear infinite;
-  font-weight: 900;
-  font-size: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 40s linear infinite;
+  will-change: transform;
 }
 
 .marquee-track span {
-  padding: 0 2.5rem;
+  display: block;
+  padding: 0 3rem;
+  font-weight: 900;
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  flex-shrink: 0;
 }
 
 @keyframes marquee-scroll {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
 
 
