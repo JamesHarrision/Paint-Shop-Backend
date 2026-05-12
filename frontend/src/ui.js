@@ -66,8 +66,9 @@ window.toggleLoader = toggleLoader;
 
 export const showToast = (message, type = 'success') => {
     const toast = document.createElement('div');
-    toast.className = `fixed bottom-8 right-8 z-[10005] px-8 py-4 font-black uppercase text-[10px] tracking-widest shadow-retro border-4 border-charcoal transform translate-y-20 transition-all duration-500 ${
-      type === 'success' ? 'bg-teal text-white' : 'bg-terracotta text-white'
+    // Using new brutalist classes
+    toast.className = `fixed bottom-8 right-8 z-[10005] px-8 py-4 font-black uppercase text-[10px] tracking-widest border-4 border-black shadow-[4px_4px_0px_#000] transform translate-y-20 transition-all duration-500 ${
+      type === 'success' ? 'bg-[#C5FF2E] text-black' : 'bg-[#FF4D4D] text-white'
     }`;
     toast.innerText = message;
     document.body.appendChild(toast);
@@ -77,7 +78,7 @@ export const showToast = (message, type = 'success') => {
     setTimeout(() => {
         toast.classList.add('translate-y-20', 'opacity-0');
         setTimeout(() => toast.remove(), 500);
-    }, 3000);
+    }, 4000);
 };
 
 window.showToast = showToast;

@@ -81,6 +81,15 @@ api.interceptors.response.use(
       }
     }
 
+    // Global Error Handling: Show Toast for other errors (except 401 which is handled above)
+    if (error.response?.status !== 401) {
+        const message = error.response?.data?.message || error.message || 'Lỗi hệ thống';
+        // Check if we are in a browser environment
+        if (typeof window !== 'undefined' && window.showToast) {
+            window.showToast(`❌ ${message}`, 'error');
+        }
+    }
+
     return Promise.reject(error);
   }
 );
