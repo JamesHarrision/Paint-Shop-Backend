@@ -1,8 +1,8 @@
-import { aiApi } from '../api.js';
+import { pythonApi } from '../api.js';
 import { formatPrice } from './cart.handler.js';
 import { showToast } from '../ui.js';
 
-export const renderAIResult = (result) => {
+export const renderPythonResult = (result) => {
     const resultDiv = document.querySelector('#ai-result');
     if (!resultDiv) return;
     resultDiv.classList.remove('hidden');
@@ -44,7 +44,7 @@ export const renderAIResult = (result) => {
     `;
 };
 
-export const initAIHandlers = () => {
+export const initPythonHandlers = () => {
     const container = document.querySelector('#ai-upload-container');
     const input = document.querySelector('#ai-file-input');
     const preview = document.querySelector('#upload-preview');
@@ -84,8 +84,8 @@ export const initAIHandlers = () => {
         btnAnalyze.disabled = true;
 
         try {
-            const { data } = await aiApi.analyze(formData);
-            renderAIResult(data.data);
+            const { data } = await pythonApi.analyze(formData);
+            renderPythonResult(data.data);
             showToast('✅ Giải mã màu sắc thành công!');
         } catch (err) {
             showToast('❌ Giải mã thất bại: ' + (err.response?.data?.message || err.message), 'error');

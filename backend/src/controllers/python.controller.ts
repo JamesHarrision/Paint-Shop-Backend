@@ -1,9 +1,9 @@
 import { Response, NextFunction } from "express";
-import { AiService } from '../services/ai.service'
+import { PythonService } from '../services/python.service'
 import { AuthRequest } from "../types/express";
 
-export class AiController {
-  private aiService = new AiService();
+export class PythonController {
+  private pythonService = new PythonService();
 
   public getColorSugestion = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
@@ -14,7 +14,7 @@ export class AiController {
       const userId = req.user!.userId;
       const filePath = req.file.path;
 
-      const result = await this.aiService.analyzeRoomColor(filePath, userId);
+      const result = await this.pythonService.analyzeRoomColor(filePath, userId);
 
       return res.status(200).json({
         status: 'success',
@@ -30,7 +30,7 @@ export class AiController {
   public getHistory = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const userId = req.user!.userId;
-      const history = await this.aiService.getHistoryByUserId(userId);
+      const history = await this.pythonService.getHistoryByUserId(userId);
       
       res.status(200).json({
         status: 'success',

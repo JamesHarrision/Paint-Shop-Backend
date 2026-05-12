@@ -30,10 +30,10 @@ services:
     networks:
       - app_network
 
-  # 3. AI Service (Giữ nguyên)
-  ai_service:
-    build: ./ai-service
-    container_name: paint_shop_ai
+  # 3. Python Service
+  python_service:
+    build: ./python-service
+    container_name: paint_shop_python
     ports:
       - "${AI_SERVICE_PORT}:8000"
     networks:
@@ -65,8 +65,8 @@ services:
       - REDIS_URL=${REDIS_URL}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      # Service Discovery: Gọi 'ai_service' thay vì localhost
-      - AI_SERVICE_URL=http://ai_service:8000
+      # Service Discovery: Gọi 'python_service' thay vì localhost
+      - AI_SERVICE_URL=http://python_service:8000
       - JWT_ACCESS_TOKEN_SECRET=${JWT_ACCESS_TOKEN_SECRET}
       - JWT_REFRESH_TOKEN_SECRET=${JWT_REFRESH_TOKEN_SECRET}
       - CLIENT_URL=${CLIENT_URL}
@@ -79,7 +79,7 @@ services:
         condition: service_healthy # Chờ DB healthcheck ok mới start backend
       redis:
         condition: service_started
-      ai_service:
+      python_service:
         condition: service_started
 
     networks:

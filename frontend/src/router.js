@@ -4,7 +4,7 @@ import { state } from './state.js';
 export const routes = {
     'home': { path: '#/', title: 'Khởi đầu' },
     'products': { path: '#/products', title: 'Bộ sưu tập' },
-    'ai': { path: '#/ai', title: 'Phòng Lab AI' },
+    'ai': { path: '#/ai', title: 'Phòng Lab Python' },
     'cart': { path: '#/cart', title: 'Giỏ hàng' },
     'checkout': { path: '#/checkout/:id', title: 'Thanh toán' },
     'orders': { path: '#/orders', title: 'Đơn hàng' },

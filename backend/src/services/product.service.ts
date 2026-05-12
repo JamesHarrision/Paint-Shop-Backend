@@ -16,7 +16,7 @@ export class ProductService {
     return version;
   }
 
-  private async incrementProductVersion() {
+  public async incrementProductVersion() {
     await redis.incr('product:version');
   }
 

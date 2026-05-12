@@ -7,7 +7,7 @@ import { renderLayout, toggleLoader } from './src/ui.js';
 
 // Templates
 import { HomeTemplate } from './src/templates/home.js';
-import { AITemplate } from './src/templates/ai.js';
+import { PythonTemplate } from './src/templates/python.js';
 import { LoginTemplate, RegisterTemplate, ForgotPasswordTemplate, ResetPasswordTemplate } from './src/templates/auth.js';
 import { ProfileTemplate } from './src/templates/profile.js';
 import { AdminTemplate } from './src/templates/admin/layout.js';
@@ -18,7 +18,7 @@ import { Error404Template, Error403Template } from './src/templates/error.js';
 
 // Handlers
 import { initLoginHandler, initRegisterHandler, initForgotPasswordHandler, initResetPasswordHandler } from './src/handlers/auth.handler.js';
-import { initAIHandlers } from './src/handlers/ai.handler.js';
+import { initPythonHandlers } from './src/handlers/python.handler.js';
 import { renderCartDetails, formatPrice } from './src/handlers/cart.handler.js';
 import { initCheckoutHandler } from './src/handlers/checkout.handler.js';
 import { initProfileHandler } from './src/handlers/profile.handler.js';
@@ -35,7 +35,7 @@ const routeConfig = {
     home: { template: HomeTemplate, init: () => renderProductsPage(document.querySelector('#products-container'), { limit: 4 }), layout: true },
     products: { template: ProductsPageTemplate, init: (params) => renderProductsPage(document.querySelector('#products-container'), params), layout: true },
     product_detail: { template: () => '<div id="product-detail-container"></div>', init: (params) => initProductDetailHandler(params.id), layout: true },
-    ai: { template: AITemplate, init: initAIHandlers, layout: true },
+    ai: { template: PythonTemplate, init: initPythonHandlers, layout: true },
     login: { template: LoginTemplate, init: initLoginHandler, layout: true },
     register: { template: RegisterTemplate, init: initRegisterHandler, layout: true },
     'forgot-password': { template: ForgotPasswordTemplate, init: initForgotPasswordHandler, layout: true },

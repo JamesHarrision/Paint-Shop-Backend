@@ -24,7 +24,11 @@ export const ProductListTemplate = (products = [], formatPrice, pagination) => `
                 <div class="absolute top-4 left-4 w-8 h-8 rounded-full border-2 border-black shadow-[2px_2px_0px_#000]" style="background-color: ${p.colorCode || '#ccc'}"></div>
               </div>
               <div class="p-6 flex flex-col flex-1 relative z-20">
-                <h3 class="font-black uppercase text-lg tracking-tight mb-4">${p.name}</h3>
+                <h3 class="font-black uppercase text-lg tracking-tight mb-1">${p.name}</h3>
+                <div class="flex items-center gap-2 mb-4">
+                  <span class="text-[#E2725B] font-black text-sm">★ ${p.averageRating || 0}</span>
+                  <span class="text-[10px] text-gray-400 font-bold">(${p.reviewCount || 0})</span>
+                </div>
                 <div class="flex justify-between items-end mt-auto">
                   <span class="text-2xl font-black">${formatPrice ? formatPrice(p.price) : p.price}</span>
                   <button onclick="window.addToCart(${p.id})" class="w-12 h-12 bg-[#E2725B] text-white border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors shadow-[4px_4px_0px_#000] active:shadow-none active:translate-x-1 active:translate-y-1">

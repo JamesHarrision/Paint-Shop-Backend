@@ -3,13 +3,13 @@ export const AITemplate = () => `
   <section class="py-12 md:py-24 container mx-auto px-6 max-w-6xl">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-16">
         <div class="lg:col-span-4">
-            <h2 class="text-5xl md:text-6xl font-black uppercase leading-none mb-8 md:mb-12 tracking-tighter">AI <span class="bg-[#20B2AA] text-white px-2 border-2 border-black">LAB</span></h2>
+            <h2 class="text-5xl md:text-6xl font-black uppercase leading-none mb-8 md:mb-12 tracking-tighter">Python <span class="bg-[#20B2AA] text-white px-2 border-2 border-black">LAB</span></h2>
             <div class="card-brutal bg-[#E2725B] text-white p-8 mb-8">
                 <p class="font-black text-white text-lg leading-tight uppercase italic mb-6">
                     Tải lên ảnh không gian của bạn (Phòng khách, phòng ngủ, phòng làm việc).
                 </p>
                 <p class="font-bold text-white/90 text-sm leading-relaxed mb-0">
-                    Hệ thống AI sẽ tự động bóc tách các mảng màu chính và gợi ý những sản phẩm sơn tương đồng nhất từ catalog của chúng tôi.
+                    Hệ thống Python sẽ tự động bóc tách các mảng màu chính và gợi ý những sản phẩm sơn tương đồng nhất từ catalog của chúng tôi.
                 </p>
             </div>
             <div class="p-6 border-4 border-black bg-white font-black text-[10px] uppercase tracking-widest shadow-[4px_4px_0px_#000]">

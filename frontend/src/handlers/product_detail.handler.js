@@ -83,6 +83,16 @@ export const initProductDetailHandler = async (id) => {
                     showToast('Đã gửi đánh giá thành công!', 'success');
                     document.querySelector('#review-comment').value = '';
                     loadReviews();
+                    
+                    // Refresh product info to update average rating and review count
+                    const updatedRes = await productApi.getById(id);
+                    const updatedProd = updatedRes.data.data;
+                    
+                    const ratingEl = document.querySelector('.text-[#E2725B]');
+                    const countEl = document.querySelector('.text-gray-400.border-b-2');
+                    
+                    if (ratingEl) ratingEl.textContent = `★ ${updatedProd.averageRating || 0}`;
+                    if (countEl) countEl.textContent = `(${updatedProd.reviewCount || 0} REVIEWS)`;
                 } catch (err) {
                     showToast(err.response?.data?.message || 'Lỗi gửi đánh giá', 'error');
                 } finally {

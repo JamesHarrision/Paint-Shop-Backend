@@ -8,7 +8,7 @@ import { AnalysisRepository } from "../repositories/analysis.repository";
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://127.0.0.1:8000';
 const REDIS_COLOR_KEY = 'product:color-lookup';
 
-export class AiService {
+export class PythonService {
   private productRepo = new ProductRepository();
   private analysisRepo = new AnalysisRepository();
 
@@ -104,8 +104,8 @@ export class AiService {
       return finalResult;
 
     } catch (error: any) {
-      console.error('!!! LỖI Ở AI SERVICE !!!', error.message);
-      throw new Error(`AI analysis failed: ${error.message}`);
+      console.error('!!! LỖI Ở PYTHON SERVICE !!!', error.message);
+      throw new Error(`Python analysis failed: ${error.message}`);
     }
   }
 

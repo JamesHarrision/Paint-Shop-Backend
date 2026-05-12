@@ -1,111 +1,99 @@
-# 🎨 Paint Shop E-commerce System (Microservices)
+# 🎨 Paint Shop - High-Performance E-commerce System
 
-Hệ thống thương mại điện tử chuyên bán sơn, tích hợp AI tư vấn màu sắc. Dự án được xây dựng với kiến trúc Clean Architecture, vận hành hoàn toàn trên Docker.
+Một hệ thống thương mại điện tử chuyên biệt cho ngành sơn, được thiết kế với kiến trúc **Clean Architecture** và vận hành mượt mà trên hệ sinh thái **Docker**. Dự án tập trung vào hiệu năng cao, bảo mật và trải nghiệm người dùng hiện đại với phong cách thiết kế **Retro-Brutalist**.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Node](https://img.shields.io/badge/Node.js-v20-green)
+![TypeScript](https://img.shields.io/badge/TypeScript-v5-blue)
 ![Docker](https://img.shields.io/badge/Docker-Ready-blue)
+![Aesthetics](https://img.shields.io/badge/Design-Retro--Brutalist-E2725B)
 
 ---
 
 ## 🚀 Tech Stack
 
-* **Backend:** Node.js, Express, TypeScript (Clean Architecture)
-* **AI Service:** Python (FastAPI) - Phân tích màu sắc từ ảnh
-* **Database:** MySQL 8.0 (Prisma ORM)
-* **Cache:** Redis (Caching & Session management)
-* **Infrastructure:** Docker & Docker Compose
-* **Containerization:** Multi-stage Build (Optimized for Production)
+Hệ thống được xây dựng trên nền tảng micro-services (giả lập) để đảm bảo tính module hóa và dễ mở rộng:
+
+*   **Backend (Core):** Node.js, Express, **TypeScript**. Tuân thủ nghiêm ngặt mô hình **Controller - Service - Repository**.
+*   **Python Service:** Python (FastAPI/Flask) - Xử lý các logic tính toán đặc thù và hỗ trợ xử lý dữ liệu.
+*   **Frontend:** Vanilla Javascript, Vite, Tailwind CSS. Sử dụng hệ thống Routing tự xây dựng (Custom Hash Router) và Template Engine nhẹ nhàng.
+*   **Database:** MySQL 8.0 với **Prisma ORM** (Type-safe database access).
+*   **Caching & Security:** **Redis** được sử dụng để tối ưu hóa tốc độ truy vấn (Caching) và quản lý JWT Blacklist (Security).
+*   **DevOps:** Toàn bộ hệ thống được container hóa bằng **Docker**. Sử dụng **Multi-stage Build** để tối ưu kích thước image khi deploy.
 
 ---
 
-## ✨ Tính năng chính
+## ✨ Tính năng nổi bật
 
-### 1. Authentication & Authorization
-* Đăng ký/Đăng nhập (JWT)
-* Phân quyền chặt chẽ (Admin vs User)
+### 1. Kiến trúc & Hiệu năng
+*   **Layered Architecture:** Tách biệt rõ ràng giữa Business Logic, Database Access và Request Handling.
+*   **Smart Caching:** Hệ thống Cache thông minh với Redis. Tự động Invalidate cache khi dữ liệu thay đổi (ví dụ: Cập nhật rating sản phẩm sẽ reset cache của sản phẩm đó ngay lập tức).
+*   **Transaction Management:** Đảm bảo tính toàn vẹn dữ liệu cho các luồng thanh toán và đặt hàng.
 
-### 2. Product Management
-* CRUD sản phẩm, quản lý tồn kho (Stock)
-* **Optimistic Locking:** Xử lý concurrency (tranh chấp) khi nhiều người mua hàng cùng lúc.
+### 2. Bảo mật (Production-Ready Auth)
+*   **JWT Access & Refresh Token:** Cơ chế rotation token an toàn, chống tấn công replay.
+*   **Redis Blacklist:** Thu hồi token ngay lập tức khi người dùng đăng xuất.
+*   **Route Guards:** Bảo vệ các tuyến đường Admin/User chặt chẽ từ cả Backend và Frontend.
 
-### 3. AI Color Analysis
-* Upload ảnh nội thất → AI phân tích mã màu chủ đạo
-* Gợi ý loại sơn phù hợp dựa trên màu sắc
-
-### 4. Order System
-* Giỏ hàng & Checkout
-* **Transaction Management:** Đảm bảo tính toàn vẹn dữ liệu khi tạo đơn
-* Quản lý trạng thái đơn hàng (Pending → Shipped → Cancelled)
+### 3. Trải nghiệm người dùng (UX/UI)
+*   **Retro-Brutalist Design:** Giao diện độc bản, cá tính với các khối màu tương phản mạnh và typography đậm nét.
+*   **Real-time UI Update:** Cập nhật số liệu rating, lượt đánh giá và trạng thái giỏ hàng ngay lập tức mà không cần load lại trang.
+*   **Admin Panel:** Hệ thống quản lý sản phẩm, bộ sưu tập và đơn hàng mạnh mẽ dành cho người quản trị.
 
 ---
 
-## 🛠️ Cài đặt & Chạy dự án (Docker)
+## 🛠️ Hướng dẫn cài đặt (Docker Compose)
 
-Bạn không cần cài Node.js hay MySQL trên máy. Chỉ cần **Docker Desktop**.
+Hệ thống yêu cầu máy tính đã cài đặt **Docker** và **Docker Desktop**.
 
 ```bash
-# Clone dự án
-git clone [https://github.com/your-username/paint-shop-backend.git](https://github.com/your-username/paint-shop-backend.git)
+# 1. Clone dự án
+git clone https://github.com/your-username/paint-shop-backend.git
 cd paint-shop-backend
-```
 
-1. Tạo file .env (Copy từ mẫu)
-```
-cp backend/.env.example backend/.env
-# Lưu ý: Cập nhật các biến môi trường trong .env nếu cần thiết.
-```
+# 2. Cấu hình môi trường
+# Copy file .env.example sang .env và chỉnh sửa các tham số nếu cần
+cp .env.example .env
 
-2. Khởi chạy hệ thống
-
-```Bash
-# Chạy toàn bộ 4 services (Backend, AI, MySQL, Redis) với 1 lệnh duy nhất:
+# 3. Khởi chạy toàn bộ hệ thống
 docker-compose up --build -d
 ```
 
-3. Setup Database (Lần đầu tiên)
-Vì Database chạy trong Docker ban đầu sẽ trống, bạn cần chạy lệnh sau từ máy host để tạo bảng và nạp dữ liệu mẫu:
+### Setup Database lần đầu
+Sau khi container DB đã chạy, thực hiện các lệnh sau để khởi tạo bảng và dữ liệu mẫu:
 
-```Bash
-# Di chuyển vào thư mục backend
+```bash
 cd backend
-```
-
-```bash
-# Chạy Migration (Tạo bảng)
 npx prisma migrate deploy
-```
-
-```bash
-# Chạy Seed (Nạp dữ liệu sản phẩm & user mẫu)
 npx prisma db seed
-Quan trọng: Khi chạy lệnh prisma từ máy host, hãy đảm bảo DATABASE_URL trong file .env trỏ tới localhost:3306 (hoặc port bạn đã map trong docker-compose).
 ```
 
-📖 API Documentation
-Hệ thống cung cấp RESTful API đầy đủ. Xem chi tiết tài liệu tại file: API_DOCS.md
+---
 
-Test nhanh
-Admin Account: admin@paint.com / admin123
+## 📂 Cấu trúc dự án
 
-User Account: user@paint.com / user123
-
-📂 Cấu trúc dự án
 ```bash
 paint-shop-backend/
-├── ai-service/          # Python Service (FastAPI)
-├── backend/             # Node.js Main Service
+├── python-service/      # Python Micro-service
+├── backend/             # Node.js Core Service (Clean Architecture)
 │   ├── src/
-│   │   ├── controllers/ # Xử lý Request/Response
-│   │   ├── services/    # Business Logic
-│   │   ├── models/      # Data Models
-│   │   ├── utils/       # Helper functions
-│   │   └── app.ts       # App Entry point
-│   ├── prisma/          # Database Schema & Seeds
-│   └── Dockerfile       # Multi-stage Dockerfile
-├── docker-compose.yml   # Orchestration
-└── README.md
+│   │   ├── controllers/ # Xử lý giao tiếp API
+│   │   ├── services/    # Logic nghiệp vụ chính (Business Logic)
+│   │   ├── repositories/# Truy vấn Database (Prisma)
+│   │   └── utils/       # Caching, Helpers
+├── frontend/            # Vanilla JS SPA (Retro-Brutalist)
+│   ├── src/
+│   │   ├── templates/   # UI Templates
+│   │   ├── handlers/    # Logic điều khiển UI
+│   │   └── router.js    # Custom Router system
+└── docker-compose.yml   # Orchestration
 ```
 
-🤝 Đóng góp
-Dự án được phát triển cho mục đích học tập (DevOps & Backend Architecture). Mọi đóng góp đều được hoan nghênh!
+---
+
+## 👤 Tài khoản thử nghiệm
+*   **Admin:** `admin@paint.com` / `admin123`
+*   **User:** `user@paint.com` / `user123`
+
+---
+*Dự án được xây dựng với mục tiêu thực hành kiến trúc hệ thống chuyên nghiệp và quy trình phát triển sản phẩm thực tế.*

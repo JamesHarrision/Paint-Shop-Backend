@@ -158,11 +158,11 @@ export const reviewApi = {
   delete: (productId, reviewId) => api.delete(`/products/${productId}/reviews/${reviewId}`)
 };
 
-export const aiApi = {
-  analyze: (formData) => api.post('/ai/analyze', formData, {
+export const pythonApi = {
+  analyze: (formData) => api.post('/python/analyze', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
-  getHistory: () => api.get('/ai/history'),
+  getHistory: () => api.get('/python/history'),
 };
 
 export const orderApi = {

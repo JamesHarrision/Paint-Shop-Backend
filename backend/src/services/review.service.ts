@@ -1,12 +1,14 @@
 import { prisma } from '../config/prisma'
 import { ReviewRepository } from '../repositories/review.repository';
 import { ProductRepository } from '../repositories/product.repository';
+import { ProductService } from './product.service';
 
 import { OrderRepository } from '../repositories/order.repository';
 
 export class ReviewService {
   private reviewRepo = new ReviewRepository();
   private productRepo = new ProductRepository();
+  private productService = new ProductService();
   private orderRepo = new OrderRepository();
 
   private updateProductRating = async (tx: any, productId: number) => {
@@ -15,10 +17,13 @@ export class ReviewService {
     const avgRating = aggregation._avg.rating ? Number(aggregation._avg.rating.toFixed(1)) : 0;
     const count = aggregation._count;
 
-    return await this.productRepo.updateProduct(productId, {
+    const result = await this.productRepo.updateProduct(productId, {
       reviewCount: count,
       averageRating: avgRating
     }, tx);
+
+    await this.productService.incrementProductVersion();
+    return result;
   }
 
   public createReview = async (

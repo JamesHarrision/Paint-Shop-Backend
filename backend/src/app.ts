@@ -4,7 +4,7 @@ import cors from 'cors'
 import path from 'path';
 import authRoutes from './routes/auth.route'
 import productRoutes from './routes/product.route'
-import aiRoutes from './routes/ai.route'
+import pythonRoutes from './routes/python.route'
 import userRoutes from './routes/user.route'
 import orderRoutes from './routes/order.route'
 import collectionRoutes from './routes/collection.route'
@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //Route
-app.use('/api/ai', aiRoutes);
+app.use('/api/python', pythonRoutes);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes); 

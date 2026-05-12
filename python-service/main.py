@@ -84,7 +84,7 @@ def generate_palette(base_rgb):
 
 @app.get("/")
 def health_check():
-    return {"status": "AI Service is running"}
+    return {"status": "Python Service is running"}
 
 @app.post("/analyze")
 async def analyze_room(file: UploadFile = File(...)):
