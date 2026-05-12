@@ -40,11 +40,22 @@ export const HomeTemplate = () => `
 
   <!-- Marquee Ticker -->
   <div class="marquee-container">
-    <div class="marquee-content">
-      <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN • </span>
-      <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN • </span>
+    <div class="marquee-track">
+      <div class="marquee-inner">
+        <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN &nbsp;&nbsp;&nbsp;</span>
+        <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN &nbsp;&nbsp;&nbsp;</span>
+        <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN &nbsp;&nbsp;&nbsp;</span>
+        <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN &nbsp;&nbsp;&nbsp;</span>
+      </div>
+      <div class="marquee-inner" aria-hidden="true">
+        <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN &nbsp;&nbsp;&nbsp;</span>
+        <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN &nbsp;&nbsp;&nbsp;</span>
+        <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN &nbsp;&nbsp;&nbsp;</span>
+        <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN &nbsp;&nbsp;&nbsp;</span>
+      </div>
     </div>
   </div>
+
 
   <div id="products-container" class="container section-padding">
       <h2 class="text-4xl md:text-6xl font-black mb-12 text-center uppercase tracking-tighter">Bộ sưu tập nổi bật</h2>

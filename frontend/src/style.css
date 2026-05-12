@@ -207,21 +207,34 @@ nav {
   color: var(--white);
   padding: 1rem 0;
   overflow: hidden;
+  border-top: var(--border);
   border-bottom: var(--border);
 }
 
-.marquee-content {
+.marquee-track {
   display: flex;
-  white-space: nowrap;
-  animation: marquee 30s linear infinite;
-  font-weight: 900;
-  text-transform: uppercase;
-  font-size: 1.5rem;
-  gap: 2rem;
-  width: max-content; /* Critical for seamless loop */
+  width: 100%;
 }
 
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+.marquee-inner {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  white-space: nowrap;
+  animation: marquee-scroll 25s linear infinite;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 1.2rem;
+  gap: 0;
+  min-width: 100%;
 }
+
+.marquee-inner span {
+  padding: 0 0.5rem;
+}
+
+@keyframes marquee-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
