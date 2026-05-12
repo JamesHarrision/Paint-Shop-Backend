@@ -116,68 +116,116 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: var(--shadow-hover);
 }
 
-/* Reset browser defaults that remove input borders */
-input, select, textarea {
+/* ── Global form reset ────────────────── */
+input, select, textarea, button {
+  font-family: inherit;
+  border-radius: 0;
   -webkit-appearance: none;
-  -moz-appearance: none;
   appearance: none;
+  box-sizing: border-box;
 }
 
+/* ── Underline input (reference screenshot) ── */
 .input-brutal {
   display: block;
   width: 100%;
-  padding: 0.85rem 1rem;
-  border: 4px solid #000 !important;
-  background: #fff;
-  font-family: inherit;
+  padding: 0.6rem 0;
+  border: none;
+  border-bottom: 2px solid #000;
+  background: transparent;
   font-size: 1rem;
-  font-weight: 600;
-  box-sizing: border-box;
-  transition: box-shadow 0.15s;
-  border-radius: 0;
+  font-weight: 500;
+  color: #1A1A1A;
   outline: none;
+  transition: border-color 0.2s;
 }
 
 .input-brutal:focus {
-  box-shadow: 4px 4px 0px var(--accent);
-  background: #fafafa;
+  border-bottom-color: #E2725B;
+}
+
+/* Full-border for textarea */
+textarea.input-brutal {
+  border: 2px solid #000;
+  padding: 0.75rem;
+  background: #fff;
+  resize: vertical;
+  min-height: 100px;
+}
+
+textarea.input-brutal:focus {
+  border-color: #E2725B;
+}
+
+/* ── Admin search box (has full border) ── */
+.admin-input {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 0;
+  border: none;
+  border-bottom: 2px solid #000;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.admin-input:focus {
+  border-bottom-color: #E2725B;
+}
+
+textarea.admin-input {
+  border: 2px solid #000;
+  padding: 0.75rem;
+  background: #fff;
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* ── Label ─────────────────────────────── */
+.form-label {
+  display: block;
+  font-size: 0.6875rem; /* 11px */
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #1A1A1A;
+  margin-bottom: 0.4rem;
+}
+
+/* ── Admin table search box (keeps border) ── */
+.search-input {
+  display: block;
+  padding: 0.65rem 0.9rem;
+  border: 3px solid #000;
+  background: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  border-color: #E2725B;
+}
+
+/* ── Admin Panel Layout ─────────────────── */
+.admin-label {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #1A1A1A;
 }
 
 /* Navigation */
 nav {
   background: var(--white);
   border-bottom: var(--border);
-}
-
-/* ==============================
-   Admin Panel Specific Styles
-   ============================== */
-.admin-input {
-  display: block;
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 4px solid #000;
-  background: #fff;
-  font-family: inherit;
-  font-size: 0.875rem;
-  font-weight: 700;
-  box-sizing: border-box;
-  outline: none;
-  border-radius: 0;
-  transition: box-shadow 0.15s;
-}
-
-.admin-input:focus {
-  box-shadow: 4px 4px 0px #E2725B;
-}
-
-.admin-label {
-  display: block;
-  font-size: 0.625rem; /* 10px */
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: #000;
 }
 
 
@@ -220,21 +268,18 @@ nav {
 }
 
 .marquee-track {
-  /* Holds all text in one long row, twice repeated */
-  display: flex;
-  flex-wrap: nowrap;
-  width: max-content;
-  animation: marquee-scroll 30s linear infinite;
+  /* inline-block expands to text width, no flex quirks */
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee-scroll 35s linear infinite;
+  font-weight: 900;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .marquee-track span {
-  display: inline-block;
-  white-space: nowrap;
-  font-weight: 900;
-  font-size: 1.1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 0 2rem;
+  padding: 0 2.5rem;
 }
 
 @keyframes marquee-scroll {
