@@ -13,15 +13,15 @@ export const LoginTemplate = () => `
           <input type="password" id="login-password" class="input-brutal" placeholder="••••••••" required>
         </div>
         <button type="submit" class="btn-brutal w-full bg-[#E2725B] text-white text-base uppercase tracking-widest mt-4">
-          Kích hoạt phiên bản
+          Đăng nhập
         </button>
       </form>
       <div class="mt-10 space-y-4">
         <p class="text-[10px] font-black uppercase tracking-widest text-[#E2725B] cursor-pointer hover:underline"
            onclick="window.navigate('forgot-password')">Quên mật khẩu?</p>
         <button onclick="window.navigate('register')"
-          class="btn-brutal w-full bg-white text-black text-[11px] uppercase tracking-widest">
-          Chưa có tài khoản? Gia nhập ngay
+          class="text-[10px] font-black uppercase tracking-widest text-[#E2725B] cursor-pointer hover:underline">
+          Chưa có tài khoản? đăng ký ngay
         </button>
       </div>
     </div>
@@ -31,7 +31,7 @@ export const LoginTemplate = () => `
 export const RegisterTemplate = () => `
   <section class="min-h-[80vh] flex items-center justify-center py-16 px-6">
     <div class="w-full max-w-sm">
-      <h2 class="text-5xl font-black uppercase tracking-tighter mb-12">GIA NHẬP</h2>
+      <h2 class="text-5xl font-black uppercase tracking-tighter mb-12">đăng ký</h2>
       <form id="register-form" class="space-y-8">
         <div>
           <label class="form-label">Họ tên đầy đủ</label>

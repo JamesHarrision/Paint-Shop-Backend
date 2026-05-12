@@ -3,7 +3,7 @@ import { state } from '../state.js';
 
 export const Header = () => {
   const user = state.user;
-  
+
   return `
     <header class="bg-white border-b-4 border-black sticky top-0 z-[10001] py-4">
       <div class="container flex justify-between items-center">
@@ -58,7 +58,7 @@ export const Header = () => {
           ` : `
             <div class="flex gap-2 md:gap-4 items-center">
               <button onclick="window.navigate('login')" class="text-[10px] md:text-[12px] font-black uppercase tracking-widest hover:underline decoration-4 decoration-[#E2725B] transition-all">Đăng nhập</button>
-              <button onclick="window.navigate('register')" class="btn-brutal !py-2 !px-4 text-[10px] md:text-[12px]">Gia nhập</button>
+              <button onclick="window.navigate('register')" class="btn-brutal !py-2 !px-4 text-[10px] md:text-[12px]">Đăng ký</button>
             </div>
           `}
         </div>
