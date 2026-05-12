@@ -1,7 +1,7 @@
 // src/templates/cart.js
 export const CartTemplate = () => `
   <section class="py-24 container mx-auto px-6 max-w-4xl">
-    <h2 class="text-6xl font-black uppercase mb-16 italic">Bộ sưu tập <br> <span class="not-italic">Đã chọn</span></h2>
+    <h2 class="text-6xl font-black uppercase mb-16 italic">Bộ sưu tập <span class="not-italic">Đã chọn</span></h2>
     <div id="cart-items" class="space-y-8">
         <!-- Rendered via JS -->
     </div>
@@ -47,7 +47,7 @@ import { Pagination } from '../components/Pagination.js';
 // src/templates/orders.js
 export const OrdersTemplate = (orders, formatPrice, pagination) => `
     <section class="py-24 container mx-auto px-6 max-w-4xl">
-        <h2 class="text-6xl font-black uppercase mb-16 italic">Lịch sử <br> <span class="not-italic text-terracotta">Giao dịch</span></h2>
+        <h2 class="text-6xl font-black uppercase mb-16 italic">Lịch sử <span class="not-italic text-terracotta">Giao dịch</span></h2>
         <div class="space-y-10">
             ${orders.length === 0 ? '<div class="card-retro text-center py-24 uppercase font-black tracking-widest text-slate-400">Chưa có lịch sử...</div>' : ''}
             ${orders.map(o => `
@@ -57,9 +57,28 @@ export const OrdersTemplate = (orders, formatPrice, pagination) => `
                             <p class="text-[10px] uppercase tracking-widest opacity-60 mb-2">Mã đơn hàng</p>
                             <p class="font-black text-xl tracking-tighter">#${o.id}</p>
                         </div>
-                        <div class="mt-8">
-                            <span class="px-4 py-2 border-2 border-cream text-[10px] font-black uppercase tracking-widest ${o.paymentStatus === 'PAID' ? 'bg-teal text-white border-teal' : ''}">
-                                ${o.paymentStatus === 'PAID' ? 'Đã thanh toán' : 'Chờ xử lý'}
+                        <div class="mt-8 flex flex-col items-start gap-3">
+                            <span class="px-4 py-2 border-2 border-cream text-[10px] font-black uppercase tracking-widest ${
+                                o.status === 'PENDING' ? '' :
+                                o.status === 'PROCESSING' ? 'bg-blue-500 text-white border-blue-500' :
+                                o.status === 'SHIPPED' ? 'bg-orange-500 text-white border-orange-500' :
+                                o.status === 'DELIVERED' ? 'bg-teal text-white border-teal' :
+                                'bg-red-500 text-white border-red-500'
+                            }">
+                                ${o.status === 'PENDING' ? 'Chờ xác nhận' :
+                                  o.status === 'PROCESSING' ? 'Đang pha màu' :
+                                  o.status === 'SHIPPED' ? 'Đang giao' :
+                                  o.status === 'DELIVERED' ? 'Đã giao' :
+                                  'Đã hủy'}
+                            </span>
+                            <span class="px-4 py-2 border-2 border-cream text-[10px] font-black uppercase tracking-widest ${
+                                o.paymentStatus === 'PAID' ? 'bg-teal text-white border-teal' : 
+                                o.paymentStatus === 'REFUNDED' ? 'bg-slate-400 text-white border-slate-400' : ''
+                            }">
+                                ${
+                                    o.paymentStatus === 'PAID' ? 'Đã thanh toán' : 
+                                    o.paymentStatus === 'REFUNDED' ? 'Đã hoàn tiền' : 'Chờ thanh toán'
+                                }
                             </span>
                         </div>
                     </div>
