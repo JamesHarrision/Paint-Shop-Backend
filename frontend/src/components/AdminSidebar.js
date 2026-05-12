@@ -1,5 +1,7 @@
 // src/components/AdminSidebar.js
 
+// src/components/AdminSidebar.js
+
 export const AdminSidebar = (activeTab = 'users') => {
     const menuItems = [
         { id: 'users', label: 'Người dùng', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z' },
@@ -9,26 +11,28 @@ export const AdminSidebar = (activeTab = 'users') => {
     ];
 
     return `
-    <aside class="w-full md:w-80 bg-white border-r-4 border-black flex flex-col z-10">
-      <div class="p-10 border-b-4 border-black bg-black text-white">
-        <h1 class="text-3xl font-black uppercase tracking-tighter italic">ADMIN <span class="bg-[#C5FF2E] text-black px-2 not-italic block text-lg mt-2 shadow-[4px_4px_0px_#FFF]">Console</span></h1>
+    <aside class="w-full md:w-80 bg-white border-r-4 border-black flex flex-col z-10 h-auto md:h-screen sticky top-0">
+      <div class="p-8 md:p-10 border-b-4 border-black bg-black text-white">
+        <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tighter italic">ADMIN <span class="bg-[#E2725B] text-white px-2 not-italic block text-lg mt-2 shadow-[4px_4px_0px_rgba(255,255,255,0.2)]">Console</span></h1>
       </div>
-      <nav class="flex-1 p-8 space-y-4">
+      <nav class="flex-1 p-6 md:p-8 space-y-3 md:space-y-4">
         ${menuItems.map(item => `
           <a 
             href="#/admin/${item.id}"
-            class="w-full flex items-center gap-4 px-6 py-4 font-black uppercase text-xs tracking-widest transition-all border-4 ${activeTab === item.id ? 'bg-[#3B82F6] text-white border-black shadow-[6px_6px_0px_#000] translate-x-[-2px] translate-y-[-2px]' : 'border-transparent hover:border-black hover:bg-gray-50'}"
+            class="w-full flex items-center gap-4 px-6 py-4 font-black uppercase text-[10px] tracking-widest transition-all border-4 ${activeTab === item.id ? 'bg-[#20B2AA] text-white border-black shadow-[6px_6px_0px_#000] translate-x-[-2px] translate-y-[-2px]' : 'border-transparent hover:border-black hover:bg-gray-50'}"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="${item.icon}" />
             </svg>
-            ${item.label}
+            <span class="hidden md:inline">${item.label}</span>
+            <span class="md:hidden">${item.label.charAt(0)}</span>
           </a>
         `).join('')}
       </nav>
-      <div class="p-8 border-t-4 border-black bg-[#FF4D4D]/10">
-        <button onclick="window.navigate('home')" class="btn-brutal w-full bg-white text-xs">Quay lại Cửa hàng</button>
+      <div class="p-6 md:p-8 border-t-4 border-black bg-[#E2725B]/10">
+        <button onclick="window.navigate('home')" class="btn-brutal w-full bg-white text-black text-[10px] !py-3">QUAY LẠI CỬA HÀNG</button>
       </div>
     </aside>
   `;
 };
+
