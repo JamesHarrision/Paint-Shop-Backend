@@ -52,20 +52,21 @@ export const ProductsPageTemplate = () => `
                     <div class="space-y-6">
                         <div>
                             <label class="block font-black uppercase text-[10px] tracking-widest mb-2 italic">Tìm kiếm</label>
-                            <input type="text" id="filter-search" placeholder="Tên sản phẩm..." 
-                                   class="input-brutal !p-3 text-sm">
+                            <input type="text" id="filter-search" placeholder="Tên sản phẩm..."
+                                   class="input-brutal">
                         </div>
                         <div>
                             <label class="block font-black uppercase text-[10px] tracking-widest mb-2 italic">Khoảng giá</label>
-                            <div class="grid grid-cols-1 gap-2">
-                                <input type="number" id="filter-min-price" placeholder="Từ" 
-                                       class="input-brutal !p-2 text-sm">
-                                <input type="number" id="filter-max-price" placeholder="Đến" 
-                                       class="input-brutal !p-2 text-sm">
+                            <div class="flex flex-col gap-2">
+                                <input type="number" id="filter-min-price" placeholder="Từ (VND)"
+                                       class="input-brutal">
+                                <input type="number" id="filter-max-price" placeholder="Đến (VND)"
+                                       class="input-brutal">
                             </div>
                         </div>
-                        <button id="btn-apply-filter" class="btn-brutal bg-[#E2725B] w-full mt-4 !py-3">Áp dụng</button>
+                        <button id="btn-apply-filter" class="btn-brutal w-full !py-3 bg-[#E2725B] text-white">Áp dụng</button>
                     </div>
+
                 </div>
             </aside>
 

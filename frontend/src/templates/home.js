@@ -41,18 +41,14 @@ export const HomeTemplate = () => `
   <!-- Marquee Ticker -->
   <div class="marquee-container">
     <div class="marquee-track">
-      <div class="marquee-inner">
-        <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN &nbsp;&nbsp;&nbsp;</span>
-        <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN &nbsp;&nbsp;&nbsp;</span>
-        <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN &nbsp;&nbsp;&nbsp;</span>
-        <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN &nbsp;&nbsp;&nbsp;</span>
-      </div>
-      <div class="marquee-inner" aria-hidden="true">
-        <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN &nbsp;&nbsp;&nbsp;</span>
-        <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN &nbsp;&nbsp;&nbsp;</span>
-        <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN &nbsp;&nbsp;&nbsp;</span>
-        <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN &nbsp;&nbsp;&nbsp;</span>
-      </div>
+      <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN</span>
+      <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN</span>
+      <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN</span>
+      <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN</span>
+      <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN</span>
+      <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN</span>
+      <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN</span>
+      <span>PAINT SHOP AI • CÔNG NGHỆ PHỐI MÀU THÔNG MINH • THIẾT KẾ KHÔNG GIAN SỐNG • SÁNG TẠO KHÔNG GIỚI HẠN</span>
     </div>
   </div>
 
