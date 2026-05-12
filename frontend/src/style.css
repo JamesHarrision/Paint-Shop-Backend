@@ -262,13 +262,12 @@ nav {
   color: #fff;
   padding: 0.9rem 0;
   overflow: hidden;
+  white-space: nowrap; /* CRITICAL: prevents text from wrapping */
   border-top: 4px solid #000;
   border-bottom: 4px solid #000;
-  position: relative;
 }
 
 .marquee-track {
-  /* inline-block expands to text width, no flex quirks */
   display: inline-block;
   white-space: nowrap;
   animation: marquee-scroll 35s linear infinite;
