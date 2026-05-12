@@ -19,7 +19,8 @@ import { Error404Template, Error403Template } from './src/templates/error.js';
 // Handlers
 import { initLoginHandler, initRegisterHandler, initForgotPasswordHandler, initResetPasswordHandler } from './src/handlers/auth.handler.js';
 import { initAIHandlers } from './src/handlers/ai.handler.js';
-import { renderCartDetails, initCheckoutHandler, formatPrice } from './src/handlers/cart.handler.js';
+import { renderCartDetails, formatPrice } from './src/handlers/cart.handler.js';
+import { initCheckoutHandler } from './src/handlers/checkout.handler.js';
 import { initProfileHandler } from './src/handlers/profile.handler.js';
 import { initAdminHandler } from './src/handlers/admin/index.js';
 import { renderProductsPage } from './src/handlers/products.handler.js';
@@ -41,7 +42,7 @@ const routeConfig = {
     'reset-password': { template: ResetPasswordTemplate, init: initResetPasswordHandler, layout: true },
     profile: { template: () => ProfileTemplate(state.user), init: initProfileHandler, layout: true },
     cart: { template: CartTemplate, init: renderCartDetails, layout: true },
-    checkout: { template: (order) => CheckoutTemplate(order, formatPrice), init: initCheckoutHandler, layout: true },
+    checkout: { template: () => '<div id="checkout-container"></div>', init: (params) => initCheckoutHandler(params.id), layout: true },
     orders: { template: () => '<div id="orders-container"></div>', init: () => renderOrdersPage(app.querySelector('#orders-container')), layout: true },
     collections: { template: CollectionsPageTemplate, init: initCollectionsHandler, layout: true },
     collection_detail: { template: () => '<div id="collection-detail-container"></div>', init: (params) => initCollectionDetailHandler(params.id), layout: true },
