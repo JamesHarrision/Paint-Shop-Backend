@@ -36,15 +36,23 @@ export const renderAdminOrders = async (page = 1) => {
                 </td>
                 <td class="p-6 font-black text-slate-600">${new Intl.NumberFormat('vi-VN').format(o.totalAmount)}đ</td>
                 <td class="p-6">
-                    <span class="px-3 py-1 text-[10px] border-2 border-charcoal ${o.paymentStatus === 'PAID' ? 'bg-teal text-white border-teal shadow-retro-sm' : 'text-slate-400'}">
-                        ${o.paymentStatus === 'PAID' ? 'ĐÃ TRẢ' : 'CHỜ'}
-                    </span>
+                    <select onchange="window.updatePaymentStatus(${o.id}, this.value)" class="border-2 border-charcoal text-[10px] font-black uppercase px-2 py-2 outline-none cursor-pointer focus:bg-cream transition-colors shadow-retro-sm ${o.paymentStatus === 'PAID' ? 'bg-teal text-white' : 'bg-slate-200 text-slate-500'}">
+                        <option value="UNPAID" ${o.paymentStatus === 'UNPAID' ? 'selected' : ''}>CHỜ THÊM</option>
+                        <option value="PAID" ${o.paymentStatus === 'PAID' ? 'selected' : ''}>ĐÃ TRẢ</option>
+                        <option value="REFUNDED" ${o.paymentStatus === 'REFUNDED' ? 'selected' : ''}>ĐÃ HOÀN</option>
+                    </select>
                 </td>
                 <td class="p-6 text-center">
-                    <select onchange="window.updateOrderStatus(${o.id}, this.value)" class="bg-white border-2 border-charcoal text-[10px] font-black uppercase px-2 py-2 outline-none cursor-pointer focus:bg-cream transition-colors shadow-retro-sm">
+                    <select onchange="window.updateOrderStatus(${o.id}, this.value)" class="border-2 border-charcoal text-[10px] font-black uppercase px-2 py-2 outline-none cursor-pointer focus:bg-cream transition-colors shadow-retro-sm ${
+                        o.status === 'PENDING' ? 'bg-yellow-200' :
+                        o.status === 'PROCESSING' ? 'bg-blue-200' :
+                        o.status === 'SHIPPED' ? 'bg-orange-200' :
+                        o.status === 'DELIVERED' ? 'bg-teal text-white' :
+                        'bg-red-200 text-charcoal'
+                    }">
                         <option value="PENDING" ${o.status === 'PENDING' ? 'selected' : ''}>Chờ xử lý</option>
                         <option value="PROCESSING" ${o.status === 'PROCESSING' ? 'selected' : ''}>Đang pha màu</option>
-                        <option value="SHIPPING" ${o.status === 'SHIPPING' ? 'selected' : ''}>Đang giao</option>
+                        <option value="SHIPPED" ${o.status === 'SHIPPED' ? 'selected' : ''}>Đang giao</option>
                         <option value="DELIVERED" ${o.status === 'DELIVERED' ? 'selected' : ''}>Đã giao</option>
                         <option value="CANCELLED" ${o.status === 'CANCELLED' ? 'selected' : ''}>Đã hủy</option>
                     </select>
@@ -64,21 +72,34 @@ export const renderAdminOrders = async (page = 1) => {
             paginationContainer.innerHTML = Pagination(data.pagination, 'changeAdminOrderPage');
         }
 
-        // Đăng ký hàm cập nhật trạng thái toàn cục
-        window.updateOrderStatus = async (orderId, status) => {
-            try {
-                window.toggleLoader(true);
-                await orderApi.updateStatus(orderId, status);
-                showToast('✅ Cập nhật trạng thái thành công!');
-                renderAdminOrders(page);
-            } catch (err) {
-                showToast('❌ Lỗi: ' + (err.response?.data?.message || err.message), 'error');
-            } finally {
-                window.toggleLoader(false);
-            }
-        };
-
     } catch (err) {
         list.innerHTML = '<tr><td colspan="6" class="p-10 text-center text-red-500 font-bold italic">Lỗi nạp đơn hàng</td></tr>';
+    }
+};
+
+// Đăng ký hàm cập nhật trạng thái toàn cục (để ngoài để không bị khởi tạo lại nhiều lần)
+window.updateOrderStatus = async (orderId, status) => {
+    try {
+        window.toggleLoader(true);
+        await orderApi.updateStatus(orderId, status);
+        showToast('✅ Cập nhật trạng thái thành công!');
+        renderAdminOrders(1); // Nên lấy page hiện tại, tạm thời dùng page 1
+    } catch (err) {
+        showToast('❌ Lỗi: ' + (err.response?.data?.message || err.message), 'error');
+    } finally {
+        window.toggleLoader(false);
+    }
+};
+
+window.updatePaymentStatus = async (orderId, paymentStatus) => {
+    try {
+        window.toggleLoader(true);
+        await orderApi.updatePaymentStatus(orderId, paymentStatus);
+        showToast('✅ Cập nhật thanh toán thành công!');
+        renderAdminOrders(1);
+    } catch (err) {
+        showToast('❌ Lỗi: ' + (err.response?.data?.message || err.message), 'error');
+    } finally {
+        window.toggleLoader(false);
     }
 };

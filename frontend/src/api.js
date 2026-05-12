@@ -142,6 +142,13 @@ export const itemCollectionApi = {
   remove: (collectionId, productId) => api.delete(`/collections/${collectionId}/items/${productId}`)
 };
 
+export const reviewApi = {
+  getProductReviews: (productId, params) => api.get(`/products/${productId}/reviews`, { params }),
+  create: (productId, data) => api.post(`/products/${productId}/reviews`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  update: (productId, reviewId, data) => api.put(`/products/${productId}/reviews/${reviewId}`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  delete: (productId, reviewId) => api.delete(`/products/${productId}/reviews/${reviewId}`)
+};
+
 export const aiApi = {
   analyze: (formData) => api.post('/ai/analyze', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
@@ -155,6 +162,7 @@ export const orderApi = {
   getAll: (params) => api.get('/orders/all', { params }),
   getDetail: (id) => api.get(`/orders/${id}`),
   updateStatus: (id, status) => api.patch(`/orders/${id}/status`, { status }),
+  updatePaymentStatus: (id, paymentStatus) => api.patch(`/orders/${id}/payment-status`, { paymentStatus }),
 };
 
 export const paymentApi = {

@@ -3,7 +3,7 @@
 export const AdminOrdersTemplate = () => `
     <div class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
         <div>
-            <h2 class="text-5xl font-black uppercase leading-none italic text-charcoal">Quản lý <br> <span class="not-italic text-terracotta">Đơn hàng</span></h2>
+            <h2 class="text-5xl font-black uppercase leading-none italic text-charcoal">Quản lý <span class="not-italic text-terracotta">Đơn hàng</span></h2>
             <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mt-4 italic">Tổng số đơn hàng: <span id="admin-order-count" class="text-charcoal border-b border-charcoal">...</span> vận đơn</p>
         </div>
         <div class="flex items-center gap-2">
