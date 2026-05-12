@@ -1,7 +1,5 @@
 // src/components/AdminSidebar.js
 
-// src/components/AdminSidebar.js
-
 export const AdminSidebar = (activeTab = 'users') => {
     const menuItems = [
         { id: 'users', label: 'Người dùng', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z' },
@@ -11,28 +9,44 @@ export const AdminSidebar = (activeTab = 'users') => {
     ];
 
     return `
-    <aside class="w-full md:w-80 bg-white border-r-4 border-black flex flex-col z-10 h-auto md:h-screen sticky top-0">
-      <div class="p-8 md:p-10 border-b-4 border-black bg-black text-white">
-        <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tighter italic">ADMIN <span class="bg-[#E2725B] text-white px-2 not-italic block text-lg mt-2 shadow-[4px_4px_0px_rgba(255,255,255,0.2)]">Console</span></h1>
+    <aside class="w-full md:w-72 bg-black text-white flex flex-col z-10 h-auto md:h-screen sticky top-0 border-r-4 border-black">
+      <!-- Header -->
+      <div class="px-8 py-10 border-b-4 border-white/10">
+        <p class="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-2">Hệ thống</p>
+        <h1 class="text-3xl font-black uppercase tracking-tighter leading-none">
+          ADMIN<br>
+          <span class="text-[#E2725B]">CONSOLE</span>
+        </h1>
       </div>
-      <nav class="flex-1 p-6 md:p-8 space-y-3 md:space-y-4">
+
+      <!-- Nav -->
+      <nav class="flex-1 px-4 py-6 space-y-1">
         ${menuItems.map(item => `
-          <a 
-            href="#/admin/${item.id}"
-            class="w-full flex items-center gap-4 px-6 py-4 font-black uppercase text-[10px] tracking-widest transition-all border-4 ${activeTab === item.id ? 'bg-[#20B2AA] text-white border-black shadow-[6px_6px_0px_#000] translate-x-[-2px] translate-y-[-2px]' : 'border-transparent hover:border-black hover:bg-gray-50'}"
+          <a href="#/admin/${item.id}"
+            class="w-full flex items-center gap-4 px-5 py-3.5 font-black uppercase text-[11px] tracking-widest transition-all rounded-none
+              ${activeTab === item.id
+                ? 'bg-[#E2725B] text-white border-l-4 border-white shadow-[4px_4px_0px_rgba(255,255,255,0.15)]'
+                : 'text-white/60 hover:text-white hover:bg-white/10 border-l-4 border-transparent'
+              }"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="${item.icon}" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="${item.icon}" />
             </svg>
             <span class="hidden md:inline">${item.label}</span>
-            <span class="md:hidden">${item.label.charAt(0)}</span>
           </a>
         `).join('')}
       </nav>
-      <div class="p-6 md:p-8 border-t-4 border-black bg-[#E2725B]/10">
-        <button onclick="window.navigate('home')" class="btn-brutal w-full bg-white text-black text-[10px] !py-3 hover:bg-[#E2725B] hover:text-white transition-colors">QUAY LẠI CỬA HÀNG</button>
+
+      <!-- Footer -->
+      <div class="px-4 py-6 border-t-4 border-white/10">
+        <button onclick="window.navigate('home')"
+          class="w-full text-[10px] font-black uppercase tracking-widest text-white/50 hover:text-white border-2 border-white/20 hover:border-white/60 px-4 py-3 transition-all text-left flex items-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Về cửa hàng
+        </button>
       </div>
     </aside>
   `;
 };
-
