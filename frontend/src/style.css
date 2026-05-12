@@ -2,17 +2,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
 :root {
-  /* Colors - Retro Brutalism Palette */
-  --bg: #F3F0E9;
-  --text: #000000;
-  --primary: #C5FF2E; /* Acid Green */
-  --secondary: #3B82F6; /* Neon Blue */
-  --accent: #FF4D4D; /* Crimson Red */
-  --cream: #F3F0E9;
-  --charcoal: #1A1A1A;
+  /* Colors - Refined "Old" Palette */
+  --bg: #F9F7F2; /* Soft Cream */
+  --text: #1A1A1A; /* Charcoal */
+  --primary: #E2725B; /* Terracotta */
+  --secondary: #2D5A27; /* Deep Forest Green (Alternative to Acid) */
+  --accent: #20B2AA; /* Teal */
+  --white: #FFFFFF;
   
   /* Borders & Shadows */
-  --border-width: 4px;
+  --border-width: 3px;
   --border: var(--border-width) solid var(--text);
   --shadow: 4px 4px 0px var(--text);
   --shadow-hover: 8px 8px 0px var(--text);
@@ -30,6 +29,7 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Base Styles */
@@ -37,6 +37,35 @@ h1, h2, h3, h4, h5, h6 {
   text-transform: uppercase;
   font-weight: 800;
   margin: 0;
+  line-height: 1.1; /* Improved from 0.8 */
+}
+
+/* Layout Container */
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+}
+
+/* Responsive Grid/Flex Utilities */
+.section-padding {
+  padding: 4rem 0;
+}
+
+@media (max-width: 768px) {
+  .section-padding {
+    padding: 2rem 0;
+  }
+  h1 { font-size: 3rem !important; }
+  h2 { font-size: 2rem !important; }
 }
 
 /* Utility Classes */
@@ -44,20 +73,22 @@ h1, h2, h3, h4, h5, h6 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.75rem 1.5rem;
+  padding: 0.85rem 1.75rem;
   background: var(--primary);
+  color: var(--white);
   border: var(--border);
   box-shadow: var(--shadow);
   font-weight: 700;
   text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   text-decoration: none;
-  color: inherit;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
 }
 
 .btn-brutal:hover {
-  transform: translate(-4px, -4px);
+  transform: translate(-3px, -3px);
   box-shadow: var(--shadow-hover);
 }
 
@@ -67,83 +98,87 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .card-brutal {
-  background: #FFF;
+  background: var(--white);
   border: var(--border);
   box-shadow: var(--shadow);
   padding: 2rem;
+  transition: all 0.3s ease;
+}
+
+.card-brutal:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
 }
 
 .input-brutal {
   width: 100%;
-  padding: 1rem;
+  padding: 1.1rem;
   border: var(--border);
-  background: #FFF;
+  background: var(--white);
   font-family: inherit;
   font-size: 1rem;
   box-sizing: border-box;
+  transition: background 0.2s;
 }
 
 .input-brutal:focus {
   outline: none;
-  background: var(--cream);
+  background: #F0F0F0;
 }
 
-/* Layout */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
-.section-padding {
-  padding: 4rem 0;
+/* Navigation */
+nav {
+  background: var(--white);
+  border-bottom: var(--border);
 }
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.5s ease forwards;
+  animation: fadeIn 0.6s ease-out forwards;
 }
 
-/* Global Navigation Styles */
-nav {
-  border-bottom: var(--border);
-  background: #FFF;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-/* Toast Styles Overrides */
-#toast-container {
-  z-index: 9999;
-}
-
-.toast {
-  border: var(--border) !important;
-  box-shadow: var(--shadow) !important;
-  border-radius: 0 !important;
-  font-weight: 700 !important;
-}
-
-/* Loader Overrides */
-#global-loader {
-  background: rgba(243, 240, 233, 0.9);
-}
-
+/* Loader Styles */
 .loader-box {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border: var(--border);
   background: var(--primary);
-  animation: spin 1s infinite linear;
+  animation: brutalSpin 1.2s infinite cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+@keyframes brutalSpin {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(90deg); }
+  50% { transform: rotate(180deg); }
+  75% { transform: rotate(270deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Ticker Marquee */
+.marquee-container {
+  background: var(--text);
+  color: var(--white);
+  padding: 1rem 0;
+  overflow: hidden;
+  border-bottom: var(--border);
+}
+
+.marquee-content {
+  display: flex;
+  white-space: nowrap;
+  animation: marquee 30s linear infinite;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 1.5rem;
+  gap: 2rem;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
