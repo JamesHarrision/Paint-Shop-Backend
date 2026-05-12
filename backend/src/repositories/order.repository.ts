@@ -133,4 +133,19 @@ export class OrderRepository {
     }
     return await prisma.order.count({ where });
   }
+
+  public async hasUserPurchasedProduct(userId: number, productId: number) {
+    const count = await prisma.orderItem.count({
+      where: {
+        productId: productId,
+        order: {
+          userId: userId,
+          status: {
+            not: OrderStatus.CANCELLED
+          }
+        }
+      }
+    });
+    return count > 0;
+  }
 }

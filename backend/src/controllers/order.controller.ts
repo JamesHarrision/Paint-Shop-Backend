@@ -58,11 +58,31 @@ export class OrderController {
         data: updatedOrder
       });
     } catch (error: any) {
-      console.error("Update order status error:", error);
+      console.error("Update status error:", error.message);
       if (error.message === 'ORDER_NOT_FOUND') {
         return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
       }
-      return res.status(500).json({ message: "Lỗi khi cập nhật trạng thái" });
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
+  public updatePaymentStatus = async (req: AuthRequest, res: Response) => {
+    try {
+      const { id } = req.params;
+      const { paymentStatus } = req.body;
+
+      const updatedOrder = await orderService.updatePaymentStatus(Number(id), paymentStatus);
+
+      return res.status(200).json({
+        message: "Cập nhật trạng thái thanh toán thành công",
+        data: updatedOrder
+      });
+    } catch (error: any) {
+      console.error("Update payment status error:", error.message);
+      if (error.message === 'ORDER_NOT_FOUND') {
+        return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
+      }
+      res.status(500).json({ message: "Internal server error" });
     }
   }
 

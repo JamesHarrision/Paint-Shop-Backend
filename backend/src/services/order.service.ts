@@ -1,5 +1,5 @@
 import { prisma } from '../config/prisma';
-import { OrderStatus } from '@prisma/client';
+import { OrderStatus, PaymentStatus } from '@prisma/client';
 import { OrderRepository } from '../repositories/order.repository';
 import { ProductRepository } from '../repositories/product.repository';
 
@@ -112,6 +112,14 @@ export class OrderService {
 
       return await this.orderRepo.updateStatus(orderId, newStatus, tx);
     });
+  }
+
+  public updatePaymentStatus = async (orderId: number, newStatus: PaymentStatus) => {
+    const currentOrder = await this.orderRepo.findById(orderId);
+    if (!currentOrder) {
+      throw new Error('ORDER_NOT_FOUND');
+    }
+    return await this.orderRepo.updatePaymentStatus(orderId, newStatus);
   }
   
   public getOrderById = async (orderId: number) => {

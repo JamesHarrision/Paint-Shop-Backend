@@ -3,7 +3,7 @@ import { OrderController } from '../controllers/order.controller';
 import { authenticate } from "../middlewares/auth.middleware";
 import { requireAdmin } from "../middlewares/role.middleware";
 import { validate } from "../middlewares/validate.middleware";
-import { checkoutSchema, updateOrderStatusSchema } from "../validators/order.validator";
+import { checkoutSchema, updateOrderStatusSchema, updatePaymentStatusSchema } from "../validators/order.validator";
 
 const router = Router();
 const orderController = new OrderController();
@@ -25,5 +25,8 @@ router.get('/:id', orderController.getOrderById);
 
 // PATCH /api/orders/:id/status - Cập nhật trạng thái (Chỉ Admin)
 router.patch('/:id/status', requireAdmin, validate(updateOrderStatusSchema), orderController.updateStatus);
+
+// PATCH /api/orders/:id/payment-status - Cập nhật trạng thái thanh toán (Chỉ Admin)
+router.patch('/:id/payment-status', requireAdmin, validate(updatePaymentStatusSchema), orderController.updatePaymentStatus);
 
 export default router;

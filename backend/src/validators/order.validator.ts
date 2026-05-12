@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { OrderStatus } from "@prisma/client";
+import { OrderStatus, PaymentStatus } from "@prisma/client";
 
 export const checkoutSchema = z.object({
   body: z.object({
@@ -14,6 +14,14 @@ export const updateOrderStatusSchema = z.object({
   body: z.object({
     status: z.nativeEnum(OrderStatus, {
       errorMap: () => ({ message: "Trạng thái đơn hàng không hợp lệ" })
+    })
+  })
+});
+
+export const updatePaymentStatusSchema = z.object({
+  body: z.object({
+    paymentStatus: z.nativeEnum(PaymentStatus, {
+      errorMap: () => ({ message: "Trạng thái thanh toán không hợp lệ" })
     })
   })
 });
