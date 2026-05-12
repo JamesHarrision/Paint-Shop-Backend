@@ -3,15 +3,15 @@
 export const AdminUsersTemplate = () => `
     <div class="flex flex-col md:flex-row justify-between items-center mb-12 md:mb-16 gap-8 md:gap-12">
         <div class="text-center md:text-left">
-            <h2 class="text-4xl md:text-6xl font-black uppercase tracking-tighter">Quản trị <span class="bg-[#20B2AA] text-white px-2 border-2 border-black">Thành viên</span></h2>
-            <p class="text-[10px] md:text-sm font-black uppercase tracking-widest text-gray-500 mt-6 italic border-l-4 border-black pl-4">Hệ thống ghi nhận: <span id="admin-user-count" class="text-black bg-[#E2725B] text-white px-2">...</span> tài khoản</p>
+            <h2 class="text-4xl md:text-6xl font-black uppercase tracking-tighter">Quản trị <span class="bg-[#3B82F6] text-white px-2 border-2 border-black">Thành viên</span></h2>
+            <p class="text-[10px] md:text-sm font-black uppercase tracking-widest text-gray-500 mt-6 italic border-l-4 border-black pl-4">Hệ thống ghi nhận: <span id="admin-user-count" class="text-black bg-[#C5FF2E] px-2">...</span> tài khoản</p>
         </div>
         <div class="flex flex-col gap-4 md:gap-6 w-full md:w-auto">
             <div class="flex items-center gap-0">
                 <input type="text" id="admin-user-search" placeholder="Tên / Email..." class="input-brutal !w-full md:!w-64 !p-3 text-sm">
                 <button id="btn-admin-user-search" class="btn-brutal bg-black text-white px-8 !shadow-none !py-3">TÌM</button>
             </div>
-            <button onclick="window.showAddUserModal()" class="btn-brutal bg-[#20B2AA] text-white w-full text-xs !py-3">+ THÊM NGƯỜI DÙNG</button>
+            <button onclick="window.showAddUserModal()" class="btn-brutal bg-[#3B82F6] text-white w-full text-xs !py-3">+ THÊM NGƯỜI DÙNG</button>
         </div>
     </div>
 
@@ -38,9 +38,9 @@ export const AdminUsersTemplate = () => `
     <!-- Modal -->
     <div id="add-user-modal" class="fixed inset-0 z-[10002] hidden">
         <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-xl bg-white border-4 border-black shadow-[8px_8px_0px_#20B2AA] md:shadow-[12px_12px_0px_#20B2AA] p-8 md:p-12 max-h-[90vh] overflow-y-auto animate-fade-in">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-xl bg-white border-4 border-black shadow-[8px_8px_0px_#3B82F6] md:shadow-[12px_12px_0px_#3B82F6] p-8 md:p-12 max-h-[90vh] overflow-y-auto animate-fade-in">
             <div class="flex justify-between items-center mb-8 md:mb-10 border-b-4 border-black pb-6">
-                <h2 id="user-modal-title" class="text-3xl md:text-4xl font-black uppercase tracking-tighter italic">Quản lý <span class="bg-[#E2725B] text-white px-2 not-italic">Member</span></h2>
+                <h2 id="user-modal-title" class="text-3xl md:text-4xl font-black uppercase tracking-tighter italic">Quản lý <span class="bg-[#C5FF2E] text-black px-2 not-italic">Member</span></h2>
                 <button onclick="window.closeAddUserModal()" class="text-4xl md:text-5xl font-black hover:text-[#FF4D4D] transition-colors leading-none">&times;</button>
             </div>
             
@@ -66,7 +66,7 @@ export const AdminUsersTemplate = () => `
                     </select>
                 </div>
 
-                <button type="submit" id="btn-user-submit" class="btn-brutal bg-[#E2725B] text-white w-full text-lg md:text-xl mt-8">LƯU THÔNG TIN</button>
+                <button type="submit" id="btn-user-submit" class="btn-brutal bg-[#3B82F6] text-white w-full text-lg md:text-xl mt-8">LƯU THÔNG TIN</button>
             </form>
         </div>
     </div>

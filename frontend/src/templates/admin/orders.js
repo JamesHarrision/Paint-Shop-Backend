@@ -3,8 +3,8 @@
 export const AdminOrdersTemplate = () => `
     <div class="flex flex-col md:flex-row justify-between items-center mb-12 md:mb-16 gap-8 md:gap-12">
         <div class="text-center md:text-left">
-            <h2 class="text-4xl md:text-6xl font-black uppercase tracking-tighter">Quản trị <span class="bg-[#E2725B] text-white px-2 border-2 border-black">Đơn hàng</span></h2>
-            <p class="text-[10px] md:text-sm font-black uppercase tracking-widest text-gray-500 mt-6 italic border-l-4 border-black pl-4">Vận hành: <span id="admin-order-count" class="text-black bg-[#20B2AA] text-white px-2">...</span> kiện hàng</p>
+            <h2 class="text-4xl md:text-6xl font-black uppercase tracking-tighter">Quản trị <span class="bg-[#3B82F6] text-white px-2 border-2 border-black">Đơn hàng</span></h2>
+            <p class="text-[10px] md:text-sm font-black uppercase tracking-widest text-gray-500 mt-6 italic border-l-4 border-black pl-4">Vận hành: <span id="admin-order-count" class="text-black bg-[#C5FF2E] px-2">...</span> kiện hàng</p>
         </div>
         <div class="flex items-center gap-0 w-full md:w-auto">
             <input type="text" id="admin-order-search" placeholder="Mã đơn / Tên khách..." class="input-brutal !w-full md:!w-64 !p-3 text-sm">

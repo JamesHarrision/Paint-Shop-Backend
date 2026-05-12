@@ -12,11 +12,11 @@ export const LoginTemplate = () => `
           <label class="block text-[10px] font-black uppercase tracking-widest mb-2 italic">Mật mã bảo mật</label>
           <input type="password" id="login-password" class="input-brutal !p-3" placeholder="••••••••" required>
         </div>
-        <button type="submit" class="btn-brutal w-full mt-4 bg-[#E2725B] text-white text-xl">Kích hoạt phiên bản</button>
+        <button type="submit" class="btn-brutal w-full mt-4 bg-[#E2725B] text-white text-lg md:text-xl py-4">Kích hoạt phiên bản</button>
       </form>
       <div class="mt-12 pt-8 border-t-4 border-black flex flex-col gap-6 text-center">
         <p class="text-[10px] font-black uppercase tracking-widest cursor-pointer text-[#E2725B] hover:underline" onclick="window.navigate('forgot-password')">Quên mật khẩu?</p>
-        <p class="text-[10px] font-black uppercase tracking-widest cursor-pointer hover:bg-black hover:text-white p-3 transition-colors border-2 border-black" onclick="window.navigate('register')">Chưa có thông tin? Gia nhập ngay</p>
+        <button onclick="window.navigate('register')" class="btn-brutal bg-white text-black text-[12px] !py-3 w-full">Chưa có thông tin? Gia nhập ngay</button>
       </div>
     </div>
   </section>
