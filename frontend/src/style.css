@@ -117,6 +117,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .input-brutal {
+  display: block;
   width: 100%;
   padding: 1.1rem;
   border: var(--border) !important;
@@ -126,7 +127,7 @@ h1, h2, h3, h4, h5, h6 {
   box-sizing: border-box;
   transition: all 0.2s;
   border-radius: 0;
-  box-shadow: 4px 4px 0px rgba(0,0,0,0.1); /* Subtle static shadow */
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
 }
 
 .input-brutal:focus {
@@ -180,12 +181,12 @@ nav {
 .marquee-content {
   display: flex;
   white-space: nowrap;
-  animation: marquee 20s linear infinite; /* Faster for more energy */
+  animation: marquee 30s linear infinite;
   font-weight: 900;
   text-transform: uppercase;
   font-size: 1.5rem;
   gap: 2rem;
-  width: fit-content;
+  width: max-content; /* Critical for seamless loop */
 }
 
 @keyframes marquee {
