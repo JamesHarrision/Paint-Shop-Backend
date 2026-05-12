@@ -8,23 +8,23 @@ export const ProductDetailTemplate = (product) => {
     const bgColor = product.colorCode || '#FFFFFF';
 
     return `
-    <section class="py-24 min-h-screen">
+    <section class="py-12 md:py-24 min-h-screen">
         <div class="container mx-auto px-6 max-w-6xl">
             
-            <button onclick="window.history.back()" class="bg-black text-white px-4 py-1 font-black uppercase text-[10px] tracking-widest hover:bg-[#C5FF2E] hover:text-black transition-colors mb-8 inline-block shadow-[4px_4px_0px_#000]">
+            <button onclick="window.history.back()" class="bg-black text-white px-4 py-1 font-black uppercase text-[10px] tracking-widest hover:bg-[#E2725B] transition-colors mb-8 inline-block shadow-[4px_4px_0px_#000]">
                 &larr; QUAY LẠI
             </button>
             
-            <div class="flex flex-col lg:flex-row gap-12 bg-white border-4 border-black shadow-[12px_12px_0px_#000] p-8 md:p-16 relative overflow-hidden">
+            <div class="flex flex-col lg:flex-row gap-8 md:gap-12 bg-white border-4 border-black shadow-[12px_12px_0px_#000] p-6 md:p-16 relative overflow-hidden">
                 <!-- Color Background Accent -->
-                <div class="absolute top-0 right-0 w-64 h-64 rounded-bl-full opacity-30 pointer-events-none" style="background-color: ${bgColor}"></div>
+                <div class="absolute top-0 right-0 w-64 h-64 rounded-bl-full opacity-20 pointer-events-none" style="background-color: ${bgColor}"></div>
 
                 <!-- Product Image -->
                 <div class="w-full lg:w-1/2">
                     <div class="aspect-[4/5] border-4 border-black overflow-hidden shadow-[8px_8px_0px_#000] relative group bg-gray-100">
                         <img src="${thumbUrl}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale hover:grayscale-0">
                         <div class="absolute bottom-6 left-6 flex items-center gap-4 bg-white border-2 border-black p-2 shadow-[4px_4px_0px_#000]">
-                            <div class="w-8 h-8 border-2 border-black" style="background-color: ${bgColor}"></div>
+                            <div class="w-6 h-6 border-2 border-black" style="background-color: ${bgColor}"></div>
                             <span class="font-black uppercase text-[10px] tracking-widest">${product.colorCode || 'N/A'}</span>
                         </div>
                     </div>
@@ -33,15 +33,15 @@ export const ProductDetailTemplate = (product) => {
                 <!-- Product Info -->
                 <div class="w-full lg:w-1/2 flex flex-col justify-center relative z-10">
                     <div class="mb-8">
-                        <span class="inline-block px-4 py-1 bg-[#3B82F6] text-white text-[12px] font-black uppercase tracking-widest mb-6 border-2 border-black shadow-[4px_4px_0px_#000]">Catalog 2026</span>
-                        <h1 class="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-4 leading-[0.9]">${product.name}</h1>
+                        <span class="inline-block px-4 py-1 bg-[#20B2AA] text-white text-[12px] font-black uppercase tracking-widest mb-6 border-2 border-black shadow-[4px_4px_0px_#000]">Catalog 2026</span>
+                        <h1 class="text-4xl md:text-6xl lg:text-7xl font-black uppercase tracking-tighter mb-4 leading-[1.1] md:leading-[0.9]">${product.name}</h1>
                         <div class="flex items-center gap-4 mb-6">
-                            <div class="bg-[#C5FF2E] border-2 border-black px-2 py-1 flex items-center gap-1 shadow-[2px_2px_0px_#000]">
-                                <span class="font-black text-xl">★ ${product.averageRating || 0}</span>
+                            <div class="bg-[#F9F7F2] border-2 border-black px-2 py-1 flex items-center gap-1 shadow-[2px_2px_0px_#000]">
+                                <span class="font-black text-lg md:text-xl text-[#E2725B]">★ ${product.averageRating || 0}</span>
                             </div>
-                            <span class="text-xs uppercase font-bold text-gray-400 border-b-2 border-gray-200">(${product.reviewCount || 0} REVIEWS)</span>
+                            <span class="text-[10px] uppercase font-bold text-gray-400 border-b-2 border-gray-200">(${product.reviewCount || 0} REVIEWS)</span>
                         </div>
-                        <p class="text-5xl font-black tracking-tighter text-black bg-[#C5FF2E] px-4 py-2 border-4 border-black shadow-[6px_6px_0px_#000] inline-block mt-4">${formatPrice(product.price)}</p>
+                        <p class="text-4xl md:text-5xl font-black tracking-tighter text-white bg-[#E2725B] px-4 py-2 border-4 border-black shadow-[6px_6px_0px_#000] inline-block mt-4">${formatPrice(product.price)}</p>
                     </div>
 
                     <div class="font-bold text-gray-800 text-lg mb-8 border-l-8 border-black pl-6">
@@ -50,11 +50,11 @@ export const ProductDetailTemplate = (product) => {
 
                     <div class="flex flex-col sm:flex-row gap-6 mt-4">
                         <div class="flex items-center border-4 border-black bg-white shadow-[4px_4px_0px_#000]">
-                            <button onclick="updateDetailQty(-1)" class="w-14 h-14 flex items-center justify-center font-black text-2xl hover:bg-black hover:text-white transition-colors">-</button>
-                            <input type="number" id="detail-qty" value="1" min="1" class="w-16 h-14 text-center font-black bg-transparent border-x-4 border-black outline-none text-xl">
-                            <button onclick="updateDetailQty(1)" class="w-14 h-14 flex items-center justify-center font-black text-2xl hover:bg-black hover:text-white transition-colors">+</button>
+                            <button onclick="updateDetailQty(-1)" class="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center font-black text-2xl hover:bg-black hover:text-white transition-colors">-</button>
+                            <input type="number" id="detail-qty" value="1" min="1" class="w-14 h-12 md:w-16 md:h-14 text-center font-black bg-transparent border-x-4 border-black outline-none text-xl">
+                            <button onclick="updateDetailQty(1)" class="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center font-black text-2xl hover:bg-black hover:text-white transition-colors">+</button>
                         </div>
-                        <button onclick="window.addToCartFromDetail(${product.id})" class="btn-brutal bg-[#C5FF2E] text-2xl flex-1 px-8">
+                        <button onclick="window.addToCartFromDetail(${product.id})" class="btn-brutal bg-[#E2725B] text-xl md:text-2xl flex-1 px-8">
                             THÊM VÀO GIỎ
                         </button>
                     </div>
@@ -62,10 +62,10 @@ export const ProductDetailTemplate = (product) => {
             </div>
 
             <!-- Review Section -->
-            <div class="mt-24">
-                <h2 class="text-5xl font-black uppercase tracking-tighter mb-12">Đánh giá <span class="bg-[#FF4D4D] text-white px-3 border-2 border-black">Sản phẩm</span></h2>
+            <div class="mt-20 md:mt-24">
+                <h2 class="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-10 md:mb-12">Đánh giá <span class="bg-[#20B2AA] text-white px-3 border-2 border-black">Sản phẩm</span></h2>
                 
-                <div class="bg-white border-4 border-black shadow-[8px_8px_0px_#000] p-10 mb-16">
+                <div class="bg-white border-4 border-black shadow-[8px_8px_0px_#000] p-6 md:p-10 mb-16">
                     <div id="review-form-container" class="hidden animate-fade-in">
                         <form id="form-review" class="space-y-6">
                             <div class="flex items-center gap-6">
@@ -81,8 +81,8 @@ export const ProductDetailTemplate = (product) => {
                                 </div>
                             </div>
                             <textarea id="review-comment" rows="4" placeholder="Cảm nghĩ của bạn về sản phẩm..." 
-                                      class="input-brutal text-lg resize-none"></textarea>
-                            <button type="submit" class="btn-brutal bg-[#3B82F6] text-white text-lg">GỬI ĐÁNH GIÁ</button>
+                                      class="input-brutal text-lg resize-none !p-4"></textarea>
+                            <button type="submit" class="btn-brutal bg-[#20B2AA] text-white text-lg px-12">GỬI ĐÁNH GIÁ</button>
                         </form>
                     </div>
                     
