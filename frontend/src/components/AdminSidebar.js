@@ -9,25 +9,25 @@ export const AdminSidebar = (activeTab = 'users') => {
     ];
 
     return `
-    <aside class="w-full md:w-80 bg-charcoal text-cream flex flex-col shadow-2xl z-10">
-      <div class="p-10 border-b border-cream/10">
-        <h1 class="text-3xl font-black uppercase tracking-tighter italic">Paint Shop <span class="text-terracotta not-italic font-serif block text-lg">Admin Console</span></h1>
+    <aside class="w-full md:w-80 bg-white border-r-4 border-black flex flex-col z-10">
+      <div class="p-10 border-b-4 border-black bg-black text-white">
+        <h1 class="text-3xl font-black uppercase tracking-tighter italic">ADMIN <span class="bg-[#C5FF2E] text-black px-2 not-italic block text-lg mt-2 shadow-[4px_4px_0px_#FFF]">Console</span></h1>
       </div>
-      <nav class="flex-1 p-6 space-y-2">
+      <nav class="flex-1 p-8 space-y-4">
         ${menuItems.map(item => `
           <a 
             href="#/admin/${item.id}"
-            class="w-full flex items-center gap-4 px-6 py-4 font-black uppercase text-[10px] tracking-widest transition-all ${activeTab === item.id ? 'bg-terracotta text-white shadow-retro-sm' : 'hover:bg-cream/5 opacity-60 hover:opacity-100'}"
+            class="w-full flex items-center gap-4 px-6 py-4 font-black uppercase text-xs tracking-widest transition-all border-4 ${activeTab === item.id ? 'bg-[#3B82F6] text-white border-black shadow-[6px_6px_0px_#000] translate-x-[-2px] translate-y-[-2px]' : 'border-transparent hover:border-black hover:bg-gray-50'}"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${item.icon}" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="${item.icon}" />
             </svg>
             ${item.label}
           </a>
         `).join('')}
       </nav>
-      <div class="p-8 border-t border-cream/10 bg-black/20">
-        <button onclick="window.navigate('home')" class="w-full py-4 border-2 border-cream/20 text-[10px] font-black uppercase tracking-widest hover:bg-cream hover:text-charcoal transition-all">Quay lại Cửa hàng</button>
+      <div class="p-8 border-t-4 border-black bg-[#FF4D4D]/10">
+        <button onclick="window.navigate('home')" class="btn-brutal w-full bg-white text-xs">Quay lại Cửa hàng</button>
       </div>
     </aside>
   `;
