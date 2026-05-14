@@ -8,8 +8,8 @@ export const ProductDetailTemplate = (product) => {
     const bgColor = product.colorCode || '#FFFFFF';
 
     return `
-    <section class="py-12 md:py-24 min-h-screen">
-        <div class="container mx-auto px-6 max-w-6xl">
+    <section class="py-12 md:py-24 min-h-screen container mx-auto">
+        <div class="px-6 max-w-6xl mx-auto">
             
             <button onclick="window.history.back()" class="bg-black text-white px-4 py-1 font-black uppercase text-[10px] tracking-widest hover:bg-[#E2725B] transition-colors mb-8 inline-block shadow-[4px_4px_0px_#000]">
                 &larr; QUAY LẠI
@@ -49,12 +49,12 @@ export const ProductDetailTemplate = (product) => {
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-6 mt-4">
-                        <div class="flex items-center border-4 border-black bg-white shadow-[4px_4px_0px_#000]">
+                        <div class="flex items-center border-4 border-black bg-white shadow-[4px_4px_0px_#000] flex-shrink-0">
                             <button onclick="updateDetailQty(-1)" class="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center font-black text-2xl hover:bg-black hover:text-white transition-colors">-</button>
                             <input type="number" id="detail-qty" value="1" min="1" class="w-14 h-12 md:w-16 md:h-14 text-center font-black bg-transparent border-x-4 border-black outline-none text-xl">
                             <button onclick="updateDetailQty(1)" class="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center font-black text-2xl hover:bg-black hover:text-white transition-colors">+</button>
                         </div>
-                        <button onclick="window.addToCartFromDetail(${product.id})" class="btn-brutal bg-[#E2725B] text-xl md:text-2xl flex-1 px-8">
+                        <button onclick="window.addToCartFromDetail(${product.id})" class="btn-brutal bg-[#E2725B] text-xl md:text-2xl flex-1 px-8 whitespace-nowrap">
                             THÊM VÀO GIỎ
                         </button>
                     </div>

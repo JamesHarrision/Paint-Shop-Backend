@@ -103,20 +103,24 @@ const renderCollectionItemCard = (item, canEdit) => {
     const thumbUrl = p.imageUrl ? (p.imageUrl.startsWith('http') ? p.imageUrl : `${import.meta.env.VITE_IMAGE_BASE_URL}/${p.imageUrl}`) : 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&q=80&w=800';
     
     return `
-        <div class="card-retro group flex flex-col relative">
+        <div onclick="if(!event.target.closest('button')) window.navigate('products/${p.id}')"
+             class="card-retro group flex flex-col relative cursor-pointer hover:translate-x-[-4px] hover:translate-y-[-4px] transition-all">
             <div class="h-48 mb-4 overflow-hidden border-2 border-charcoal">
-                <img src="${thumbUrl}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                <img src="${thumbUrl}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 grayscale group-hover:grayscale-0">
             </div>
             <div class="flex-1">
-                <h4 class="font-black uppercase text-lg mb-2">${p.name}</h4>
-                <p class="text-terracotta font-black text-xl mb-4">${p.price}đ</p>
-                
-                <div class="flex gap-2">
-                    <button onclick="window.navigate('products')" class="flex-1 py-2 text-[10px] font-black uppercase tracking-widest border-2 border-charcoal hover:bg-charcoal hover:text-white transition-all text-center">Mua Ngay</button>
-                    ${canEdit ? `
-                        <button onclick="window.removeCollectionItem('${item.collectionId}', ${p.id})" class="px-4 py-2 border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-all text-[10px] font-black tracking-widest group-hover:block hidden absolute top-4 right-4 bg-white shadow-[4px_4px_0px_0px_rgba(239,68,68,1)]">&times; Xóa</button>
-                    ` : ''}
+                <h4 class="font-black uppercase text-lg mb-1 group-hover:text-terracotta transition-colors">${p.name}</h4>
+                <div class="flex justify-between items-center mt-4">
+                    <p class="text-charcoal font-black text-xl">${p.price.toLocaleString('vi-VN')}đ</p>
+                    <button onclick="event.stopPropagation(); window.navigate('products/${p.id}')" class="px-4 py-2 text-[10px] font-black uppercase tracking-widest border-2 border-charcoal hover:bg-charcoal hover:text-white transition-all">Xem ngay</button>
                 </div>
+                
+                ${canEdit ? `
+                    <button onclick="event.stopPropagation(); window.removeCollectionItem('${item.collectionId}', ${p.id})" 
+                            class="absolute top-2 right-2 w-8 h-8 flex items-center justify-center border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-all bg-white shadow-[2px_2px_0px_0px_rgba(239,68,68,1)] z-20">
+                        &times;
+                    </button>
+                ` : ''}
             </div>
         </div>
     `;

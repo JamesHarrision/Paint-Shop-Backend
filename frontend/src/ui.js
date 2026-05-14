@@ -8,7 +8,7 @@ export const renderLayout = (contentTemplate) => {
 
     root.innerHTML = `
         ${Header()}
-        <main id="main-content">
+        <main id="main-content" class="py-0">
             ${contentTemplate}
         </main>
         <footer class="bg-charcoal text-cream/40 py-24 border-t-4 border-terracotta">

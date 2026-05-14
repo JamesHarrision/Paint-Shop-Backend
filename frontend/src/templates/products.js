@@ -1,7 +1,7 @@
 import { Pagination } from '../components/Pagination.js';
 
 export const ProductListTemplate = (products = [], formatPrice, pagination) => `
-  <section class="py-12 px-0 md:px-6">
+  <section class="container mx-auto py-12">
     <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-8 border-b-4 border-black pb-8">
         <div>
             <span class="bg-[#20B2AA] text-white px-3 py-1 border-2 border-black font-bold uppercase text-[10px] tracking-widest mb-2 inline-block shadow-[2px_2px_0px_#000]">Catalog 2026</span>
@@ -15,24 +15,24 @@ export const ProductListTemplate = (products = [], formatPrice, pagination) => `
             <p class="text-2xl font-black uppercase italic tracking-widest text-gray-300">Đang cập nhật sản phẩm mới...</p>
         </div>
     ` : `
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div class="product-grid">
           ${products.map(p => `
-            <div class="group relative bg-white border-4 border-black shadow-[8px_8px_0px_#000] flex flex-col p-0 overflow-hidden hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[12px_12px_0px_#000] transition-all cursor-pointer">
-              <div onclick="window.navigate('products/${p.id}')" class="absolute inset-0 z-10"></div>
+            <div onclick="if(!event.target.closest('button')) window.navigate('products/${p.id}')" 
+                 class="group bg-white border-4 border-black shadow-[8px_8px_0px_#000] flex flex-col p-0 overflow-hidden hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[12px_12px_0px_#000] transition-all cursor-pointer relative">
               <div class="aspect-[4/5] overflow-hidden border-b-4 border-black bg-gray-50 relative">
                 <img src="${p.imageUrl || 'https://via.placeholder.com/400x500?text=Paint+Shop'}" alt="${p.name}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 transform group-hover:scale-105">
                 <div class="absolute top-4 left-4 w-8 h-8 rounded-full border-2 border-black shadow-[2px_2px_0px_#000]" style="background-color: ${p.colorCode || '#ccc'}"></div>
               </div>
-              <div class="p-6 flex flex-col flex-1 relative z-20">
-                <h3 class="font-black uppercase text-lg tracking-tight mb-1">${p.name}</h3>
+              <div class="p-6 flex flex-col flex-1">
+                <h3 class="font-black uppercase text-lg tracking-tight mb-1 group-hover:text-[#E2725B] transition-colors">${p.name}</h3>
                 <div class="flex items-center gap-2 mb-4">
                   <span class="text-[#E2725B] font-black text-sm">★ ${p.averageRating || 0}</span>
                   <span class="text-[10px] text-gray-400 font-bold">(${p.reviewCount || 0})</span>
                 </div>
-                <div class="flex justify-between items-end mt-auto">
-                  <span class="text-2xl font-black">${formatPrice ? formatPrice(p.price) : p.price}</span>
-                  <button onclick="window.addToCart(${p.id})" class="w-12 h-12 bg-[#E2725B] text-white border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors shadow-[4px_4px_0px_#000] active:shadow-none active:translate-x-1 active:translate-y-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="flex justify-between items-center mt-auto gap-4">
+                  <span class="text-2xl font-black whitespace-nowrap">${formatPrice ? formatPrice(p.price) : p.price}</span>
+                  <button onclick="event.stopPropagation(); window.addToCart(${p.id})" class="flex-shrink-0 w-12 h-12 bg-[#E2725B] text-white border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors shadow-[4px_4px_0px_#000] active:shadow-none active:translate-x-1 active:translate-y-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4" />
                     </svg>
                   </button>

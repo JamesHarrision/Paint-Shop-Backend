@@ -25,6 +25,15 @@ body {
   position: relative;
 }
 
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
 /* Hiệu ứng Grain (Nhiễu hạt) toàn trang */
 body::before {
   content: "";
@@ -252,6 +261,25 @@ textarea.admin-input {
 .border-charcoal { border-color: var(--color-charcoal); }
 .text-charcoal { color: var(--color-charcoal); }
 .text-terracotta { color: var(--color-terracotta); }
+
+/* --- Grid System --- */
+.product-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 640px) {
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .product-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
 
 /* --- Toast Notifications --- */
 #toast-container {
