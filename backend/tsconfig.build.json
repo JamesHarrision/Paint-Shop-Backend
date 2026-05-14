@@ -4,6 +4,7 @@
     "rootDir": "./src"
   },
   "exclude": [
+    "prisma",
     "node_modules",
     "dist",
     "scratch",
