@@ -7,7 +7,7 @@ export const CollectionDetailTemplate = (collection) => {
     const defaultThumb = 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&q=80&w=800';
     let thumbUrl = defaultThumb;
     if (collection.thumbnail) {
-        thumbUrl = collection.thumbnail.startsWith('http') ? collection.thumbnail : `http://localhost:3000/${collection.thumbnail}`;
+        thumbUrl = collection.thumbnail.startsWith('http') ? collection.thumbnail : `${import.meta.env.VITE_IMAGE_BASE_URL}/${collection.thumbnail}`;
     }
 
     const isOwner = state.user?.userId === collection.userId;
@@ -100,7 +100,7 @@ const renderCollectionItemCard = (item, canEdit) => {
     const p = item.product;
     if (!p) return '';
     
-    const thumbUrl = p.imageUrl ? (p.imageUrl.startsWith('http') ? p.imageUrl : `http://localhost:3000/${p.imageUrl}`) : 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&q=80&w=800';
+    const thumbUrl = p.imageUrl ? (p.imageUrl.startsWith('http') ? p.imageUrl : `${import.meta.env.VITE_IMAGE_BASE_URL}/${p.imageUrl}`) : 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&q=80&w=800';
     
     return `
         <div class="card-retro group flex flex-col relative">

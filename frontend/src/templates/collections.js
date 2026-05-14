@@ -82,7 +82,7 @@ export const renderCollectionCard = (col, isMyTab) => {
     const defaultThumb = 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&q=80&w=800';
     let thumbUrl = defaultThumb;
     if (col.thumbnail) {
-        thumbUrl = col.thumbnail.startsWith('http') ? col.thumbnail : `http://localhost:3000/${col.thumbnail}`;
+        thumbUrl = col.thumbnail.startsWith('http') ? col.thumbnail : `${import.meta.env.VITE_IMAGE_BASE_URL}/${col.thumbnail}`;
     }
 
     return `

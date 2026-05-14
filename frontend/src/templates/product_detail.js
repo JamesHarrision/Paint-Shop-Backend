@@ -4,7 +4,7 @@ import { formatPrice } from '../handlers/cart.handler.js';
 export const ProductDetailTemplate = (product) => {
     if (!product) return '';
 
-    const thumbUrl = product.imageUrl ? (product.imageUrl.startsWith('http') ? product.imageUrl : `http://localhost:3000/${product.imageUrl}`) : 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&q=80&w=800';
+    const thumbUrl = product.imageUrl ? (product.imageUrl.startsWith('http') ? product.imageUrl : `${import.meta.env.VITE_IMAGE_BASE_URL}/${product.imageUrl}`) : 'https://images.unsplash.com/photo-1562259949-e8e7689d7828?auto=format&fit=crop&q=80&w=800';
     const bgColor = product.colorCode || '#FFFFFF';
 
     return `
