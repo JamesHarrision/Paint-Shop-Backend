@@ -45,8 +45,9 @@ RUN npm ci --only=production && npm cache clean --force
 # 4. Generate lại Prisma Client cho môi trường này (đảm bảo binary khớp với OS)
 RUN npx prisma generate
 
-# 5. Copy file build từ stage 'builder' sang
+# 5. Copy file build và source từ stage 'builder' sang
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/src ./src
 
 # 6. Tạo thư mục uploads
 # Không dùng COPY vì thư mục này có thể trống hoặc không được commit lên git
