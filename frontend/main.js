@@ -32,7 +32,7 @@ import { initCollectionDetailHandler } from './src/handlers/collection_detail.ha
 const app = document.querySelector('#app');
 
 const routeConfig = {
-    home: { template: HomeTemplate, init: () => renderProductsPage(document.querySelector('#products-container'), { limit: 4 }), layout: true },
+    home: { template: HomeTemplate, init: () => renderProductsPage(document.querySelector('#products-container'), { limit: 6 }), layout: true },
     products: { template: ProductsPageTemplate, init: (params) => renderProductsPage(document.querySelector('#products-container'), params), layout: true },
     product_detail: { template: () => '<div id="product-detail-container"></div>', init: (params) => initProductDetailHandler(params.id), layout: true },
     ai: { template: PythonTemplate, init: initPythonHandlers, layout: true },

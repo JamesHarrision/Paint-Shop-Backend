@@ -5,7 +5,7 @@ import { formatPrice } from './cart.handler.js';
 
 let currentFilters = {
     page: 1,
-    limit: 8,
+    limit: 6,
     search: '',
     minPrice: undefined,
     maxPrice: undefined
