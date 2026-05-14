@@ -48,9 +48,9 @@ RUN npx prisma generate
 # 5. Copy file build từ stage 'builder' sang
 COPY --from=builder /app/dist ./dist
 
-# 6. Copy thư mục uploads (nếu cần serve static files từ đây)
-# Lưu ý: Trong thực tế nên dùng Volume, nhưng copy để tạo cấu trúc thư mục
-COPY --from=builder /app/uploads ./uploads
+# 6. Tạo thư mục uploads
+# Không dùng COPY vì thư mục này có thể trống hoặc không được commit lên git
+RUN mkdir -p uploads
 
 # 7. Mở port và chạy
 EXPOSE 3000

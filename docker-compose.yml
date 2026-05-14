@@ -76,9 +76,28 @@ services:
     # KHÔNG dùng 'command: npm run dev' nữa. 
     # Docker sẽ tự dùng CMD ["npm", "start"] trong Dockerfile.
 
+  # 5. Nginx Proxy Manager (Dành cho VPS)
+  nginx-proxy-manager:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: paint_shop_npm
+    restart: always
+    ports:
+      - '80:80'   # HTTP
+      - '81:81'   # Admin UI Dashboard
+      - '443:443' # HTTPS
+    volumes:
+      - ./npm_data:/data
+      - ./npm_letsencrypt:/etc/letsencrypt
+    networks:
+      - app_network
+    depends_on:
+      - backend
+
 networks:
   app_network:
     driver: bridge
 
 volumes:
   mysql_data:
+  npm_data:
+  npm_letsencrypt:

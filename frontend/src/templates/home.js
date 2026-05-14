@@ -7,9 +7,11 @@ export const HomeTemplate = () => `
         <span class="bg-[#20B2AA] text-white px-4 py-1 border-2 border-black font-black uppercase text-[12px] tracking-widest mb-6 inline-block shadow-[4px_4px_0px_#000]">
           Sáng tạo vô hạn
         </span>
-        <h1 class="text-5xl md:text-7xl lg:text-[8rem] font-black uppercase leading-[1.1] mb-10 tracking-tighter">
-          Nghệ <span class="bg-[#E2725B] text-white px-4 border-4 border-black shadow-[8px_8px_0px_#000]">Thuật</span> <br/>
-          <span class="text-outline">Màu Sắc</span>
+        <h1 class="text-5xl md:text-6xl lg:text-[6.5rem] font-black uppercase leading-[1.1] mb-10 tracking-tighter">
+          <span class="block">
+            Kiến <span class="bg-[#E2725B] text-white px-4 border-4 border-black shadow-[8px_8px_0px_#000] inline-block">Tạo</span>
+          </span>
+          <span class="text-outline block">Sắc Màu</span>
         </h1>
         <p class="text-lg md:text-xl font-bold text-black max-w-md mb-12 leading-relaxed border-l-8 border-[#E2725B] pl-6">
           Cuộc cách mạng hóa không gian sống của bạn bằng sức mạnh của AI. Chụp ảnh, phân tích và khoác lên lớp áo mới cho tổ ấm của bạn ngay hôm nay.

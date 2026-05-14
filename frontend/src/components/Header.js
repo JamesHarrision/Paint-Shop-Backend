@@ -6,7 +6,7 @@ export const Header = () => {
 
   return `
     <header class="bg-white border-b-4 border-black sticky top-0 z-[10001] py-4">
-      <div class="container flex justify-between items-center">
+      <div class="container mx-auto px-6 md:px-12 lg:px-24 flex justify-between items-center">
         <div class="flex items-center gap-8 lg:gap-12">
           <h1 onclick="window.navigate('home')" class="text-2xl md:text-3xl font-black uppercase tracking-tighter cursor-pointer hover:skew-x-[-5deg] transition-transform">
             Paint <span class="bg-[#E2725B] text-white px-2 border-2 border-black">Shop</span>

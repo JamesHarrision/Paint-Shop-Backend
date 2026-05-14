@@ -5,7 +5,7 @@ import { logout } from './handlers/auth.handler.js';
 export const renderLayout = (contentTemplate) => {
     const root = document.querySelector('#app');
     if (!root) return;
-    
+
     root.innerHTML = `
         ${Header()}
         <main id="main-content">
@@ -45,7 +45,7 @@ const bindHeaderEvents = () => {
 
 export const toggleLoader = (show) => {
     let loader = document.querySelector('#global-loader');
-    
+
     if (show) {
         if (loader) return; // Already showing
         const div = document.createElement('div');
@@ -76,14 +76,13 @@ window.toggleLoader = toggleLoader;
 export const showToast = (message, type = 'success') => {
     const toast = document.createElement('div');
     // Using new brutalist classes
-    toast.className = `fixed bottom-8 right-8 z-[10005] px-8 py-4 font-black uppercase text-[10px] tracking-widest border-4 border-black shadow-[4px_4px_0px_#000] transform translate-y-20 transition-all duration-500 ${
-      type === 'success' ? 'bg-[#C5FF2E] text-black' : 'bg-[#FF4D4D] text-white'
-    }`;
+    toast.className = `fixed bottom-8 right-8 z-[10005] px-8 py-4 font-black uppercase text-[10px] tracking-widest border-4 border-black shadow-[4px_4px_0px_#000] transform translate-y-20 transition-all duration-500 ${type === 'success' ? 'bg-[#C5FF2E] text-black' : 'bg-[#FF4D4D] text-white'
+        }`;
     toast.innerText = message;
     document.body.appendChild(toast);
-    
+
     requestAnimationFrame(() => toast.classList.remove('translate-y-20'));
-    
+
     setTimeout(() => {
         toast.classList.add('translate-y-20', 'opacity-0');
         setTimeout(() => toast.remove(), 500);
